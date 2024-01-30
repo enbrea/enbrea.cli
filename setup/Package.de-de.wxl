@@ -1,0 +1,20 @@
+﻿<!--
+This file contains the declaration of all the localizable strings.
+-->
+<WixLocalization xmlns="http://wixtoolset.org/schemas/v4/wxl" Culture="de-DE">
+
+  <String Id="AppName" Value="ENBREA CLI" />
+  <String Id="AppDescription" Value="Client Tool für die Arbeit mit ENBREA auf der Kommandozeile" />
+  <String Id="AppFolder" Value="Enbrea" />
+  <String Id="Manufacturer" Value="STÜBER SYSTEMS GmbH" />
+  <String Id="ProjectFolder" Value="Stueber Systems" />
+  <String Id="DowngradeError" Value="Eine neuere Version von [ProductName] ist bereits installiert." />
+
+  <String Id="FeaturesCompleteTitle" Value="Vollständige Installation" />
+  <String Id="FeaturesCompleteDescription" Value="Vollständige Installation aller verfügbaren Features." />
+  <String Id="FeatureCoreTitle" Value="Kernkomponenten" />
+  <String Id="FeatureCoreDescription" Value="Installation der Kernkomponenten." />
+
+  <String Id="WelcomeDlgDescription" Value="Der Setup-Assistent wird [Produktname] Version [ProduktVersion] auf Ihrem Computer installieren. Klicken Sie auf Weiter, um fortzufahren, oder auf Abbrechen, um den Setup-Assistenten zu beenden." />
+
+</WixLocalization>

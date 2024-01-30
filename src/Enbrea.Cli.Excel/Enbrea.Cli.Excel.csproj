@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Copyright>© 2024 STÜBER SYSTEMS GmbH</Copyright>
+    <Product>ENBREA CLI Module for Excel/CSV</Product>
+    <Company>STÜBER SYSTEMS GmbH</Company>
+    <Version>0.0.1</Version>
+    <Description>Generating ECF files from a simple Excel sheet or CSV</Description>
+    <Authors>STÜBER SYSTEMS GmbH</Authors>
+    <RootNamespace>Enbrea.CLI.Excel</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.102.2" />
+    <PackageReference Include="Enbrea.Ecf" Version="0.2.0" />
+    <PackageReference Include="Enbrea.GuidFactory" Version="0.9.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Enbrea.Cli.Common\Enbrea.Cli.Common.csproj" />
+  </ItemGroup>
+
+</Project>

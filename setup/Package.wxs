@@ -1,0 +1,139 @@
+﻿<Wix
+  xmlns="http://wixtoolset.org/schemas/v4/wxs"
+  xmlns:netfx="http://wixtoolset.org/schemas/v4/wxs/netfx"
+  xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <!-- Version number from EXE file -->
+  <?define Version="!(bind.FileVersion.Enbrea.exe)" ?>
+
+  <!-- The upgrade code GUID for the product (DO NOT CHANGE!) -->
+  <?define UpgradeCode="05bd6fa8-59b1-4c19-970e-80af0b8d0213" ?>
+
+  <!-- The URL for add/remove programs -->
+  <?define AppHelpLink="https://github.com/enbrea/enbrea.cli" ?>
+
+  <!-- 32-bit / 64-bit dependend variables -->
+  <?if $(var.Platform) = x64 ?>
+  <?define SourceFolder = "..\src\Enbrea.Cli\bin\Publish\win-x64" ?>
+  <?else?>
+  <?define SourceFolder = "..\src\Enbrea.Cli\bin\Publish\win-x86" ?>
+  <?endif?>
+  
+
+  <!-- Package definition -->
+  <Package
+      Name="!(loc.AppName)"
+      Manufacturer="!(loc.Manufacturer)"
+      Version="$(var.Version)"
+      Scope="perMachine"
+      UpgradeCode="$(var.UpgradeCode)"
+      Compressed="true">
+
+    <!-- Summary Information Stream -->
+    <SummaryInformation
+      Description="!(loc.AppDescription)" />
+
+    <!-- App icon -->
+    <Icon Id="AppIcon.exe" SourceFile="images\app.ico" />
+
+    <!-- Properties for add/remove programs -->
+    <Property Id="ARPPRODUCTICON" Value="AppIcon.exe" />
+    <Property Id="ARPHELPLINK" Value="$(var.AppHelpLink)" />
+
+    <!-- Default installation folder -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+
+    <!-- Disable path validation -->
+    <Property Id="WIXUI_DONTVALIDATEPATH" Value="1" />
+
+    <!-- Determine the directory of a previous installation (if one exists). If not INSTALLDIR stays empty -->
+    <Property Id="INSTALLDIR">
+      <RegistrySearch Id="DetermineInstallLocation" Type="raw" Root="HKLM" Key="Software\!(loc.Manufacturer)\!(loc.AppName)" Name="InstallLocation" />
+    </Property>
+
+    <!-- Set ARPINSTALLLOCATION property (see https://learn.microsoft.com/en-us/windows/win32/msi/arpinstalllocation) -->
+    <CustomAction Id="SetARPINSTALLLOCATION" Property="ARPINSTALLLOCATION" Value="[INSTALLDIR]" />
+
+    <!-- Upgrade logic -->
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" AllowSameVersionUpgrades="yes" />
+
+    <!-- This is the main installer sequence run when the product is actually installed -->
+    <InstallExecuteSequence>
+
+      <!-- Determine the install location after the install path has been validated by the installer -->
+      <Custom Action="SetARPINSTALLLOCATION" After="InstallValidate"></Custom>
+
+    </InstallExecuteSequence>
+
+    <!-- Compatibility check for .NET 7 -->
+    <netfx:DotNetCompatibilityCheck
+      Property="DOTNETRUNTIMECHECK"
+      Platform="$(var.Platform)"
+      RollForward="major"
+      RuntimeType="core"
+      Version="8.0.0"/>
+
+    <!-- Embed cab files into msi -->
+    <MediaTemplate EmbedCab="yes"/>
+
+    <!-- Feature structure -->
+    <Feature Id="Complete" Title="!(loc.FeaturesCompleteTitle)" Description="!(loc.FeaturesCompleteDescription)" Display="expand" Level="1" ConfigurableDirectory="INSTALLDIR">
+
+      <Feature Id="Core" Title="!(loc.FeatureCoreTitle)" Description="!(loc.FeatureCoreDescription)" Level="1">
+
+        <ComponentRef Id="Enbrea.exe" />
+        <ComponentRef Id="Registry.InstallLocation" />
+        <ComponentRef Id="Environment.InstallLocation" />
+
+      </Feature>
+
+    </Feature>
+
+    <!-- Directory and file structure -->
+    <StandardDirectory Id="ProgramFiles6432Folder">
+      <Directory Id="ProjectFolder" Name="!(loc.ProjectFolder)">
+        <Directory Id="INSTALLDIR" Name="!(loc.AppFolder)">
+
+          <!-- EXE file -->
+          <Component Id="Enbrea.exe" Guid="20a0af90-930f-4eae-a5f5-f9da1749261a">
+            <File
+              Id="Enbrea.exe"
+              Source="$(var.SourceFolder)\Enbrea.exe"
+              KeyPath="yes" />
+          </Component>
+
+          <!-- Registry entries -->
+          <Component Id="Registry.InstallLocation" Guid="af5657a1-4d0f-4d2e-a0b8-b4f91ae913b8">
+            <RegistryKey Root="HKLM" Key="Software\!(loc.Manufacturer)\!(loc.AppName)">
+              <RegistryValue
+                Name="InstallLocation"
+                Value="[INSTALLDIR]"
+                Type="string"
+                KeyPath="yes" />
+            </RegistryKey>
+          </Component>
+
+          <!-- Environment variable -->
+          <Component Id="Environment.InstallLocation" Guid="d163a1e9-9947-431c-9d8c-ff9bd1224360">
+            <Environment
+              Id="PATH"
+              Name="PATH"
+              Value="[INSTALLDIR]"
+              Permanent="yes"
+              Part="last"
+              Action="set"
+              System="yes" />
+          </Component>
+
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+
+    <!-- Our installer UI -->
+    <UI>
+      <UIRef Id="CustomWixUI_InstallDir" />
+    </UI>
+
+  </Package>
+
+</Wix>
