@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Copyright>© 2024 STÜBER SYSTEMS GmbH</Copyright>
+    <Product>ENBREA CLI Module for BBS-Planung</Product>
+    <Company>STÜBER SYSTEMS GmbH</Company>
+    <Version>0.0.1</Version>
+    <Description>Generating ECF files from a BBS-Planung database</Description>
+    <Authors>STÜBER SYSTEMS GmbH</Authors>
+    <RootNamespace>Enbrea.CLI.BbsPlanung</RootNamespace>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Enbrea.BbsPlanung.Db" Version="0.3.0" />
+    <PackageReference Include="Enbrea.Ecf" Version="0.2.0" />
+    <PackageReference Include="System.Data.Odbc" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Enbrea.Cli.Common\Enbrea.Cli.Common.csproj" />
+  </ItemGroup>
+
+</Project>
