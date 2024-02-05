@@ -153,7 +153,7 @@ namespace Enbrea.Cli
                 }
             };
 
-            command.SetHandler(CommandHandlers.DeleteImportTask, 
+            command.SetHandler(CommandHandlers.DeleteImportTask,
                 command.Options[0] as Option<ImportProvider>);
 
             return command;
@@ -176,6 +176,70 @@ namespace Enbrea.Cli
                 command.Options[0] as Option<FileInfo>,
                 command.Options[1] as Option<Guid>
             );
+
+            return command;
+        }
+
+        public static Command DisableExportTask()
+        {
+            var command = new Command("disable-export-task", "Deactivates a scheduled export task for ENBREA")
+            {
+                new Option<ExportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
+                {
+                    IsRequired = true
+                }
+            };
+
+            command.SetHandler(CommandHandlers.DisableExportTask,
+                command.Options[0] as Option<ExportProvider>);
+
+            return command;
+        }
+
+        public static Command DisableImportTask()
+        {
+            var command = new Command("disable-import-task", "Deactivates a scheduled import task for ENBREA")
+            {
+                new Option<ImportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
+                {
+                    IsRequired = true
+                }
+            };
+
+            command.SetHandler(CommandHandlers.DisableImportTask,
+                command.Options[0] as Option<ImportProvider>);
+
+            return command;
+        }
+
+        public static Command EnableExportTask()
+        {
+            var command = new Command("enable-export-task", "Activates a scheduled export task for ENBREA")
+            {
+                new Option<ExportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
+                {
+                    IsRequired = true
+                }
+            };
+
+            command.SetHandler(CommandHandlers.EnableExportTask,
+                command.Options[0] as Option<ExportProvider>);
+
+            return command;
+        }
+
+        public static Command EnableImportTask()
+        {
+            var command = new Command("enable-import-task", "Activates a scheduled import task for ENBREA")
+            {
+                new Option<ImportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
+                {
+                    IsRequired = true
+                }
+            };
+
+            command.SetHandler(CommandHandlers.EnableImportTask,
+                command.Options[0] as Option<ImportProvider>);
 
             return command;
         }

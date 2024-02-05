@@ -39,7 +39,7 @@ namespace Enbrea.Cli
             _consoleWriter = ConsoleWriterFactory.CreateConsoleWriter(ProgressUnit.Count);
         }
 
-        public async System.Threading.Tasks.Task CreateExportTask(string configFile, Configuration config, ExportProvider provider, uint interval)
+        public void CreateExportTask(string configFile, Configuration config, ExportProvider provider, uint interval)
         {
             _consoleWriter.StartProgress($"Create or update an export task to {provider}");
             try
@@ -83,7 +83,7 @@ namespace Enbrea.Cli
 
                     taskDefinition.Actions.Add(
                         "enbrea.exe",
-                        $"export -p {provider} -c \"{configFile}\" -l \"{GetLogFolderName(config, provider)}\"",
+                        $"export -p {provider} -c \"{configFile}\" -l \"{Path.Combine(GetLogFolderName(config, provider), "log.txt")}\"",
                         Path.GetDirectoryName(configFile));
 
                     var taskFolder = AddEnbreaTaskFolder();
@@ -93,8 +93,6 @@ namespace Enbrea.Cli
 
                     _consoleWriter.FinishProgress().Success($"Task successfully created");
                 }
-
-                await System.Threading.Tasks.Task.CompletedTask;
             }
             catch
             {
@@ -103,7 +101,7 @@ namespace Enbrea.Cli
             }
         }
 
-        public async System.Threading.Tasks.Task CreateImportTask(string configFile, Configuration config, ImportProvider provider, uint interval)
+        public void CreateImportTask(string configFile, Configuration config, ImportProvider provider, uint interval)
         {
             _consoleWriter.StartProgress($"Create or update an import task from {provider}");
             try
@@ -147,7 +145,7 @@ namespace Enbrea.Cli
 
                     taskDefinition.Actions.Add(
                         "enbrea.exe",
-                        $"import -p {provider} -c \"{configFile}\" -l \"{GetLogFolderName(config, provider)}\"",
+                        $"import -p {provider} -c \"{configFile}\" -l \"{Path.Combine(GetLogFolderName(config, provider), "log.txt")}\"",
                         Path.GetDirectoryName(configFile));
 
                     var taskFolder = AddEnbreaTaskFolder();
@@ -157,8 +155,6 @@ namespace Enbrea.Cli
 
                     _consoleWriter.FinishProgress().Success($"Task successfully created");
                 }
-
-                await System.Threading.Tasks.Task.CompletedTask;
             }
             catch
             {
@@ -167,7 +163,7 @@ namespace Enbrea.Cli
             }
         }
 
-        public async System.Threading.Tasks.Task DeleteAllTasks()
+        public void DeleteAllTasks()
         {
             _consoleWriter.StartProgress("Delete all import and export tasks");
             try
@@ -218,8 +214,6 @@ namespace Enbrea.Cli
                 {
                     _consoleWriter.FinishProgress().Information($"No tasks found!");
                 }
-
-                await System.Threading.Tasks.Task.CompletedTask;
             }
             catch
             {
@@ -228,7 +222,7 @@ namespace Enbrea.Cli
             }
         }
 
-        public async System.Threading.Tasks.Task DeleteExportTask(ExportProvider provider)
+        public void DeleteExportTask(ExportProvider provider)
         {
             _consoleWriter.StartProgress("Delete export task");
             try
@@ -244,8 +238,6 @@ namespace Enbrea.Cli
                         taskFolder.DeleteTask(task.Name);
 
                         _consoleWriter.FinishProgress().Success($"Task {task.Name} successfully deleted");
-
-                        await System.Threading.Tasks.Task.CompletedTask;
                     }
                     else
                     {
@@ -264,7 +256,7 @@ namespace Enbrea.Cli
             }
         }
 
-        public async System.Threading.Tasks.Task DeleteImportTask(ImportProvider provider)
+        public void DeleteImportTask(ImportProvider provider)
         {
             _consoleWriter.StartProgress("Delete import task");
             try
@@ -280,8 +272,6 @@ namespace Enbrea.Cli
                         taskFolder.DeleteTask(task.Name);
 
                         _consoleWriter.FinishProgress().Success($"Task {task.Name} successfully deleted");
-
-                        await System.Threading.Tasks.Task.CompletedTask;
                     }
                     else
                     {
@@ -300,7 +290,147 @@ namespace Enbrea.Cli
             }
         }
 
-        public async System.Threading.Tasks.Task ListAllTasks()
+        public void DisableExportTask(ExportProvider provider)
+        {
+            _consoleWriter.StartProgress("Disable export task");
+            try
+            {
+                var taskFolder = GetEnbreaTaskFolder();
+
+                if (taskFolder != null)
+                {
+                    var task = GetTask(provider);
+
+                    if (task != null)
+                    {
+                        task.Definition.Settings.Enabled = false;
+                        task.RegisterChanges();
+
+                        _consoleWriter.FinishProgress().Success($"Task {task.Name} successfully updated");
+                    }
+                    else
+                    {
+                        throw new ScheduleException($"The task enbrea.import.{provider} does not exists");
+                    }
+                }
+                else
+                {
+                    throw new ScheduleException($"No ENBREA tasks found");
+                }
+            }
+            catch
+            {
+                _consoleWriter.CancelProgress();
+                throw;
+            }
+        }
+
+        public void DisableImportTask(ImportProvider provider)
+        {
+            _consoleWriter.StartProgress("Disable import task");
+            try
+            {
+                var taskFolder = GetEnbreaTaskFolder();
+
+                if (taskFolder != null)
+                {
+                    var task = GetTask(provider);
+
+                    if (task != null)
+                    {
+                        task.Definition.Settings.Enabled = false;
+                        task.RegisterChanges();
+
+                        _consoleWriter.FinishProgress().Success($"Task {task.Name} successfully updated");
+                    }
+                    else
+                    {
+                        throw new ScheduleException($"The task enbrea.import.{provider} does not exists");
+                    }
+                }
+                else
+                {
+                    throw new ScheduleException($"No ENBREA tasks found");
+                }
+            }
+            catch
+            {
+                _consoleWriter.CancelProgress();
+                throw;
+            }
+        }
+
+        public void EnableExportTask(ExportProvider provider)
+        {
+            _consoleWriter.StartProgress("Enable export task");
+            try
+            {
+                var taskFolder = GetEnbreaTaskFolder();
+
+                if (taskFolder != null)
+                {
+                    var task = GetTask(provider);
+
+                    if (task != null)
+                    {
+                        task.Definition.Settings.Enabled = true;
+                        task.RegisterChanges();
+
+                        _consoleWriter.FinishProgress().Success($"Task {task.Name} successfully updated");
+                    }
+                    else
+                    {
+                        throw new ScheduleException($"The task enbrea.import.{provider} does not exists");
+                    }
+                }
+                else
+                {
+                    throw new ScheduleException($"No ENBREA tasks found");
+                }
+            }
+            catch
+            {
+                _consoleWriter.CancelProgress();
+                throw;
+            }
+        }
+
+        public void EnableImportTask(ImportProvider provider)
+        {
+            _consoleWriter.StartProgress("Enable import task");
+            try
+            {
+                var taskFolder = GetEnbreaTaskFolder();
+
+                if (taskFolder != null)
+                {
+                    var task = GetTask(provider);
+
+                    if (task != null)
+                    {
+                        task.Definition.Settings.Enabled = true;
+                        task.RegisterChanges();
+
+                        _consoleWriter.FinishProgress().Success($"Task {task.Name} successfully updated");
+                    }
+                    else
+                    {
+                        throw new ScheduleException($"The task enbrea.import.{provider} does not exists");
+                    }
+                }
+                else
+                {
+                    throw new ScheduleException($"No ENBREA tasks found");
+                }
+            }
+            catch
+            {
+                _consoleWriter.CancelProgress();
+                throw;
+            }
+        }
+
+        public void ListAllTasks()
         {
             _consoleWriter.StartProgress("List all import and export tasks...");
             try
@@ -332,20 +462,18 @@ namespace Enbrea.Cli
                 if (tasks.Count > 0)
                 {
                     _consoleWriter.NewLine();
-                    _consoleWriter.Message($"Task name                 | Interval");
-                    _consoleWriter.Message($"------------------------- | --------");
+                    _consoleWriter.Message($"Task name                 | Enabled | Interval");
+                    _consoleWriter.Message($"------------------------- | ------- | --------");
 
                     foreach (var task in tasks)
                     {
-                        _consoleWriter.Message($"{task.Name,-25} | {task.Definition.Triggers.FirstOrDefault()?.Repetition?.Interval}");
+                        _consoleWriter.Message($"{task.Name,-25} | {task.Definition.Settings.Enabled, -7} | {task.Definition.Triggers.FirstOrDefault()?.Repetition?.Interval}");
                     }
 
                     _consoleWriter.NewLine();
                 }
 
                 _consoleWriter.Success($"{tasks.Count} tasks found");
-
-                await System.Threading.Tasks.Task.CompletedTask;
             }
             catch
             {
