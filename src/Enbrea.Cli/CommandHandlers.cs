@@ -62,7 +62,8 @@ namespace Enbrea.Cli
                     {
                         var config = await ConfigurationManager.LoadFromFile(configFile, cancellationToken);
                         var scheduleManager = new ScheduleManager();
-                        await scheduleManager.CreateExportTask(configFile.FullName, config, provider, interval);
+                        scheduleManager.CreateExportTask(configFile.FullName, config, provider, interval);
+                        await Task.CompletedTask;
                     }
                     else
                     {
@@ -88,7 +89,8 @@ namespace Enbrea.Cli
                     {
                         var config = await ConfigurationManager.LoadFromFile(configFile, cancellationToken);
                         var scheduleManager = new ScheduleManager();
-                        await scheduleManager.CreateImportTask(configFile.FullName, config, provider, interval);
+                        scheduleManager.CreateImportTask(configFile.FullName, config, provider, interval);
+                        await Task.CompletedTask;
                     }
                     else
                     {
@@ -132,7 +134,8 @@ namespace Enbrea.Cli
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         var scheduleManager = new ScheduleManager();
-                        await scheduleManager.DeleteAllTasks();
+                        scheduleManager.DeleteAllTasks();
+                        await Task.CompletedTask;
                     }
                     else
                     {
@@ -157,7 +160,8 @@ namespace Enbrea.Cli
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         var scheduleManager = new ScheduleManager();
-                        await scheduleManager.DeleteExportTask(provider);
+                        scheduleManager.DeleteExportTask(provider);
+                        await Task.CompletedTask;
                     }
                     else
                     {
@@ -182,7 +186,8 @@ namespace Enbrea.Cli
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         var scheduleManager = new ScheduleManager();
-                        await scheduleManager.DeleteImportTask(provider);
+                        scheduleManager.DeleteImportTask(provider);
+                        await Task.CompletedTask;
                     }
                     else
                     {
@@ -207,6 +212,7 @@ namespace Enbrea.Cli
                     var config = await ConfigurationManager.LoadFromFile(configFile, cancellationToken);
                     var snapshotManager = new SnapshotManager(config, cancellationToken);
                     await snapshotManager.DeleteSnapshot(uid);
+                    await Task.CompletedTask;
                 }
                 catch (Exception ex)
                 {
@@ -216,6 +222,108 @@ namespace Enbrea.Cli
             });
         }
 
+        public static async Task DisableExportTask(ExportProvider provider)
+        {
+            await Execute(async (cancellationEvent, cancellationToken) =>
+            {
+                var consoleWriter = ConsoleWriterFactory.CreateConsoleWriter(ProgressUnit.Count);
+                try
+                {
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        var scheduleManager = new ScheduleManager();
+                        scheduleManager.DisableExportTask(provider);
+                        await Task.CompletedTask;
+                    }
+                    else
+                    {
+                        throw new PlatformNotSupportedException("This command is only supported by the Windows platform.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    consoleWriter.NewLine().Error($"Command failed! {ex.Message}");
+                    throw;
+                }
+            });
+        }
+
+        public static async Task DisableImportTask(ImportProvider provider)
+        {
+            await Execute(async (cancellationEvent, cancellationToken) =>
+            {
+                var consoleWriter = ConsoleWriterFactory.CreateConsoleWriter(ProgressUnit.Count);
+                try
+                {
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        var scheduleManager = new ScheduleManager();
+                        scheduleManager.DisableImportTask(provider);
+                        await Task.CompletedTask;
+                    }
+                    else
+                    {
+                        throw new PlatformNotSupportedException("This command is only supported by the Windows platform.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    consoleWriter.NewLine().Error($"Command failed! {ex.Message}");
+                    throw;
+                }
+            });
+        }
+
+        public static async Task EnableExportTask(ExportProvider provider)
+        {
+            await Execute(async (cancellationEvent, cancellationToken) =>
+            {
+                var consoleWriter = ConsoleWriterFactory.CreateConsoleWriter(ProgressUnit.Count);
+                try
+                {
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        var scheduleManager = new ScheduleManager();
+                        scheduleManager.EnableExportTask(provider);
+                        await Task.CompletedTask;
+                    }
+                    else
+                    {
+                        throw new PlatformNotSupportedException("This command is only supported by the Windows platform.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    consoleWriter.NewLine().Error($"Command failed! {ex.Message}");
+                    throw;
+                }
+            });
+        }
+        public static async Task EnableImportTask(ImportProvider provider)
+        {
+            await Execute(async (cancellationEvent, cancellationToken) =>
+            {
+                var consoleWriter = ConsoleWriterFactory.CreateConsoleWriter(ProgressUnit.Count);
+                try
+                {
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        var scheduleManager = new ScheduleManager();
+                        scheduleManager.EnableImportTask(provider);
+                        await Task.CompletedTask;
+                    }
+                    else
+                    {
+                        throw new PlatformNotSupportedException("This command is only supported by the Windows platform.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    consoleWriter.NewLine().Error($"Command failed! {ex.Message}");
+                    throw;
+                }
+            });
+        }
         public static async Task Export(FileInfo configFile, ExportProvider provider, bool skipEnbrea, bool skipProvider, string logFile)
         {
             await Execute(async (cancellationEvent, cancellationToken) =>
@@ -320,7 +428,8 @@ namespace Enbrea.Cli
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         var scheduleManager = new ScheduleManager();
-                        await scheduleManager.ListAllTasks();
+                        scheduleManager.ListAllTasks();
+                        await Task.CompletedTask;
                     }
                     else
                     {
