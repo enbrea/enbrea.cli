@@ -119,9 +119,6 @@ namespace Enbrea.Cli
                         // Console output
                         _consoleWriter.NewLine().Caption("Connect and create new import job");
 
-                        // Delete old import jobs in ENBREA
-                        await DeleteOldJobs();
-
                         // Create new import job for ENBREA
                         var jobId = await CreateJob(_config, manifest);
 
@@ -302,29 +299,6 @@ namespace Enbrea.Cli
             var responseBody = await response.Content.ReadFromJsonAsync<Reference>();
 
             return responseBody.Id;
-        }
-
-        protected async Task DeleteOldJobs()
-        {
-            _consoleWriter.StartProgress("Delete successfull and failed import jobs...");
-            try
-            {
-                var response = await _httpClient.DeleteAsync("imports/jobs",
-                    _config,
-                    _cancellationToken);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    await ThrowImportException("Delete jobs failed", response);
-                }
-
-                _consoleWriter.FinishProgress();
-            }
-            catch
-            {
-                _consoleWriter.CancelProgress();
-                throw;
-            }
         }
 
         protected void DeletePreviousFiles(IEnumerable<ImportFile> files)

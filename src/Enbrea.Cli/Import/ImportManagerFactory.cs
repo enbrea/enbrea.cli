@@ -39,7 +39,7 @@ namespace Enbrea.Cli
                 case ExportProvider.davinci:
                     return new DaVinci.ImportManager(config.DaVinci, consoleWriter, cancellationToken);
                 case ExportProvider.magellan:
-                    throw new System.Exception("Not yet supported.");
+                    return new Magellan.ImportManager(config.Magellan, consoleWriter, cancellationToken);
                 default:
                     return null;
             }

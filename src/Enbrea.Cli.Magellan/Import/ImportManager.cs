@@ -56,7 +56,7 @@ namespace Enbrea.Cli.Magellan
         private int _version = 0;
 
         public ImportManager(Configuration config, ConsoleWriter consoleWriter, CancellationToken cancellationToken)
-            : base(config.TargetFolder, consoleWriter, cancellationToken)
+            : base(config.SourceFolder, consoleWriter, cancellationToken)
         {
             _config = config;
         }
@@ -72,7 +72,7 @@ namespace Enbrea.Cli.Magellan
                 try
                 {
                     _tableCounter = 0;
-                    _version = await ReadMagellanVersion(connection);
+                    _version = await ReadMagellanVersion(connection, transaction);
 
                     if (_version < 7)
                     {
@@ -163,6 +163,9 @@ namespace Enbrea.Cli.Magellan
 
                     // Init ECF Table Reader
                     var ecfTableReader = new EcfTableReader(ecfStreamReader);
+
+                    // Read ECF header line
+                    await ecfTableReader.ReadHeadersAsync();
 
                     // Iterate through the ECF records
                     while (ecfTableReader.ReadAsync().Result > 0)
@@ -405,7 +408,7 @@ namespace Enbrea.Cli.Magellan
                         var target = _applicationTargets.Where(x => x.Id == targetId).SingleOrDefault();
                         if (target != null)
                         {
-                            if ((targetOrder != null) && (targetOrder == 0) && (target.Track.Order == 1))
+                            if ((targetOrder != null) && (targetOrder == 0) && (target.Track.Order == null || target.Track.Order == 1))
                             {
                                 sqlBuilder.SetValue("Einschulmerkmal", target.Code);
                             }
@@ -493,6 +496,7 @@ namespace Enbrea.Cli.Magellan
                 importContext.LookupValue<string>(EcfHeaders.MobileNumber, (value) => sqlBuilder.SetValue("Mobil", value));
                 importContext.LookupValue<string>(EcfHeaders.HomePhoneNumber, (value) => sqlBuilder.SetValue("TelefonPrivat", value));
                 importContext.LookupValue<string>(EcfHeaders.OfficePhoneNumber, (value) => sqlBuilder.SetValue("TelefonBeruf", value));
+                importContext.LookupValue<string>(EcfHeaders.Notes, (value) => sqlBuilder.SetValue("Bemerkung", value));
 
                 await importContext.TryLookupEntityByCode(EcfHeaders.CountryId, "Staatsangehoerigkeiten", (value) => sqlBuilder.SetValue("Land", value));
 
@@ -733,7 +737,7 @@ namespace Enbrea.Cli.Magellan
                 await importContext.LookupEntityByIdColumn(EcfHeaders.CustodianId, "Sorgeberechtigte", _config.TenantId, async (custodianId) =>
                 {
                     await importContext.LookupOrCreateEntity("SchuelerSorgebe",
-                        "\"Mandant\" = @tenantId and \"Schueler\" = @schoolTermId and \"Sorgebe\" = @custodianId",
+                        "\"Mandant\" = @tenantId and \"Schueler\" = @studentId and \"Sorgebe\" = @custodianId",
                         fbCommand =>
                     {
                         fbCommand.Parameters.Add("@tenantId", _config.TenantId);
@@ -759,7 +763,7 @@ namespace Enbrea.Cli.Magellan
                         fbCommand.Parameters.Add("@tenantId", _config.TenantId);
                         fbCommand.Parameters.Add("@id", id);
 
-                        await fbCommand.ExecuteScalarAsync();
+                        await fbCommand.ExecuteNonQueryAsync();
                     });
                 });
             });
@@ -1064,7 +1068,7 @@ namespace Enbrea.Cli.Magellan
                 importContext.LookupValue<string>(EcfHeaders.OfficePhoneNumber, (value) => sqlBuilder.SetValue("TelefonDienst", value));
 
                 await importContext.TryLookupEntityByCode(EcfHeaders.CountryId, "Staatsangehoerigkeiten", (value) => sqlBuilder.SetValue("Land", value));
-                await importContext.TryLookupEntityByCode(EcfHeaders.Nationality1Id, "Staatsangehoerigkeiten", (value) => sqlBuilder.SetValue("Staatsangeh1", value));
+                await importContext.TryLookupEntityByCode(EcfHeaders.Nationality1Id, "Staatsangehoerigkeiten", (value) => sqlBuilder.SetValue("Staatsangeh", value));
                 await importContext.TryLookupEntityByCode(EcfHeaders.Nationality2Id, "Staatsangehoerigkeiten", (value) => sqlBuilder.SetValue("Staatsangeh2", value));
 
                 using var fbCommand = new FbCommand(sqlBuilder.AsInsertOrUpdate(insertOrUpdate, "\"Mandant\" = @tenantId and \"ID\" = @id"), fbConnection, fbTransaction);
@@ -1114,7 +1118,7 @@ namespace Enbrea.Cli.Magellan
             }); ;
         }
 
-        private async Task<int> ReadMagellanVersion(FbConnection fbConnection)
+        private async Task<int> ReadMagellanVersion(FbConnection fbConnection, FbTransaction fbTransaction)
         {
             var sql =
                 """
@@ -1124,7 +1128,6 @@ namespace Enbrea.Cli.Magellan
                   "Version";
                 """;
 
-            using var fbTransaction = await fbConnection.BeginTransactionAsync(_cancellationToken);
             using var fbCommand = new FbCommand(sql, fbConnection, fbTransaction);
 
             using var reader = await fbCommand.ExecuteReaderAsync(_cancellationToken);
@@ -1146,8 +1149,6 @@ namespace Enbrea.Cli.Magellan
             {
                 result = 6;
             }
-
-            await fbTransaction.CommitAsync(_cancellationToken);
 
             return result;
         }

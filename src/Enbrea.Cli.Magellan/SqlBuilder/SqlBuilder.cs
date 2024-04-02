@@ -20,6 +20,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Enbrea.Cli.Magellan
@@ -43,7 +44,7 @@ namespace Enbrea.Cli.Magellan
             strBuilder.Append(' ');
             strBuilder.Append("FROM");
             strBuilder.Append(' ');
-            strBuilder.Append($"{_tableName}");
+            strBuilder.Append($"\"{_tableName}\"");
 
             if (!string.IsNullOrEmpty(whereClause))
             {
@@ -64,7 +65,7 @@ namespace Enbrea.Cli.Magellan
             strBuilder.Append(' ');
             strBuilder.Append("INTO");
             strBuilder.Append(' ');
-            strBuilder.Append($"{_tableName}");
+            strBuilder.Append($"\"{_tableName}\"");
             strBuilder.Append(' ');
             strBuilder.Append('(');
             strBuilder.Append(GetColumnNames());
@@ -75,6 +76,12 @@ namespace Enbrea.Cli.Magellan
             strBuilder.Append('(');
             strBuilder.Append(GetParamNames());
             strBuilder.Append(')');
+
+            if (_assignments.SingleOrDefault(x => x.FieldName == "ID") != null)
+            {
+                strBuilder.Append(' ');
+                strBuilder.Append("RETURNING \"ID\"");
+            }
 
             return strBuilder.ToString();
         }
@@ -93,7 +100,7 @@ namespace Enbrea.Cli.Magellan
 
             strBuilder.Append("UPDATE");
             strBuilder.Append(' ');
-            strBuilder.Append($"{_tableName}");
+            strBuilder.Append($"\"{_tableName}\"");
             strBuilder.Append(' ');
             strBuilder.Append("SET");
             strBuilder.Append(' ');
@@ -105,6 +112,12 @@ namespace Enbrea.Cli.Magellan
                 strBuilder.Append("WHERE");
                 strBuilder.Append(' ');
                 strBuilder.Append(whereClause);
+            }
+
+            if (_assignments.SingleOrDefault(x => x.FieldName == "ID") != null)
+            {
+                strBuilder.Append(' ');
+                strBuilder.Append("RETURNING \"ID\"");
             }
 
             return strBuilder.ToString();
@@ -123,7 +136,7 @@ namespace Enbrea.Cli.Magellan
             foreach (var assignments in _assignments)
             {
                 if (strBuilder.Length > 0) strBuilder.Append(',');
-                strBuilder.Append($"\"{assignments.FieldName}\" = {assignments.ParamName}");
+                strBuilder.Append($"\"{assignments.FieldName}\" = @{assignments.ParamName}");
             }
 
             return strBuilder.ToString();

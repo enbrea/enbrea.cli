@@ -23,6 +23,7 @@ using Enbrea.Cli.Common;
 using Enbrea.Konsoli;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -52,147 +53,181 @@ namespace Enbrea.Cli
         {
             if (_config.EcfMapping.Files.Count > 0)
             {
-                await CleanUp();
+                // Create ouput directory
+                Directory.CreateDirectory(GetEcfFolderName());
 
+                // Console output
+                _consoleWriter.Caption("Create new export job");
+
+                // Delete old export jobs
+                await DeleteOldJobs();
+
+                // Create new export job
                 var jobId = await CreateJob(_config);
 
-                await Prepare(jobId);
+                // Console output
+                _consoleWriter.NewLine().Caption("Create export tables");
+
+                // Create export tables
+                var tableCount = 0;
+                var tables = new Dictionary<Guid, EcfFileMapping>();
+
+                foreach (var file in _config.EcfMapping.Files)
+                {
+                    tables.Add(await CreateTable(jobId, file), file);
+                    tableCount++;
+                }
+
+                // Console output
+                _consoleWriter.Success($"{tableCount} tables created");
+
+                // Console output
+                _consoleWriter.NewLine().Caption("Extract export data");
+
+                // Extract data to export tables
                 await Extract(jobId);
-                await Download(jobId, jobId);
+
+                // Console output
+                _consoleWriter.NewLine().Caption("Download ECF files");
+
+                // Download ECF files
+                var fileCount = 0;
+
+                foreach (var table in tables)
+                {
+                    await DownloadFile(jobId, table.Key, table.Value);
+
+                    fileCount++;
+                }
+
+                // Console output
+                _consoleWriter.Success($"{fileCount} files downloaded").NewLine(); 
             }
             else
             {
-                throw new ImportException($"No export tables in configuration found.");
+                throw new ExportException("No export tables in configuration found.");
             }
         }
 
-        private async Task CleanUp()
+        protected async Task<Guid> CreateJob(Configuration config)
         {
-            Console.WriteLine();
-            Console.WriteLine($"[CleanUp] Delete successfull and failed jobs...");
-
-            var response = await _httpClient.DeleteAsync("exports/jobs", _config, _cancellationToken);
-
-            if (!response.IsSuccessStatusCode)
+            _consoleWriter.StartProgress("Create job...");
+            try
             {
-                throw new ImportException($"Delete jobs failed. Server responded with status code {response.StatusCode}");
-            }
+                var response = await _httpClient.PostAsync("exports/jobs",
+                    _config,
+                    new CreateExportJobOptions(
+                        config.SchoolTerm,
+                        config.ApplicationProcess,
+                        _provider),
+                    _cancellationToken);
 
-            Console.WriteLine($"[CleanUp] Jobs deleted");
+                if (!response.IsSuccessStatusCode)
+                {
+                    await ThrowExportException("Create job failed", response);
+                }
+
+                var responseBody = await response.Content.ReadFromJsonAsync<Reference>();
+
+                _consoleWriter.FinishProgress();
+
+                return responseBody.Id;
+            }
+            catch
+            {
+                _consoleWriter.CancelProgress();
+                throw;
+            }
         }
 
-        private async Task<Guid> CreateJob(Configuration config)
+        protected async Task<Guid> CreateTable(Guid jobId, EcfFileMapping file)
         {
-            Console.WriteLine();
-
-            Console.WriteLine($"[Job] Create...");
-
-            var response = await _httpClient.PostAsync("exports/jobs", _config, 
-                new CreateExportJobOptions(config.SchoolTerm, config.ApplicationProcess, _provider), 
-                _cancellationToken);
-
-            if (!response.IsSuccessStatusCode)
+            _consoleWriter.StartProgress($"Create table for {file.Name}...");
+            try
             {
-                throw new ExportException($"Create job failed. Server responded with status code {response.StatusCode}");
+                var response = await _httpClient.PostAsync($"exports/jobs/{jobId}/tables", _config,
+                    new CreateExportTableOptions(file.Name, file.KeyHeaders),
+                    _cancellationToken);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    await ThrowExportException($"Create table failed.", response);
+                }
+
+                var responseBody = await response.Content.ReadFromJsonAsync<Reference>();
+
+                _consoleWriter.FinishProgress();
+
+                return responseBody.Id;
             }
-
-            //var responseBody = await response.Content.ReadAsJsonAsync<Reference>();
-            var responseBody = await response.Content.ReadFromJsonAsync<Reference>();
-            var jobId = responseBody.Id;
-
-            Console.WriteLine($"[Job] Storage {jobId} created");
-
-            return jobId;
+            catch
+            {
+                _consoleWriter.CancelProgress();
+                throw;
+            }
         }
 
-        private async Task<Guid> CreateTable(Guid jobId, EcfFileMapping file)
+        protected async Task DeleteOldJobs()
         {
-            Console.WriteLine();
-            Console.WriteLine($"[Table] Create {file.Name}...");
-
-            var response = await _httpClient.PostAsync($"exports/jobs/{jobId}/tables", _config, 
-                new CreateExportTableOptions(file.Name, file.KeyHeaders), 
-                _cancellationToken);
-
-            if (!response.IsSuccessStatusCode)
+            _consoleWriter.StartProgress("Delete successfull and failed jobs...");
+            try
             {
-                throw new ImportException($"Create table failed. Server responded with status code {response.StatusCode}");
+                var response = await _httpClient.DeleteAsync("exports/jobs",
+                    _config,
+                    _cancellationToken);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    await ThrowExportException("Delete jobs failed", response);
+                }
+
+                _consoleWriter.FinishProgress();
             }
+            catch
+            {
+                _consoleWriter.CancelProgress();
+                throw;
+            }
+        }
+        protected async Task DownloadFile(Guid jobId, Guid tableId, EcfFileMapping file)
+        {
+            _consoleWriter.StartProgress($"Download file {file.Name}");
+            try
+            {
+                using var response = await _httpClient.GetAsync(
+                    $"exports/jobs/{jobId}/tables/{tableId}",
+                    HttpCompletionOption.ResponseHeadersRead,
+                    _config,
+                    _cancellationToken);
 
-            var responseBody = await response.Content.ReadFromJsonAsync<Reference>();
-            var tableId = responseBody.Id;
+                if (!response.IsSuccessStatusCode)
+                {
+                    await ThrowExportException($"Download file failed.", response);
+                }
 
-            Console.WriteLine($"[Table] Table {file.Name} created");
+                if (response.StatusCode != HttpStatusCode.NoContent)
+                {
+                    using var ecfFile = await response.Content.ReadAsStreamAsync(_cancellationToken);
 
-            return tableId;
+                    using var ecfFileStream = new FileStream(Path.Combine(GetEcfFolderName(), file.GetNameWithExtension()),
+                        FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+
+                    await ecfFile.CopyToAsync(ecfFileStream, _cancellationToken);
+                }
+
+                _consoleWriter.FinishProgress();
+            }
+            catch
+            {
+                _consoleWriter.CancelProgress();
+                throw;
+            }
         }
 
-        private async Task Prepare(Guid jobId)
+        protected async Task Extract(Guid jobId)
         {
-            Console.WriteLine();
-            Console.WriteLine($"[Preparing] Create tables for extraction...");
+            var successfullExtract = false;
 
-            var tableCount = 0;
-
-            foreach (var file in _config.EcfMapping.Files)
-            {
-                var tableId = await CreateTable(jobId, file);
-
-                tableCount++;
-            }
-
-            Console.WriteLine($"[Preparing] {tableCount} tables for extraction created");
-        }
-
-        private async Task Download(Guid jobId, Guid tableId)
-        {
-            Console.WriteLine();
-            Console.WriteLine($"[Downloading] Download files...");
-
-            Directory.CreateDirectory(_dataFolderName);
-
-            var fileCount = 0;
-
-            foreach (var file in _config.EcfMapping.Files)
-            {
-                Console.WriteLine($"[Downloading] File {file.Name}...");
-
-                await DownloadFile(jobId, tableId, file);
-
-                fileCount++;
-            }
-
-            Console.WriteLine($"[Downloading] {fileCount} files downloaded");
-        }
-
-        private async Task DownloadFile(Guid jobId, Guid tableId, EcfFileMapping file)
-        {
-            using var response = await _httpClient.GetAsync(
-                $"exports/jobs/{jobId}/tables/{tableId}",
-                HttpCompletionOption.ResponseHeadersRead,
-                _config,
-                _cancellationToken);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ExportException($"Create job failed. Server responded with status code {response.StatusCode}");
-            }
-
-            if (response.StatusCode == HttpStatusCode.NoContent)
-            {
-                return;
-            }
-
-            using var ecfFile = await response.Content.ReadAsStreamAsync();
-
-            using var ecfFileStream = new FileStream(Path.Combine(_dataFolderName, file.GetNameWithExtension()),
-                FileMode.Create, FileAccess.ReadWrite, FileShare.None);
-
-            await ecfFile.CopyToAsync(ecfFileStream, _cancellationToken);
-        }
-
-        private async Task Extract(Guid jobId)
-        {
             using var finishEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
 
             var connection = new HubConnectionBuilder()
@@ -203,8 +238,7 @@ namespace Enbrea.Cli
             {
                 if (error != null)
                 {
-                    Console.WriteLine();
-                    Console.WriteLine($"[Server lost] {error.Message}");
+                    _consoleWriter.Error($"Server lost: {error.Message}");
                     _cancellationEvent.Set();
                 }
                 return Task.CompletedTask;
@@ -216,7 +250,7 @@ namespace Enbrea.Cli
             {
                 if (ecfJobId == jobId)
                 {
-                    Console.WriteLine($"[Extracting] [{ecfTableName}] Start...");
+                    _consoleWriter.StartProgress($"Extracting {ecfTableName}...");
                 }
             });
 
@@ -224,7 +258,7 @@ namespace Enbrea.Cli
             {
                 if (ecfJobId == jobId)
                 {
-                    Console.WriteLine($"[Extracting] [{ecfTableName}] {ecfRecordCounter} record(s) extracted");
+                    _consoleWriter.FinishProgress(ecfRecordCounter);
                 }
             });
 
@@ -232,8 +266,7 @@ namespace Enbrea.Cli
             {
                 if (ecfJobId == jobId)
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("[Extracting] Start...");
+                    _consoleWriter.Message("Start extracting...");
                 }
             });
 
@@ -241,7 +274,8 @@ namespace Enbrea.Cli
             {
                 if (ecfJobId == jobId)
                 {
-                    Console.WriteLine($"[Extracting] {ecfTableCounter} table(s) and {ecfRecordCounter} record(s) extracted");
+                    _consoleWriter.Success($"{ecfTableCounter} table(s) extracted");
+                    successfullExtract = true;
                     finishEvent.Set();
                 }
             });
@@ -250,28 +284,45 @@ namespace Enbrea.Cli
             {
                 if (ecfJobId == jobId)
                 {
-                    Console.WriteLine();
-                    Console.WriteLine($"[Error] Extracting failed. Only {ecfTableCounter} table(s) and {ecfRecordCounter} record(s) extracted");
-                    Console.WriteLine($"[Error] Reason: {errorMessage}");
+                    _consoleWriter.CancelProgress();
+                    _consoleWriter.Error($"Extracting failed. Reason: {errorMessage}");
                     finishEvent.Set();
                 }
             });
 
+            connection.On<Guid, string, int>("RecordExtracted", (ecfJobId, ecfTableName, ecfRecordCounter) =>
+            {
+                if (ecfJobId == jobId)
+                {
+                    _consoleWriter.ContinueProgress(ecfRecordCounter);
+                }
+            });
+
             var response = await _httpClient.PostAsync($"exports/jobQueue/jobs/{jobId}",
-                _config,  
+                _config,
                 _cancellationToken);
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new ExportException($"Start extracting failed. Server responded with status code {response.StatusCode}.");
+                await ThrowExportException("Start extracting failed.", response);
             }
 
             WaitHandle.WaitAny(new[]
             {
-                    finishEvent, _cancellationEvent
-                });
+                finishEvent, _cancellationEvent
+            });
+
+            if (!successfullExtract)
+            {
+                await ThrowExportException("Extracting failed", response);
+            }
 
             await connection.StopAsync(_cancellationToken);
+        }
+
+        private static async Task ThrowExportException(string message, HttpResponseMessage serverResponse)
+        {
+            throw new ExportException(message, serverResponse.StatusCode, await serverResponse.Content.ReadAsStringAsync());
         }
     }
 }

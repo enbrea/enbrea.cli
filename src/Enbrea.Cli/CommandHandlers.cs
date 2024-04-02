@@ -340,7 +340,6 @@ namespace Enbrea.Cli
                         {
                             await exportManager.Execute();
                         }
-
                     }
 
                     if (!skipProvider)
@@ -376,7 +375,6 @@ namespace Enbrea.Cli
                         {
                             await exportManager.Execute();
                         }
-
                     }
 
                     if (!skipEnbrea)

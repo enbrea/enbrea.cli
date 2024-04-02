@@ -104,7 +104,7 @@ namespace Enbrea.Cli.Untis
                 var manifest = new EcfManifest();
 
                 manifest.ValidFrom = DateOnlyUtils.ToDateTimeOffset(untisDocument.GeneralSettings.TermBeginDate);
-                manifest.ValidTo = DateOnlyUtils.ToDateTimeOffset(untisDocument.GeneralSettings.TermEndDate);
+                manifest.ValidTo = DateOnlyUtils.ToDateTimeOffset(untisDocument.GeneralSettings.TermEndDate.AddDays(1));
 
                 await EcfManifestManager.SaveToFileAsync(GetEcfManifestFileName(), manifest, _cancellationToken);
 
