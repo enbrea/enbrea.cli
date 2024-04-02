@@ -44,6 +44,7 @@ namespace Enbrea.Cli.Magellan
                 "Female" => "W",
                 "Male" => "M",
                 "Diverse" => "D",
+                "Indeterminate" => "D",
                 _ => string.Empty,
             };
         }
@@ -51,10 +52,10 @@ namespace Enbrea.Cli.Magellan
         public static byte GradeSystem(string value)
         {
             /*
-             Possible values in MAGELLAN:
-                0 = Notenwerte
-                1 = Punktwerte
-                2 = Beurteilungen
+               Possible values in MAGELLAN:
+               0 = Notenwerte
+               1 = Punktwerte
+               2 = Beurteilungen
             */
             return value switch
             {

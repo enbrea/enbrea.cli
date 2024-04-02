@@ -19,18 +19,18 @@
  */
 #endregion
 
+using Enbrea.Cli.Common;
 using Enbrea.Ecf;
 using FirebirdSql.Data.FirebirdClient;
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Enbrea.Cli.Magellan
 {
     public class ImportContext
     {
-        static private readonly Dictionary<Guid, string> _idMap = new();
+        static private readonly Dictionary<Guid, string> _idMap = [];
         private readonly EcfTableReader _ecfTableReader;
         private readonly FbConnection _fbConnection;
         private readonly FbTransaction _fbTransaction;
@@ -508,10 +508,18 @@ namespace Enbrea.Cli.Magellan
                                 code = ValueConverter.Limit(code, maxLength);
                                 if (await LookupCode(tableName, code) != null)
                                 {
+                                    if (code == "1")
+                                    {
+                                        Console.WriteLine(id);
+                                    };
                                     _idMap.TryAdd(globalId, await action(SqlInsertOrUpdate.Update, code));
                                 }
                                 else
                                 {
+                                    if (code == "1")
+                                    {
+                                        Console.WriteLine(id);
+                                    };
                                     _idMap.TryAdd(globalId, await action(SqlInsertOrUpdate.Insert, code));
                                 }
                             }
@@ -556,10 +564,18 @@ namespace Enbrea.Cli.Magellan
                                 code = ValueConverter.Limit(code, maxLength);
                                 if (await LookupCode(tableName, code) != null)
                                 {
+                                    if (code == "1")
+                                    {
+                                        Console.WriteLine(id);
+                                    };
                                     _idMap.TryAdd(globalId, await action(SqlInsertOrUpdate.Update, code));
                                 }
                                 else
                                 {
+                                    if (code == "1")
+                                    {
+                                        Console.WriteLine(id);
+                                    };
                                     _idMap.TryAdd(globalId, await action(SqlInsertOrUpdate.Insert, code));
                                 }
                             }
@@ -605,6 +621,10 @@ namespace Enbrea.Cli.Magellan
                             var localId = await LookupId(tableName, globalId);
                             if (localId != null)
                             {
+                                if (localId == 1)
+                                {
+                                    Console.WriteLine(id);
+                                };
                                 _idMap.TryAdd(globalId, (await action(SqlInsertOrUpdate.Update, localId)).ToString());
                             }
                             else
@@ -652,6 +672,10 @@ namespace Enbrea.Cli.Magellan
                             var localId = await LookupId(tableName, tenantId, globalId);
                             if (localId != null)
                             {
+                                if (localId == 1)
+                                {
+                                    Console.WriteLine(id);
+                                };
                                 _idMap.TryAdd(globalId, (await action(SqlInsertOrUpdate.Update, localId)).ToString());
                             }
                             else
@@ -803,6 +827,25 @@ namespace Enbrea.Cli.Magellan
             }
         }
 
+        private async Task<bool> Lookup(string tableName, string whereClause, Action<FbCommand> prepare)
+        {
+            string sql =
+                $"""
+                select 
+                  * 
+                from 
+                  "{tableName}"
+                where
+                  {whereClause}
+                """;
+
+            using var fbCommand = new FbCommand(sql, _fbConnection, _fbTransaction);
+
+            prepare(fbCommand);
+
+            return await fbCommand.ExecuteScalarAsync() != null;
+        }
+
         private async Task<string> LookupCode(string tableName, string code)
         {
             string sql =
@@ -811,6 +854,8 @@ namespace Enbrea.Cli.Magellan
                   "Kuerzel" 
                 from 
                   "{tableName}"
+                where
+                  "Kuerzel" = @code
                 """;
 
             if (Guid.TryParse(code, out var globalId))
@@ -827,6 +872,9 @@ namespace Enbrea.Cli.Magellan
             else
             {
                 using var fbCommand = new FbCommand(sql, _fbConnection, _fbTransaction);
+
+                fbCommand.Parameters.Add("@code", code);
+
                 return (string)await fbCommand.ExecuteScalarAsync();
             }
         }
@@ -913,12 +961,12 @@ namespace Enbrea.Cli.Magellan
                 from 
                   "{tableName}"
                 where
-                  "EnbreaId" = @globalId
+                  "EnbreaID" = @globalId
                 """;
 
             using var fbCommand = new FbCommand(sql, _fbConnection, _fbTransaction);
 
-            fbCommand.Parameters.Add("@globalId", globalId);
+            fbCommand.Parameters.Add("@globalId", globalId.ToEnbreaId());
 
             return (int?)await fbCommand.ExecuteScalarAsync();
         }
@@ -932,36 +980,16 @@ namespace Enbrea.Cli.Magellan
                 from 
                   "{tableName}"
                 where
-                  "Mandant" = @tenantId and "EnbreaId" = @globalId
+                  "Mandant" = @tenantId and "EnbreaID" = @globalId
                 """;
 
             using var fbCommand = new FbCommand(sql, _fbConnection, _fbTransaction);
 
             fbCommand.Parameters.Add("@tenantId", tenantId);
-            fbCommand.Parameters.Add("@globalId", globalId);
+            fbCommand.Parameters.Add("@globalId", globalId.ToEnbreaId());
 
             return (int?)await fbCommand.ExecuteScalarAsync();
         }
-
-        private async Task<bool> Lookup(string tableName, string whereClause, Action<FbCommand> prepare)
-        {
-            string sql =
-                $"""
-                select 
-                  * 
-                from 
-                  "{tableName}"
-                where
-                  {whereClause}
-                """;
-
-            using var fbCommand = new FbCommand(sql, _fbConnection, _fbTransaction);
-
-            prepare(fbCommand);
-
-            return await fbCommand.ExecuteScalarAsync() != null;
-        }
-
         private async Task<int?> LookupId(string tableName, string whereClause, Action<FbCommand> prepare)
         {
             string sql =

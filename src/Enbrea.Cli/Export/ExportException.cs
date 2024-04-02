@@ -20,6 +20,7 @@
 #endregion
 
 using System;
+using System.Net;
 
 namespace Enbrea.Cli
 {
@@ -30,6 +31,11 @@ namespace Enbrea.Cli
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
         public ExportException(string message) : base(message)
+        {
+        }
+
+        public ExportException(string message, HttpStatusCode statusCode, string serverMessage)
+            : base($"{message}. Server responded with: ({statusCode}) {serverMessage}")
         {
         }
     }
