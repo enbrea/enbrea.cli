@@ -66,7 +66,7 @@ namespace Enbrea.Cli.Magellan
                 PrepareEcfFolder();
 
                 // Catalogs
-                await Execute(EcfTables.Countries, connection, async (c, w) => await ExportCatalog("Staaten", c, w));
+                await Execute(EcfTables.Countries, connection, async (c, w) => await ExportCountries(c, w));
                 await Execute(EcfTables.CourseCategories, connection, async (c, w) => await ExportCatalog("Fachstati", c, w));
                 await Execute(EcfTables.CourseTypes, connection, async (c, w) => await ExportCatalog("Unterrichtsarten", c, w));
                 await Execute(EcfTables.FormsOfTeaching, connection, async (c, w) => await ExportCatalog("Unterrichtsformen", c, w));
@@ -167,6 +167,58 @@ namespace Enbrea.Cli.Magellan
                 ecfTableWriter.SetValue(EcfHeaders.StatisticalCode, reader["StatistikID"]);
                 ecfTableWriter.SetValue(EcfHeaders.InternalCode, reader["Schluessel"]);
                 ecfTableWriter.SetValue(EcfHeaders.Name, reader["Bezeichnung"]);
+
+                await ecfTableWriter.WriteAsync(_cancellationToken);
+
+                _consoleWriter.ContinueProgress(++ecfRecordCounter);
+            }
+
+            return ecfRecordCounter;
+        }
+
+        private async Task<int> ExportCountries(FbConnection fbConnection, EcfTableWriter ecfTableWriter)
+        {
+            string sql =
+                $"""
+                select distinct
+                  "Land" as "Kuerzel"
+                from 
+                  "tblLehrer"
+                where
+                  "Land" is not null AND TRIM("Land") <> ''
+                union distinct
+                select distinct
+                  "Land" as "Kuerzel"
+                from 
+                  "Schueler"
+                where
+                  "Land" is not null AND TRIM("Land") <> ''
+                union distinct
+                select distinct
+                  "Land" as "Kuerzel"
+                from 
+                  "Sorgeberechtigte"
+                where
+                  "Land" is not null AND TRIM("Land") <> ''
+                """;
+
+            using var fbTransaction = await fbConnection.BeginTransactionAsync(_cancellationToken);
+            using var fbCommand = new FbCommand(sql, fbConnection, fbTransaction);
+
+            using var reader = await fbCommand.ExecuteReaderAsync(_cancellationToken);
+
+            var ecfRecordCounter = 0;
+
+            await ecfTableWriter.WriteHeadersAsync(
+                EcfHeaders.Id,
+                EcfHeaders.Code,
+                EcfHeaders.Name);
+
+            while (await reader.ReadAsync(_cancellationToken))
+            {
+                ecfTableWriter.SetValue(EcfHeaders.Id, reader["Kuerzel"]);
+                ecfTableWriter.SetValue(EcfHeaders.Code, reader["Kuerzel"]);
+                ecfTableWriter.SetValue(EcfHeaders.Name, reader["Kuerzel"]);
 
                 await ecfTableWriter.WriteAsync(_cancellationToken);
 
