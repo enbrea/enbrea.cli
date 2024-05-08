@@ -34,11 +34,11 @@ namespace Enbrea.Cli.Edoosys
 {
     public class DbExportManager : EcfCustomManager
     {
+        private readonly Configuration _config;
+        private HashSet<string> _ecfSchoolClassesCache = [];
+        private HashSet<string> _ecfTeacherCache = [];
         private int _recordCounter = 0;
         private int _tableCounter = 0;
-        private HashSet<string> _ecfTeacherCache = new HashSet<string>();
-        private HashSet<string> _ecfSchoolClassesCache = new HashSet<string>();
-        private readonly Configuration _config;
 
         public DbExportManager(Configuration config, ConsoleWriter consoleWriter, CancellationToken cancellationToken)
             : base(config.TargetFolder, consoleWriter, cancellationToken)
@@ -61,15 +61,26 @@ namespace Enbrea.Cli.Edoosys
             PrepareEcfFolder();
 
             // Education
-            await Execute(EcfTables.Subjects, edoosysDbReader, async (r, w) => await ExportSubjects(r, w));
-            await Execute(EcfTables.Students, edoosysDbReader, async (r, w) => await ExportStudents(r, w));
-            await Execute(EcfTables.StudentSchoolClassAttendances, edoosysDbReader, async (r, w) => await ExportStudentSchoolClassAttendances(r, w));
-            await Execute(EcfTables.StudentSubjects, edoosysDbReader, async (r, w) => await ExportStudentSubjects(r, w));
-            await Execute(EcfTables.SchoolClasses, edoosysDbReader, async (r, w) => await ExportSchoolClasses(r, w));
-            await Execute(EcfTables.Teachers, edoosysDbReader, async (r, w) => await ExportTeachers(r, w));
+            await Execute(EcfTables.Subjects, edoosysDbReader, ExportSubjects);
+            await Execute(EcfTables.Students, edoosysDbReader, ExportStudents);
+            await Execute(EcfTables.StudentSchoolClassAttendances, edoosysDbReader, ExportStudentSchoolClassAttendances);
+            await Execute(EcfTables.StudentSubjects, edoosysDbReader, ExportStudentSubjects);
+            await Execute(EcfTables.SchoolClasses, edoosysDbReader, ExportSchoolClasses);
+            await Execute(EcfTables.Teachers, edoosysDbReader, ExportTeachers);
 
             // Report status
             _consoleWriter.Success($"{_tableCounter} table(s) and {_recordCounter} record(s) extracted").NewLine();
+        }
+
+        private static Guid GenerateKey(params string[] array)
+        {
+            var csvLineBuilder = new CsvLineBuilder();
+
+            foreach (var arrayItem in array)
+            {
+                csvLineBuilder.Append(arrayItem);
+            }
+            return IdFactory.CreateIdFromValue(csvLineBuilder.ToString());
         }
 
         private async Task Execute(string ecfTableName, EdoosysDbReader edoosysDbReader, Func<EdoosysDbReader, EcfTableWriter, Task<int>> action)
@@ -82,10 +93,10 @@ namespace Enbrea.Cli.Edoosys
                 using var ecfStreamWriter = new StreamWriter(Path.ChangeExtension(Path.Combine(GetEcfFolderName(), ecfTableName), "csv"));
 
                 // Init ECF Writer
-                var ecfTablefWriter = new EcfTableWriter(ecfStreamWriter);
+                var ecfTableWriter = new EcfTableWriter(ecfStreamWriter);
 
                 // Call table specific action
-                var ecfRecordCounter = await action(edoosysDbReader, ecfTablefWriter);
+                var ecfRecordCounter = await action(edoosysDbReader, ecfTableWriter);
 
                 // Inc counters
                 _recordCounter += ecfRecordCounter;
@@ -121,8 +132,8 @@ namespace Enbrea.Cli.Edoosys
                         {
                             if (_ecfSchoolClassesCache.Contains(schoolClass.RootId))
                             {
-                                ecfTableWriter.TrySetValue(EcfHeaders.Id, schoolClass.RootId);
-                                ecfTableWriter.TrySetValue(EcfHeaders.Code, schoolClass.RootCode);
+                                ecfTableWriter.SetValue(EcfHeaders.Id, schoolClass.RootId);
+                                ecfTableWriter.SetValue(EcfHeaders.Code, schoolClass.RootCode);
                                 ecfTableWriter.TrySetValue(EcfHeaders.Name, schoolClass.RootName);
 
                                 await ecfTableWriter.WriteAsync();
@@ -137,8 +148,8 @@ namespace Enbrea.Cli.Edoosys
                     {
                         if (_ecfSchoolClassesCache.Contains(schoolClass.Id))
                         {
-                            ecfTableWriter.TrySetValue(EcfHeaders.Id, schoolClass.Id);
-                            ecfTableWriter.TrySetValue(EcfHeaders.Code, $"{schoolClass.RootCode}_{schoolClass.Code}");
+                            ecfTableWriter.SetValue(EcfHeaders.Id, schoolClass.Id);
+                            ecfTableWriter.SetValue(EcfHeaders.Code, $"{schoolClass.RootCode}_{schoolClass.Code}");
                             ecfTableWriter.TrySetValue(EcfHeaders.Name, $"{schoolClass.RootCode}_{schoolClass.Code}");
 
                             await ecfTableWriter.WriteAsync();
@@ -171,9 +182,9 @@ namespace Enbrea.Cli.Edoosys
 
                 await foreach (var student in edoosysDbReader.StudentsAsync(_config.SchoolNo, _config.SchoolYearCode, activeStudentsOnly: true))
                 {
-                    ecfTableWriter.TrySetValue(EcfHeaders.Id, student.Id);
-                    ecfTableWriter.TrySetValue(EcfHeaders.LastName, student.Lastname);
-                    ecfTableWriter.TrySetValue(EcfHeaders.FirstName, student.Firstname);
+                    ecfTableWriter.SetValue(EcfHeaders.Id, student.Id);
+                    ecfTableWriter.SetValue(EcfHeaders.LastName, student.Lastname);
+                    ecfTableWriter.SetValue(EcfHeaders.FirstName, student.Firstname);
                     ecfTableWriter.TrySetValue(EcfHeaders.Gender, ValueConverter.GetGenderOrDefault(student.Gender));
                     ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, ValueConverter.GetDateOrDefault(student.Birthdate));
 
@@ -205,9 +216,9 @@ namespace Enbrea.Cli.Edoosys
                 {
                     var schoolClassId = _config.NoSchoolClassGroups ? attendance.SchoolClassRootId : attendance.SchoolClassId;
 
-                    ecfTableWriter.TrySetValue(EcfHeaders.Id, GenerateKey(attendance.StudentId, schoolClassId));
-                    ecfTableWriter.TrySetValue(EcfHeaders.StudentId, attendance.StudentId);
-                    ecfTableWriter.TrySetValue(EcfHeaders.SchoolClassId, schoolClassId);
+                    ecfTableWriter.SetValue(EcfHeaders.Id, GenerateKey(attendance.StudentId, schoolClassId));
+                    ecfTableWriter.SetValue(EcfHeaders.StudentId, attendance.StudentId);
+                    ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, schoolClassId);
                     await ecfTableWriter.WriteAsync();
 
                     _ecfSchoolClassesCache.Add(schoolClassId);
@@ -240,11 +251,11 @@ namespace Enbrea.Cli.Edoosys
                 {
                     var schoolClassId = _config.NoSchoolClassGroups ? studentSubject.SchoolClassRootId : studentSubject.SchoolClassId;
 
-                    ecfTableWriter.TrySetValue(EcfHeaders.Id, GenerateKey(studentSubject.StudentId, studentSubject.SubjectId, schoolClassId, studentSubject.TeacherId));
-                    ecfTableWriter.TrySetValue(EcfHeaders.StudentId, studentSubject.StudentId);
-                    ecfTableWriter.TrySetValue(EcfHeaders.SubjectId, studentSubject.SubjectId);
-                    ecfTableWriter.TrySetValue(EcfHeaders.SchoolClassId, schoolClassId);
-                    ecfTableWriter.TrySetValue(EcfHeaders.TeacherId, studentSubject.TeacherId);
+                    ecfTableWriter.SetValue(EcfHeaders.Id, GenerateKey(studentSubject.StudentId, studentSubject.SubjectId, schoolClassId, studentSubject.TeacherId));
+                    ecfTableWriter.SetValue(EcfHeaders.StudentId, studentSubject.StudentId);
+                    ecfTableWriter.SetValue(EcfHeaders.SubjectId, studentSubject.SubjectId);
+                    ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, schoolClassId);
+                    ecfTableWriter.SetValue(EcfHeaders.TeacherId, studentSubject.TeacherId);
 
                     await ecfTableWriter.WriteAsync();
 
@@ -274,8 +285,8 @@ namespace Enbrea.Cli.Edoosys
 
                 await foreach (var subject in edoosysDbReader.SubjectsAsync(_config.SchoolNo, _config.SchoolYearCode))
                 {
-                    ecfTableWriter.TrySetValue(EcfHeaders.Id, subject.Id);
-                    ecfTableWriter.TrySetValue(EcfHeaders.Code, subject.Code);
+                    ecfTableWriter.SetValue(EcfHeaders.Id, subject.Id);
+                    ecfTableWriter.SetValue(EcfHeaders.Code, subject.Code);
                     ecfTableWriter.TrySetValue(EcfHeaders.Name, subject.Name);
 
                     await ecfTableWriter.WriteAsync();
@@ -309,8 +320,8 @@ namespace Enbrea.Cli.Edoosys
                 {
                     if (_ecfTeacherCache.Contains(teacher.Id))
                     { 
-                        ecfTableWriter.TrySetValue(EcfHeaders.Id, teacher.Id);
-                        ecfTableWriter.TrySetValue(EcfHeaders.Code, teacher.Code);
+                        ecfTableWriter.SetValue(EcfHeaders.Id, teacher.Id);
+                        ecfTableWriter.SetValue(EcfHeaders.Code, teacher.Code);
                         ecfTableWriter.TrySetValue(EcfHeaders.LastName, teacher.Lastname);
                         ecfTableWriter.TrySetValue(EcfHeaders.FirstName, teacher.Firstname);
                         ecfTableWriter.TrySetValue(EcfHeaders.Gender, ValueConverter.GetGenderOrDefault(teacher.Gender));
@@ -329,17 +340,5 @@ namespace Enbrea.Cli.Edoosys
                 throw new Exception("No school no and/or no school year for edoo.sys database defined");
             }
         }
-
-        private Guid GenerateKey(params string[] array)
-        {
-            var csvLineBuilder = new CsvLineBuilder();
-
-            foreach (var arrayItem in array)
-            {
-                csvLineBuilder.Append(arrayItem);
-            }
-            return IdFactory.CreateIdFromValue(csvLineBuilder.ToString());
-        }
-
     }
 }

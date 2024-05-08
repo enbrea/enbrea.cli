@@ -19,6 +19,7 @@
  */
 #endregion
 
+using Enbrea.Cli.Common;
 using System.Text.Json.Serialization;
 
 namespace Enbrea.Cli.Untis
@@ -42,10 +43,10 @@ namespace Enbrea.Cli.Untis
         public DataProvider DataProvider { get; set; } = DataProvider.File;
 
         /// <summary>
-        /// Export folder for GPU files and XML file export from Untis
+        /// Mapping for export to ECF
         /// </summary>
-        [JsonPropertyOrder(7)]
-        public string ExportFolder { get; set; } = ".\\untis\\export\\gpu";
+        [JsonPropertyOrder(12)]
+        public ProviderEcfMapping EcfMapping { get; set; }
 
         /// <summary>
         /// Exported Gpu files from Untis encoded as UTF8?
@@ -53,6 +54,11 @@ namespace Enbrea.Cli.Untis
         [JsonPropertyOrder(10)]
         public bool ExportFilesAsUtf8 { get; set; } = false;
 
+        /// <summary>
+        /// Export folder for GPU files and XML file export from Untis
+        /// </summary>
+        [JsonPropertyOrder(7)]
+        public string ExportFolder { get; set; } = ".\\untis\\export\\gpu";
         /// <summary>
         /// Quote char for GPU files export from Untis
         /// </summary>

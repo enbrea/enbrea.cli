@@ -19,6 +19,7 @@
  */
 #endregion
 
+using Enbrea.Cli.Common;
 using Enbrea.SchildNRW.Db;
 using System.Text.Json.Serialization;
 
@@ -41,6 +42,12 @@ namespace Enbrea.Cli.SchildNRW
         [JsonPropertyOrder(0)]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public SchildNRWDbProvider DataProvider { get; set; } = SchildNRWDbProvider.MySql;
+
+        /// <summary>
+        /// Mapping for export to ECF
+        /// </summary>
+        [JsonPropertyOrder(5)]
+        public ProviderEcfMapping EcfMapping { get; set; }
 
         /// <summary>
         /// School term (Schulhalbjahr)

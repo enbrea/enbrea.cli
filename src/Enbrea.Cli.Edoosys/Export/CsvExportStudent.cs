@@ -39,7 +39,11 @@ namespace Enbrea.Cli.Edoosys
             csvTableReader.TryGetValue("Vornamen", out FirstName);
             csvTableReader.TryGetValue("Familienname", out LastName);
             csvTableReader.TryGetValue("Geburtsdatum", out BirthDate);
-            csvTableReader.TryGetValue("Geschlecht (männlich/weiblich)", out Gender);
+
+            if (!csvTableReader.TryGetValue("Geschlecht (männlich/weiblich)", out Gender))
+            {
+                csvTableReader.TryGetValue("Geschlecht (männlich/weiblich).Kurzform", out Gender);
+            }
         }
     }
 }

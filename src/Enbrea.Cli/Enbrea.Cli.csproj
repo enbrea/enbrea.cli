@@ -17,21 +17,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Enbrea.Csv" Version="0.10.0" />
-    <PackageReference Include="Enbrea.Ecf" Version="0.2.0" />
-    <PackageReference Include="IdentityModel" Version="6.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.1" />
+    <PackageReference Include="Enbrea.Csv" Version="0.10.2" />
+    <PackageReference Include="Enbrea.Ecf" Version="0.2.1" />
+    <PackageReference Include="IdentityModel" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
     <PackageReference Include="Serilog" Version="3.1.1" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     <PackageReference Include="System.IO.Hashing" Version="8.0.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.1" />
-    <PackageReference Include="TaskScheduler" Version="2.10.1" />
+    <PackageReference Include="System.Text.Json" Version="8.0.3" />
+    <PackageReference Include="TaskScheduler" Version="2.11.0" />
   </ItemGroup>
 
   <ItemGroup>

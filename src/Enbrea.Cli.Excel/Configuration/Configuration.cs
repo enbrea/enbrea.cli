@@ -36,9 +36,9 @@ namespace Enbrea.Cli.Excel
         [JsonPropertyOrder(8)]
         public ICollection<CsvMapping> CsvMappings { get; set; } = new List<CsvMapping>()
         {
-            new CsvMapping() { FromHeader = "VNAME", ToHeader = "Vorname" },
-            new CsvMapping() { FromHeader = "NNAME", ToHeader = "Nachname" },
-            new CsvMapping() { FromHeader = "KLASSE", ToHeader = "Klasse" },
+            new() { FromHeader = "VNAME", ToHeader = "Vorname" },
+            new() { FromHeader = "NNAME", ToHeader = "Nachname" },
+            new() { FromHeader = "KLASSE", ToHeader = "Klasse" },
         };
 
         /// <summary>
@@ -90,9 +90,9 @@ namespace Enbrea.Cli.Excel
         [JsonPropertyOrder(5)]
         public ICollection<XlsxMapping> XlsxMappings { get; set; } = new List<XlsxMapping>() 
         {
-            new XlsxMapping() { FromHeader = "A", ToHeader = "Vorname" },
-            new XlsxMapping() { FromHeader = "B", ToHeader = "Nachname" },
-            new XlsxMapping() { FromHeader = "C", ToHeader = "Klasse" },
+            new() { FromHeader = "A", ToHeader = "Vorname" },
+            new() { FromHeader = "B", ToHeader = "Nachname" },
+            new() { FromHeader = "C", ToHeader = "Klasse" },
         };
 
         /// <summary>

@@ -19,38 +19,26 @@
  */
 #endregion
 
-using Enbrea.Cli.Common;
-using System.Text.Json.Serialization;
-
-namespace Enbrea.Cli.BbsPlanung
+namespace Enbrea.Cli.Common
 {
     /// <summary>
-    /// Configuration for BBS-Planung
+    /// File mapping for an ECF file exported by an ECF provider
     /// </summary>
-    public class Configuration
+    public class ProviderEcfFileMapping
     {
         /// <summary>
-        /// MS access database connection for direct BBS-Planung access
+        /// List of columns to be removed from export by the provider to the specified ECF file
         /// </summary>
-        [JsonPropertyOrder(0)]
-        public string DatabaseConnection { get; set; } = "Driver={Microsoft Access Driver (*.mdb, *.accdb)};Dbq=c:\\Access\\s_daten.mdb;SystemDB=c:\\Access\\system.mdw;Uid=myUsername;Pwd=myPassword";
+        public string[] RemoveExportHeaders { get; set; }
 
         /// <summary>
-        /// Mapping for export to ECF
+        /// ECF file name
         /// </summary>
-        [JsonPropertyOrder(4)]
-        public ProviderEcfMapping EcfMapping { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
-        /// School number (Schulnummer)
+        /// No export of the specified ECF file
         /// </summary>
-        [JsonPropertyOrder(1)]
-        public int SchoolNo { get; set; } = 12345;
-
-        /// <summary>
-        /// Target folder for ECF files, log files etc.
-        /// </summary>
-        [JsonPropertyOrder(2)]
-        public string TargetFolder { get; set; } = ".\\bbsplanung\\export";
+        public bool NoExport { get; set; } = false;
     }
 }

@@ -57,11 +57,11 @@ namespace Enbrea.Cli.Excel
             PrepareEcfFolder();
 
             // Education
-            await Execute(EcfTables.Subjects, async (r, w) => await ExportSubjects(r, w));
-            await Execute(EcfTables.SchoolClasses, async (r, w) => await ExportSchoolClasses(r, w));
-            await Execute(EcfTables.Students, async (r, w) => await ExportStudents(r, w));
-            await Execute(EcfTables.StudentSchoolClassAttendances, async (r, w) => await ExportStudentSchoolClassAttendances(r, w));
-            await Execute(EcfTables.StudentSubjects, async (r, w) => await ExportStudentSubjects(r, w));
+            await Execute(EcfTables.Subjects, ExportSubjects);
+            await Execute(EcfTables.SchoolClasses, ExportSchoolClasses);
+            await Execute(EcfTables.Students, ExportStudents);
+            await Execute(EcfTables.StudentSchoolClassAttendances, ExportStudentSchoolClassAttendances);
+            await Execute(EcfTables.StudentSubjects, ExportStudentSubjects);
 
             // Report status
             _consoleWriter.Success($"{_tableCounter} table(s) and {_recordCounter} record(s) extracted").NewLine();

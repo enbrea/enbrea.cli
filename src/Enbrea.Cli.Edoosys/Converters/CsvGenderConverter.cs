@@ -41,7 +41,9 @@ namespace Enbrea.Cli.Edoosys
             {
                 return value switch
                 {
+                    "W" => EcfGender.Female,
                     "weiblich" => EcfGender.Female,
+                    "M" => EcfGender.Male,
                     "männlich" => EcfGender.Male,
                     _ => null,
                 };

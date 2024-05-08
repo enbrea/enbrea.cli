@@ -29,7 +29,15 @@ namespace Enbrea.Cli
     {
         public static EcfCustomManager CreateImportToEnbreaManager(ImportProvider provider, Configuration config, bool skipSnapshot, ConsoleWriter consoleWriter, EventWaitHandle cancellationEvent, CancellationToken cancellationToken)
         {
-            return new ImportManager(provider, GetEnbreaEcfTarget(provider, config), config, skipSnapshot, consoleWriter, cancellationEvent, cancellationToken);
+            return new ImportManager(
+                provider,
+                GetProviderEcfMapping(provider, config),
+                GetEnbreaEcfTarget(provider, config),
+                config, 
+                skipSnapshot, 
+                consoleWriter, 
+                cancellationEvent, 
+                cancellationToken);
         }
 
         public static EcfCustomManager CreateImportToProviderManager(ExportProvider provider, Configuration config, ConsoleWriter consoleWriter, CancellationToken cancellationToken)
@@ -66,6 +74,27 @@ namespace Enbrea.Cli
                 default:
                     return null;
 
+            }
+        }
+
+        private static ProviderEcfMapping GetProviderEcfMapping(ImportProvider provider, Configuration config)
+        {
+            switch (provider)
+            {
+                case ImportProvider.davinci:
+                    return config.DaVinci.EcfMapping;
+                case ImportProvider.magellan:
+                    return config.Magellan.EcfMapping;
+                case ImportProvider.untis:
+                    return config.Untis.EcfMapping;
+                case ImportProvider.bbsplanung:
+                    return config.BbsPlanung.EcfMapping;
+                case ImportProvider.edoosys:
+                    return config.Edoosys.EcfMapping;
+                case ImportProvider.schildnrw:
+                    return config.SchildNRW.EcfMapping;
+                default:
+                    return null;
             }
         }
     }

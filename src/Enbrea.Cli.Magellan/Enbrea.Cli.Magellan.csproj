@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Enbrea.Ecf" Version="0.2.0" />
+    <PackageReference Include="Enbrea.Ecf" Version="0.2.1" />
     <PackageReference Include="Enbrea.GuidFactory" Version="0.9.2" />
     <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="10.0.0" />
   </ItemGroup>
