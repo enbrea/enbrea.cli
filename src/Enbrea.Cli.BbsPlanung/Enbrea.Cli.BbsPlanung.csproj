@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Enbrea.BbsPlanung.Db" Version="0.3.0" />
-    <PackageReference Include="Enbrea.Ecf" Version="0.2.0" />
+    <PackageReference Include="Enbrea.Ecf" Version="0.2.1" />
     <PackageReference Include="System.Data.Odbc" Version="8.0.0" />
   </ItemGroup>
 
