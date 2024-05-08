@@ -21,8 +21,8 @@
 
 using Enbrea.BbsPlanung.Db;
 using Enbrea.Cli.Common;
-using Enbrea.Konsoli;
 using Enbrea.Ecf;
+using Enbrea.Konsoli;
 using System;
 using System.IO;
 using System.Threading;
@@ -60,11 +60,11 @@ namespace Enbrea.Cli.BbsPlanung
             await bbsPlanungDbReader.ConnectAsync();
 
             // Education
-            await Execute(EcfTables.Teachers, bbsPlanungDbReader, async (r, w) => await ExportTeachers(r, w));
-            await Execute(EcfTables.SchoolClasses, bbsPlanungDbReader, async (r, w) => await ExportSchoolClasses(r, w));
-            await Execute(EcfTables.Students, bbsPlanungDbReader, async (r, w) => await ExportStudents(r, w));
-            await Execute(EcfTables.StudentSchoolClassAttendances, bbsPlanungDbReader, async (r, w) => await ExportStudentSchoolClassAttendances(r, w));
-            await Execute(EcfTables.StudentSubjects, bbsPlanungDbReader, async (r, w) => await ExportStudentSubjects(r, w));
+            await Execute(EcfTables.Teachers, bbsPlanungDbReader, ExportTeachers);
+            await Execute(EcfTables.SchoolClasses, bbsPlanungDbReader, ExportSchoolClasses);
+            await Execute(EcfTables.Students, bbsPlanungDbReader, ExportStudents);
+            await Execute(EcfTables.StudentSchoolClassAttendances, bbsPlanungDbReader, ExportStudentSchoolClassAttendances);
+            await Execute(EcfTables.StudentSubjects, bbsPlanungDbReader, ExportStudentSubjects);
 
             // Disconnect reader
             await bbsPlanungDbReader.DisconnectAsync();
@@ -83,10 +83,10 @@ namespace Enbrea.Cli.BbsPlanung
                 using var ecfStreamWriter = new StreamWriter(Path.ChangeExtension(Path.Combine(GetEcfFolderName(), ecfTableName), "csv"));
 
                 // Init ECF Writer
-                var ecfTablefWriter = new EcfTableWriter(ecfStreamWriter);
+                var ecfTableWriter = new EcfTableWriter(ecfStreamWriter);
 
                 // Call table specific action
-                var ecfRecordCounter = await action(bbsPlanungDbReader, ecfTablefWriter);
+                var ecfRecordCounter = await action(bbsPlanungDbReader, ecfTableWriter);
 
                 // Inc counters
                 _recordCounter += ecfRecordCounter;
@@ -113,8 +113,8 @@ namespace Enbrea.Cli.BbsPlanung
 
             await foreach (var schoolClass in bbsPlanungDbReader.SchoolClassesAsync(_config.SchoolNo))
             {
-                ecfTableWriter.TrySetValue(EcfHeaders.Id, schoolClass.Code);
-                ecfTableWriter.TrySetValue(EcfHeaders.Code, schoolClass.Code);
+                ecfTableWriter.SetValue(EcfHeaders.Id, schoolClass.Code);
+                ecfTableWriter.SetValue(EcfHeaders.Code, schoolClass.Code);
                 ecfTableWriter.TrySetValue(EcfHeaders.Teacher1Id, schoolClass.Teacher);
                 ecfTableWriter.TrySetValue(EcfHeaders.Notes, schoolClass.Notes);
 
@@ -140,9 +140,9 @@ namespace Enbrea.Cli.BbsPlanung
 
             await foreach (var student in bbsPlanungDbReader.StudentsAsync(_config.SchoolNo))
             {
-                ecfTableWriter.TrySetValue(EcfHeaders.Id, student.Id.ToString());
-                ecfTableWriter.TrySetValue(EcfHeaders.LastName, student.Lastname);
-                ecfTableWriter.TrySetValue(EcfHeaders.FirstName, student.Firstname);
+                ecfTableWriter.SetValue(EcfHeaders.Id, student.Id.ToString());
+                ecfTableWriter.SetValue(EcfHeaders.LastName, student.Lastname);
+                ecfTableWriter.SetValue(EcfHeaders.FirstName, student.Firstname);
                 ecfTableWriter.TrySetValue(EcfHeaders.Gender, student.GetGenderOrDefault());
                 ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, student.GetBirthdateOrDefault());
                 ecfTableWriter.TrySetValue(EcfHeaders.StudentNo, student.StudentNo);
@@ -166,9 +166,9 @@ namespace Enbrea.Cli.BbsPlanung
 
             await foreach (var student in bbsPlanungDbReader.StudentsAsync(_config.SchoolNo))
             {
-                ecfTableWriter.TrySetValue(EcfHeaders.Id, student.Id.ToString() + "_" + student.SchoolClass);
-                ecfTableWriter.TrySetValue(EcfHeaders.StudentId, student.Id.ToString());
-                ecfTableWriter.TrySetValue(EcfHeaders.SchoolClassId, student.SchoolClass);
+                ecfTableWriter.SetValue(EcfHeaders.Id, student.Id.ToString() + "_" + student.SchoolClass);
+                ecfTableWriter.SetValue(EcfHeaders.StudentId, student.Id.ToString());
+                ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, student.SchoolClass);
 
                 await ecfTableWriter.WriteAsync();
 
@@ -189,9 +189,9 @@ namespace Enbrea.Cli.BbsPlanung
 
             await foreach (var student in bbsPlanungDbReader.StudentsAsync(_config.SchoolNo))
             {
-                ecfTableWriter.TrySetValue(EcfHeaders.Id, student.Id.ToString() + "_" + student.SchoolClass);
-                ecfTableWriter.TrySetValue(EcfHeaders.StudentId, student.Id.ToString());
-                ecfTableWriter.TrySetValue(EcfHeaders.SchoolClassId, student.SchoolClass);
+                ecfTableWriter.SetValue(EcfHeaders.Id, student.Id.ToString() + "_" + student.SchoolClass);
+                ecfTableWriter.SetValue(EcfHeaders.StudentId, student.Id.ToString());
+                ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, student.SchoolClass);
 
                 await ecfTableWriter.WriteAsync();
 
@@ -215,8 +215,8 @@ namespace Enbrea.Cli.BbsPlanung
 
             await foreach (var teacher in bbsPlanungDbReader.TeachersAsync(_config.SchoolNo))
             {
-                ecfTableWriter.TrySetValue(EcfHeaders.Id, teacher.Id);
-                ecfTableWriter.TrySetValue(EcfHeaders.Code, teacher.Code);
+                ecfTableWriter.SetValue(EcfHeaders.Id, teacher.Id);
+                ecfTableWriter.SetValue(EcfHeaders.Code, teacher.Code);
                 ecfTableWriter.TrySetValue(EcfHeaders.LastName, teacher.Lastname);
                 ecfTableWriter.TrySetValue(EcfHeaders.FirstName, teacher.Firstname);
                 ecfTableWriter.TrySetValue(EcfHeaders.Gender, teacher.GetGenderOrDefault());

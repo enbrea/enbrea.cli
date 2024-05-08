@@ -19,6 +19,7 @@
  */
 #endregion
 
+using Enbrea.Cli.Common;
 using System.Text.Json.Serialization;
 
 namespace Enbrea.Cli.Edoosys
@@ -58,6 +59,12 @@ namespace Enbrea.Cli.Edoosys
         [JsonPropertyOrder(0)]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public DataProvider DataProvider { get; set; } = DataProvider.Postgres;
+
+        /// <summary>
+        /// Mapping for export to ECF
+        /// </summary>
+        [JsonPropertyOrder(9)]
+        public ProviderEcfMapping EcfMapping { get; set; }
 
         /// <summary>
         /// Do not process edoo.sys school class groups (Klassengruppen)

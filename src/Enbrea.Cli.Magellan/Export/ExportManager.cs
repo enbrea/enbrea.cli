@@ -66,7 +66,7 @@ namespace Enbrea.Cli.Magellan
                 PrepareEcfFolder();
 
                 // Catalogs
-                await Execute(EcfTables.Countries, connection, async (c, w) => await ExportCountries(c, w));
+                await Execute(EcfTables.Countries, connection, ExportCountries);
                 await Execute(EcfTables.CourseCategories, connection, async (c, w) => await ExportCatalog("Fachstati", c, w));
                 await Execute(EcfTables.CourseTypes, connection, async (c, w) => await ExportCatalog("Unterrichtsarten", c, w));
                 await Execute(EcfTables.FormsOfTeaching, connection, async (c, w) => await ExportCatalog("Unterrichtsformen", c, w));
@@ -83,21 +83,21 @@ namespace Enbrea.Cli.Magellan
                 await Execute(EcfTables.SubjectGroups, connection, async (c, w) => await ExportCatalog("Fachgruppen", c, w));
 
                 // Special catalogs
-                await Execute(EcfTables.EducationalPrograms, connection, async (c, w) => await ExportEducationalPrograms(c, w));
+                await Execute(EcfTables.EducationalPrograms, connection, ExportEducationalPrograms);
                 await Execute(EcfTables.MaritalStatuses, connection, async (c, w) => await ExportMaritalStatuses(w));
                 await Execute(EcfTables.SchoolClassTypes, connection, async (c, w) => await ExportSchoolClassTypes(w));
                 await Execute(EcfTables.SubjectCategories, connection, async (c, w) => await ExportSubjectCategories(w));
                 await Execute(EcfTables.SubjectTypes, connection, async (c, w) => await ExportSubjectTypes(w));
 
                 // Education
-                await Execute(EcfTables.Departments, connection, async (c, w) => await ExportDepartments(c, w));
-                await Execute(EcfTables.Subjects, connection, async (c, w) => await ExportSubjects(c, w));
-                await Execute(EcfTables.Teachers, connection, async (c, w) => await ExportTeachers(c, w));
-                await Execute(EcfTables.SchoolClasses, connection, async (c, w) => await ExportSchoolClasses(c, w));
-                await Execute(EcfTables.Students, connection, async (c, w) => await ExportStudents(c, w));
-                await Execute(EcfTables.StudentSchoolAttendances, connection, async (c, w) => await ExportStudentSchoolAttendances(c, w));
-                await Execute(EcfTables.StudentSchoolClassAttendances, connection, async (c, w) => await ExportStudentSchoolClassAttendances(c, w));
-                await Execute(EcfTables.StudentSubjects, connection, async (c, w) => await ExportStudentSubjects(c, w));
+                await Execute(EcfTables.Departments, connection, ExportDepartments);
+                await Execute(EcfTables.Subjects, connection, ExportSubjects);
+                await Execute(EcfTables.Teachers, connection, ExportTeachers);
+                await Execute(EcfTables.SchoolClasses, connection, ExportSchoolClasses);
+                await Execute(EcfTables.Students, connection, ExportStudents);
+                await Execute(EcfTables.StudentSchoolAttendances, connection, ExportStudentSchoolAttendances);
+                await Execute(EcfTables.StudentSchoolClassAttendances, connection, ExportStudentSchoolClassAttendances);
+                await Execute(EcfTables.StudentSubjects, connection, ExportStudentSubjects);
 
                 _consoleWriter.Success($"{_tableCounter} table(s) extracted").NewLine();
             }
@@ -113,15 +113,14 @@ namespace Enbrea.Cli.Magellan
             _consoleWriter.StartProgress($"Extracting {ecfTableName}...");
             try
             {
-
                 // Init CSV file stream
                 using var ecfStreamWriter = new StreamWriter(Path.ChangeExtension(Path.Combine(GetEcfFolderName(), ecfTableName), "csv"));
 
                 // Init ECF Writer
-                var ecfTablefWriter = new EcfTableWriter(ecfStreamWriter);
+                var ecfTableWriter = new EcfTableWriter(ecfStreamWriter);
 
                 // Call table specific action
-                var ecfRecordCounter = await action(fbConnection, ecfTablefWriter);
+                var ecfRecordCounter = await action(fbConnection, ecfTableWriter);
 
                 // Inc table counter
                 _tableCounter++;
@@ -164,9 +163,9 @@ namespace Enbrea.Cli.Magellan
             {
                 ecfTableWriter.SetValue(EcfHeaders.Id, reader["Kuerzel"]);
                 ecfTableWriter.SetValue(EcfHeaders.Code, reader["Kuerzel"]);
-                ecfTableWriter.SetValue(EcfHeaders.StatisticalCode, reader["StatistikID"]);
-                ecfTableWriter.SetValue(EcfHeaders.InternalCode, reader["Schluessel"]);
-                ecfTableWriter.SetValue(EcfHeaders.Name, reader["Bezeichnung"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.StatisticalCode, reader["StatistikID"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.InternalCode, reader["Schluessel"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.Name, reader["Bezeichnung"]);
 
                 await ecfTableWriter.WriteAsync(_cancellationToken);
 
@@ -218,7 +217,7 @@ namespace Enbrea.Cli.Magellan
             {
                 ecfTableWriter.SetValue(EcfHeaders.Id, reader["Kuerzel"]);
                 ecfTableWriter.SetValue(EcfHeaders.Code, reader["Kuerzel"]);
-                ecfTableWriter.SetValue(EcfHeaders.Name, reader["Kuerzel"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.Name, reader["Kuerzel"]);
 
                 await ecfTableWriter.WriteAsync(_cancellationToken);
 
@@ -258,7 +257,7 @@ namespace Enbrea.Cli.Magellan
             {
                 ecfTableWriter.SetValue(EcfHeaders.Id, reader["Kuerzel"]);
                 ecfTableWriter.SetValue(EcfHeaders.Code, reader["Kuerzel"]);
-                ecfTableWriter.SetValue(EcfHeaders.Name, reader["Bezeichnung"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.Name, reader["Bezeichnung"]);
 
                 await ecfTableWriter.WriteAsync(_cancellationToken);
 
@@ -293,9 +292,9 @@ namespace Enbrea.Cli.Magellan
             {
                 ecfTableWriter.SetValue(EcfHeaders.Id, reader["Kuerzel"]);
                 ecfTableWriter.SetValue(EcfHeaders.Code, reader["Kuerzel"]);
-                ecfTableWriter.SetValue(EcfHeaders.StatisticalCode, reader["StatistikID"]);
-                ecfTableWriter.SetValue(EcfHeaders.InternalCode, reader["Schluessel"]);
-                ecfTableWriter.SetValue(EcfHeaders.Name, reader["Bezeichnung"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.StatisticalCode, reader["StatistikID"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.InternalCode, reader["Schluessel"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.Name, reader["Bezeichnung"]);
 
                 await ecfTableWriter.WriteAsync(_cancellationToken);
 
@@ -373,18 +372,18 @@ namespace Enbrea.Cli.Magellan
             {
                 ecfTableWriter.SetValue(EcfHeaders.Id, reader["Id"]);
                 ecfTableWriter.SetValue(EcfHeaders.Code, reader["Kuerzel"]);
-                ecfTableWriter.SetValue(EcfHeaders.StatisticalCode, reader["KuerzelStatistik"]);
-                ecfTableWriter.SetValue(EcfHeaders.Name1, reader["Langname1"]);
-                ecfTableWriter.SetValue(EcfHeaders.Name2, reader["Langname2"]);
-                ecfTableWriter.SetValue(EcfHeaders.SchoolClassTypeId, reader["Klassenart"]);
-                ecfTableWriter.SetValue(EcfHeaders.SchoolClassLevelId, reader["Klassenstufe"]);
-                ecfTableWriter.SetValue(EcfHeaders.DepartmentId, reader["Abteilung"]);
-                ecfTableWriter.SetValue(EcfHeaders.SchoolTypeId, reader["Schulart"]);
-                ecfTableWriter.SetValue(EcfHeaders.SchoolCategoryId, reader["Schulform"]);
-                ecfTableWriter.SetValue(EcfHeaders.SchoolOrganisationId, reader["Organisation"]);
-                ecfTableWriter.SetValue(EcfHeaders.Teacher1Id, reader["Lehrer1"]);
-                ecfTableWriter.SetValue(EcfHeaders.Teacher2Id, reader["Lehrer2"]);
-                ecfTableWriter.SetValue(EcfHeaders.FormOfTeachingId, reader["Unterrichtsform"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.StatisticalCode, reader["KuerzelStatistik"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.Name1, reader["Langname1"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.Name2, reader["Langname2"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.SchoolClassTypeId, reader["Klassenart"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.SchoolClassLevelId, reader["Klassenstufe"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.DepartmentId, reader["Abteilung"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.SchoolTypeId, reader["Schulart"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.SchoolCategoryId, reader["Schulform"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.SchoolOrganisationId, reader["Organisation"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.Teacher1Id, reader["Lehrer1"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.Teacher2Id, reader["Lehrer2"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.FormOfTeachingId, reader["Unterrichtsform"]);
 
                 await ecfTableWriter.WriteAsync(_cancellationToken);
 
@@ -501,26 +500,26 @@ namespace Enbrea.Cli.Magellan
                     ecfTableWriter.SetValue(EcfHeaders.LastName, reader["Nachname"]);
                     ecfTableWriter.SetValue(EcfHeaders.FirstName, reader["Vorname"]);
                     ecfTableWriter.SetValue(EcfHeaders.MiddleName, reader["Vorname2"]);
-                    ecfTableWriter.SetValue(EcfHeaders.Birthname, reader["Geburtsname"]);
-                    ecfTableWriter.SetValue(EcfHeaders.Salutation, reader.GetSalutationOrDefault("Anrede"));
-                    ecfTableWriter.SetValue(EcfHeaders.Gender, reader.GetGenderOrDefault("Geschlecht"));
-                    ecfTableWriter.SetValue(EcfHeaders.Birthdate, reader.GetDateOrDefault("Geburtsdatum"));
-                    ecfTableWriter.SetValue(EcfHeaders.Birthname, reader["Geburtsname"]);
-                    ecfTableWriter.SetValue(EcfHeaders.PlaceOfBirth, reader["Geburtsort"]);
-                    //ecfTableWriter.SetValue(EcfHeaders.CountryOfBirthId, reader["Geburtsland"]);
-                    ecfTableWriter.SetValue(EcfHeaders.AddressLines, reader["Strasse"]);
-                    ecfTableWriter.SetValue(EcfHeaders.PostalCode, reader["PLZ"]);
-                    ecfTableWriter.SetValue(EcfHeaders.Locality, reader["Ort"]);
-                    //ecfTableWriter.SetValue(EcfHeaders.CountryId, reader["Land"]);
-                    ecfTableWriter.SetValue(EcfHeaders.HomePhoneNumber, reader["Telefon"]);
-                    ecfTableWriter.SetValue(EcfHeaders.EmailAddress, reader["EMail"]);
-                    ecfTableWriter.SetValue(EcfHeaders.MobileNumber, reader["Mobil"]);
-                    //ecfTableWriter.SetValue(EcfHeaders.Nationality1Id, reader["Staatsangeh1"]);
-                    //ecfTableWriter.SetValue(EcfHeaders.Nationality2Id, reader["Staatsangeh2"]);
-                    ecfTableWriter.SetValue(EcfHeaders.NativeLanguageId, reader["Muttersprache"]);
-                    ecfTableWriter.SetValue(EcfHeaders.CorrespondenceLanguageId, reader["Verkehrssprache"]);
-                    //ecfTableWriter.SetValue(EcfHeaders.ReligionId, reader["Konfession"]);
-                    ecfTableWriter.SetValue(EcfHeaders.TutorId, reader["Tutor"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.Birthname, reader["Geburtsname"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.Salutation, reader.GetSalutationOrDefault("Anrede"));
+                    ecfTableWriter.TrySetValue(EcfHeaders.Gender, reader.GetGenderOrDefault("Geschlecht"));
+                    ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, reader.GetDateOrDefault("Geburtsdatum"));
+                    ecfTableWriter.TrySetValue(EcfHeaders.Birthname, reader["Geburtsname"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.PlaceOfBirth, reader["Geburtsort"]);
+                    //ecfTableWriter.TrySetValue(EcfHeaders.CountryOfBirthId, reader["Geburtsland"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.AddressLines, reader["Strasse"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.PostalCode, reader["PLZ"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.Locality, reader["Ort"]);
+                    //ecfTableWriter.TrySetValue(EcfHeaders.CountryId, reader["Land"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.HomePhoneNumber, reader["Telefon"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.EmailAddress, reader["EMail"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.MobileNumber, reader["Mobil"]);
+                    //ecfTableWriter.TrySetValue(EcfHeaders.Nationality1Id, reader["Staatsangeh1"]);
+                    //ecfTableWriter.TrySetValue(EcfHeaders.Nationality2Id, reader["Staatsangeh2"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.NativeLanguageId, reader["Muttersprache"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.CorrespondenceLanguageId, reader["Verkehrssprache"]);
+                    //ecfTableWriter.TrySetValue(EcfHeaders.ReligionId, reader["Konfession"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.TutorId, reader["Tutor"]);
 
                     await ecfTableWriter.WriteAsync(_cancellationToken);
 
@@ -578,8 +577,8 @@ namespace Enbrea.Cli.Magellan
                 {
                     ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValue($"{studentId}+1"));
                     ecfTableWriter.SetValue(EcfHeaders.StudentId, studentId);
-                    ecfTableWriter.SetValue(EcfHeaders.EntryDate, reader.GetDateOrDefault("ZugangAm"));
-                    ecfTableWriter.SetValue(EcfHeaders.ExitDate, reader.GetDateOrDefault("AbgangAm"));
+                    ecfTableWriter.TrySetValue(EcfHeaders.EntryDate, reader.GetDateOrDefault("ZugangAm"));
+                    ecfTableWriter.TrySetValue(EcfHeaders.ExitDate, reader.GetDateOrDefault("AbgangAm"));
 
                     await ecfTableWriter.WriteAsync(_cancellationToken);
 
@@ -590,8 +589,8 @@ namespace Enbrea.Cli.Magellan
                 {
                     ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValue($"{studentId}+2"));
                     ecfTableWriter.SetValue(EcfHeaders.StudentId, studentId);
-                    ecfTableWriter.SetValue(EcfHeaders.EntryDate, reader.GetDateOrDefault("Zugang2Am"));
-                    ecfTableWriter.SetValue(EcfHeaders.ExitDate, reader.GetDateOrDefault("Abgang2Am"));
+                    ecfTableWriter.TrySetValue(EcfHeaders.EntryDate, reader.GetDateOrDefault("Zugang2Am"));
+                    ecfTableWriter.TrySetValue(EcfHeaders.ExitDate, reader.GetDateOrDefault("Abgang2Am"));
 
                     await ecfTableWriter.WriteAsync(_cancellationToken);
 
@@ -665,8 +664,8 @@ namespace Enbrea.Cli.Magellan
                 ecfTableWriter.SetValue(EcfHeaders.Id, reader["ID"]);
                 ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, reader["Klasse"]);
                 ecfTableWriter.SetValue(EcfHeaders.StudentId, reader["Schueler"]);
-                ecfTableWriter.SetValue(EcfHeaders.EntryDate, reader.GetYoungestDateOrDefault("KlasseZugangAm", "SchuelerZugangAm"));
-                ecfTableWriter.SetValue(EcfHeaders.ExitDate, reader.GetOldestDateOrDefault("KlasseAbgangAm", "SchuelerAbgangAm"));
+                ecfTableWriter.TrySetValue(EcfHeaders.EntryDate, reader.GetYoungestDateOrDefault("KlasseZugangAm", "SchuelerZugangAm"));
+                ecfTableWriter.TrySetValue(EcfHeaders.ExitDate, reader.GetOldestDateOrDefault("KlasseAbgangAm", "SchuelerAbgangAm"));
 
                 await ecfTableWriter.WriteAsync(_cancellationToken);
 
@@ -812,6 +811,7 @@ namespace Enbrea.Cli.Magellan
             await ecfTableWriter.WriteHeadersAsync(
                 EcfHeaders.Id,
                 EcfHeaders.SchoolClassId,
+                EcfHeaders.TeacherId,
                 EcfHeaders.StudentId,
                 EcfHeaders.CourseNo,
                 EcfHeaders.CourseTypeId,
@@ -819,7 +819,6 @@ namespace Enbrea.Cli.Magellan
                 EcfHeaders.SubjectId,
                 EcfHeaders.SubjectLevelId,
                 EcfHeaders.SubjectFocusId,
-                EcfHeaders.TeacherId,
                 EcfHeaders.EntryDate,
                 EcfHeaders.ExitDate);
 
@@ -827,16 +826,16 @@ namespace Enbrea.Cli.Magellan
             {
                 ecfTableWriter.SetValue(EcfHeaders.Id, reader["ID"]);
                 ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, reader["Klasse"]);
+                ecfTableWriter.SetValue(EcfHeaders.TeacherId, reader["Lehrer"]);
                 ecfTableWriter.SetValue(EcfHeaders.StudentId, reader["Schueler"]);
                 ecfTableWriter.SetValue(EcfHeaders.CourseNo, reader.GetShortOrDefault("KursNr", 0));
                 ecfTableWriter.SetValue(EcfHeaders.CourseTypeId, reader["Unterrichtsart"]);
                 ecfTableWriter.SetValue(EcfHeaders.CourseCategoryId, reader["Fachstatus"]);
                 ecfTableWriter.SetValue(EcfHeaders.SubjectId, reader["Fach"]);
-                ecfTableWriter.SetValue(EcfHeaders.SubjectLevelId, reader["Niveau"]);
-                ecfTableWriter.SetValue(EcfHeaders.SubjectFocusId, reader["Schwerpunkt"]);
-                ecfTableWriter.SetValue(EcfHeaders.TeacherId, reader["Lehrer"]);
-                ecfTableWriter.SetValue(EcfHeaders.EntryDate, reader.GetYoungestDateOrDefault("KlasseZugangAm", "SchuelerZugangAm"));
-                ecfTableWriter.SetValue(EcfHeaders.ExitDate, reader.GetOldestDateOrDefault("KlasseAbgangAm", "SchuelerAbgangAm"));
+                ecfTableWriter.TrySetValue(EcfHeaders.SubjectLevelId, reader["Niveau"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.SubjectFocusId, reader["Schwerpunkt"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.EntryDate, reader.GetYoungestDateOrDefault("KlasseZugangAm", "SchuelerZugangAm"));
+                ecfTableWriter.TrySetValue(EcfHeaders.ExitDate, reader.GetOldestDateOrDefault("KlasseAbgangAm", "SchuelerAbgangAm"));
 
                 await ecfTableWriter.WriteAsync(_cancellationToken);
 
@@ -848,12 +847,15 @@ namespace Enbrea.Cli.Magellan
 
         private async Task<int> ExportSubjectCategories(EcfTableWriter ecfTableWriter)
         {
-            await ecfTableWriter.WriteHeadersAsync(
-                EcfHeaders.Id,
-                EcfHeaders.Code,
-                EcfHeaders.StatisticalCode,
-                EcfHeaders.InternalCode,
-                EcfHeaders.Name);
+            if (ecfTableWriter.Headers.Count == 0)
+            {
+                await ecfTableWriter.WriteHeadersAsync(
+                    EcfHeaders.Id,
+                    EcfHeaders.Code,
+                    EcfHeaders.StatisticalCode,
+                    EcfHeaders.InternalCode,
+                    EcfHeaders.Name);
+            }
 
             await ecfTableWriter.WriteAsync("0", "SLK", "00", "00", "sprachl.-lit.-künstlerisch");
             await ecfTableWriter.WriteAsync("1", "GES", "01", "01", "gesellschaftswiss.");
@@ -896,12 +898,12 @@ namespace Enbrea.Cli.Magellan
             {
                 ecfTableWriter.SetValue(EcfHeaders.Id, reader["ID"]);
                 ecfTableWriter.SetValue(EcfHeaders.Code, reader["Kuerzel"]);
-                ecfTableWriter.SetValue(EcfHeaders.StatisticalCode, reader["StatistikID"]);
-                ecfTableWriter.SetValue(EcfHeaders.InternalCode, reader["Schluessel"]);
-                ecfTableWriter.SetValue(EcfHeaders.Name, reader["Bezeichnung"]);
-                ecfTableWriter.SetValue(EcfHeaders.SubjectTypeId, reader["Kategorie"]);
-                ecfTableWriter.SetValue(EcfHeaders.SubjectCategoryId, reader["Aufgabenbereich"]);
-                ecfTableWriter.SetValue(EcfHeaders.SubjectGroupId, reader["Gruppe"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.StatisticalCode, reader["StatistikID"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.InternalCode, reader["Schluessel"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.Name, reader["Bezeichnung"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.SubjectTypeId, reader["Kategorie"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.SubjectCategoryId, reader["Aufgabenbereich"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.SubjectGroupId, reader["Gruppe"]);
 
                 await ecfTableWriter.WriteAsync(_cancellationToken);
 
@@ -996,34 +998,34 @@ namespace Enbrea.Cli.Magellan
                 EcfHeaders.Nationality2Id,
                 EcfHeaders.NativeLanguageId,
                 EcfHeaders.CorrespondenceLanguageId,
-                EcfHeaders.ReligionId); ;
+                EcfHeaders.ReligionId);
 
             while (await reader.ReadAsync(_cancellationToken))
             {
                 ecfTableWriter.SetValue(EcfHeaders.Id, reader["ID"]);
                 ecfTableWriter.SetValue(EcfHeaders.Code, reader["Kuerzel"]);
-                ecfTableWriter.SetValue(EcfHeaders.LastName, reader["Nachname"]);
-                ecfTableWriter.SetValue(EcfHeaders.FirstName, reader["Vorname"]);
-                ecfTableWriter.SetValue(EcfHeaders.MiddleName, reader["Vorname2"]);
-                ecfTableWriter.SetValue(EcfHeaders.Salutation, reader.GetSalutationOrDefault("Anrede"));
-                ecfTableWriter.SetValue(EcfHeaders.Gender, reader.GetGenderOrDefault("Geschlecht"));
-                ecfTableWriter.SetValue(EcfHeaders.Birthdate, reader.GetDateOrDefault("Geburtsdatum"));
-                ecfTableWriter.SetValue(EcfHeaders.Birthname, reader["Geburtsname"]);
-                ecfTableWriter.SetValue(EcfHeaders.PlaceOfBirth, reader["Geburtsort"]);
-                ecfTableWriter.SetValue(EcfHeaders.MaritalStatusId, reader["Ehestand"]);
-                ecfTableWriter.SetValue(EcfHeaders.AddressLines, reader["Strasse"]);
-                ecfTableWriter.SetValue(EcfHeaders.PostalCode, reader["PLZ"]);
-                ecfTableWriter.SetValue(EcfHeaders.Locality, reader["Ort"]);
-                ecfTableWriter.SetValue(EcfHeaders.CountryId, reader["Land"]);
-                ecfTableWriter.SetValue(EcfHeaders.HomePhoneNumber, reader["Telefon"]);
-                ecfTableWriter.SetValue(EcfHeaders.OfficePhoneNumber, reader["TelefonDienst"]);
-                ecfTableWriter.SetValue(EcfHeaders.EmailAddress, reader["Email"]);
-                ecfTableWriter.SetValue(EcfHeaders.MobileNumber, reader["Mobil"]);
-                ecfTableWriter.SetValue(EcfHeaders.Nationality1Id, reader["Staatsangeh"]);
-                ecfTableWriter.SetValue(EcfHeaders.Nationality2Id, reader["Staatsangeh2"]);
-                ecfTableWriter.SetValue(EcfHeaders.NativeLanguageId, reader["Muttersprache"]);
-                ecfTableWriter.SetValue(EcfHeaders.CorrespondenceLanguageId, reader["Verkehrssprache"]);
-                ecfTableWriter.SetValue(EcfHeaders.ReligionId, reader["Konfession"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.LastName, reader["Nachname"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.FirstName, reader["Vorname"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.MiddleName, reader["Vorname2"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.Salutation, reader.GetSalutationOrDefault("Anrede"));
+                ecfTableWriter.TrySetValue(EcfHeaders.Gender, reader.GetGenderOrDefault("Geschlecht"));
+                ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, reader.GetDateOrDefault("Geburtsdatum"));
+                ecfTableWriter.TrySetValue(EcfHeaders.Birthname, reader["Geburtsname"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.PlaceOfBirth, reader["Geburtsort"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.MaritalStatusId, reader["Ehestand"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.AddressLines, reader["Strasse"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.PostalCode, reader["PLZ"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.Locality, reader["Ort"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.CountryId, reader["Land"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.HomePhoneNumber, reader["Telefon"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.OfficePhoneNumber, reader["TelefonDienst"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.EmailAddress, reader["Email"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.MobileNumber, reader["Mobil"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.Nationality1Id, reader["Staatsangeh"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.Nationality2Id, reader["Staatsangeh2"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.NativeLanguageId, reader["Muttersprache"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.CorrespondenceLanguageId, reader["Verkehrssprache"]);
+                ecfTableWriter.TrySetValue(EcfHeaders.ReligionId, reader["Konfession"]);
 
                 await ecfTableWriter.WriteAsync(_cancellationToken);
 

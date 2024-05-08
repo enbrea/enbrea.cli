@@ -19,25 +19,22 @@
  */
 #endregion
 
-using Enbrea.Csv;
+using System.Collections.Generic;
 
-namespace Enbrea.Cli.Edoosys
+namespace Enbrea.Cli.Common
 {
-    public class CsvExportSchoolClass
+    /// <summary>
+    /// Mapping of ECF files exported by an ECF provider
+    /// </summary>
+    /// <remarks>
+    /// This mapping is optional. It defines for certain ECF files whether they should be exported or not. 
+    /// And if they are exported, which columns should be exported.
+    /// </remarks>
+    public class ProviderEcfMapping
     {
-        public readonly string Code;
-        public readonly string Id;
-
-        public CsvExportSchoolClass(CsvTableReader csvTableReader)
-        {
-            if (csvTableReader.TryGetValue("Klasse", out Id))
-            {
-                Code = Id;
-            }
-            else if (csvTableReader.TryGetValue("Klasse / Klassengruppe", out Id))
-            {
-                Code = Id;
-            }
-        }
+        /// <summary>
+        /// The list of file mappings
+        /// </summary>
+        public ICollection<ProviderEcfFileMapping> Files { get; set; }
     }
 }

@@ -19,6 +19,7 @@
  */
 #endregion
 
+using Enbrea.Cli.Common;
 using System;
 using System.Text.Json.Serialization;
 
@@ -41,6 +42,12 @@ namespace Enbrea.Cli.DaVinci
         [JsonPropertyOrder(0)]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public DataProvider DataProvider { get; set; } = DataProvider.File;
+
+        /// <summary>
+        /// Mapping for export to ECF
+        /// </summary>
+        [JsonPropertyOrder(9)]
+        public ProviderEcfMapping EcfMapping { get; set; }
 
         /// <summary>
         /// In case of server access, the server file id

@@ -19,17 +19,21 @@
  */
 #endregion
 
+using Enbrea.Cli.Common;
 using System.Text.Json.Serialization;
 
 namespace Enbrea.Cli.Magellan
 {
+    /// <summary>
+    /// Configuraton for MAGELLAN 
+    /// </summary>
     public class Configuration
     {
         /// <summary>
         /// Firebird database connection for MAGELLAN access
         /// </summary>
         [JsonPropertyOrder(0)]
-        public string DatabaseConnection { get; set; } = "DataSource=localhost;Database='C:\\Users\\Public\\Documents\\Stueber Systems\\MAGELLAN 10\\Datenbank\\Magellan10.fdb';Charset=UTF8;User=myUsername;Password=myPassword";
+        public string DatabaseConnection { get; set; } = "DataSource=localhost;Database='C:\\Users\\Public\\Documents\\Stueber Systems\\MAGELLAN 11\\Datenbank\\Magellan11.fdb';Charset=UTF8;User=myUsername;Password=myPassword";
 
         /// <summary>
         /// ID of the current MAGELLAN school term (Zeitraum)
@@ -42,6 +46,12 @@ namespace Enbrea.Cli.Magellan
         /// </summary>
         [JsonPropertyOrder(4)]
         public string SourceFolder { get; set; } = ".\\magellan\\import";
+
+        /// <summary>
+        /// Table mapping for export and import
+        /// </summary>
+        [JsonPropertyOrder(5)]
+        public ProviderEcfMapping EcfMapping { get; set; }
 
         /// <summary>
         /// Target folder for ecf files, log files etc.

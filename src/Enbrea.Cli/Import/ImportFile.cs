@@ -49,6 +49,11 @@ namespace Enbrea.Cli
             get { return Path.ChangeExtension(FullName, "csv.previous"); }
         }
 
+        public string FullNameForTemporaryUse
+        {
+            get { return Path.ChangeExtension(FullName, "csv.tmp"); }
+        }
+
         public string[] KeyHeaders { get; }
         
         public string TableName

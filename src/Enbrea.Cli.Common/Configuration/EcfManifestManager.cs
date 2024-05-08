@@ -19,7 +19,6 @@
  */
 #endregion
 
-using Enbrea.Csv;
 using Enbrea.Ecf;
 using System.IO;
 using System.Threading;

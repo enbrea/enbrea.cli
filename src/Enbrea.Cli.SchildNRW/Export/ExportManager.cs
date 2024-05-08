@@ -24,7 +24,6 @@ using Enbrea.Ecf;
 using Enbrea.Konsoli;
 using Enbrea.SchildNRW.Db;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -58,17 +57,17 @@ namespace Enbrea.Cli.SchildNRW
             PrepareEcfFolder();
 
             // Catalogs
-            await Execute(EcfTables.CourseTypes, schildNRWDbReader, async (r, w) => await ExportCourseTypes(r, w));
+            await Execute(EcfTables.CourseTypes, schildNRWDbReader, ExportCourseTypes);
 
             // Education
-            await Execute(EcfTables.Teachers, schildNRWDbReader, async (r, w) => await ExportTeachers(r, w));
-            await Execute(EcfTables.Subjects, schildNRWDbReader, async (r, w) => await ExportSubjects(r, w));
-            await Execute(EcfTables.SchoolClasses, schildNRWDbReader, async (r, w) => await ExportSchoolClasses(r, w));
-            await Execute(EcfTables.Students, schildNRWDbReader, async (r, w) => await ExportStudents(r, w));
-            await Execute(EcfTables.StudentSchoolClassAttendances, schildNRWDbReader, async (r, w) => await ExportStudentSchoolClassAttendances(r, w));
-            await Execute(EcfTables.Courses, schildNRWDbReader, async (r, w) => await ExportCourses(r, w));
-            await Execute(EcfTables.StudentCourseAttendances, schildNRWDbReader, async (r, w) => await ExportStudentCourseAttendances(r, w));
-            await Execute(EcfTables.TeacherCourseAttendances, schildNRWDbReader, async (r, w) => await ExportTeacherCourseAttendances(r, w));
+            await Execute(EcfTables.Teachers, schildNRWDbReader, ExportTeachers);
+            await Execute(EcfTables.Subjects, schildNRWDbReader, ExportSubjects);
+            await Execute(EcfTables.SchoolClasses, schildNRWDbReader, ExportSchoolClasses);
+            await Execute(EcfTables.Students, schildNRWDbReader, ExportStudents);
+            await Execute(EcfTables.StudentSchoolClassAttendances, schildNRWDbReader, ExportStudentSchoolClassAttendances);
+            await Execute(EcfTables.Courses, schildNRWDbReader, ExportCourses);
+            await Execute(EcfTables.StudentCourseAttendances, schildNRWDbReader, ExportStudentCourseAttendances);
+            await Execute(EcfTables.TeacherCourseAttendances, schildNRWDbReader, ExportTeacherCourseAttendances);
 
             // Report status
             _consoleWriter.Success($"{_tableCounter} table(s) and {_recordCounter} record(s) extracted").NewLine();
@@ -80,15 +79,14 @@ namespace Enbrea.Cli.SchildNRW
             _consoleWriter.StartProgress($"Extracting {ecfTableName}...");
             try
             {
-
                 // Init CSV file stream
                 using var ecfStreamWriter = new StreamWriter(Path.ChangeExtension(Path.Combine(GetEcfFolderName(), ecfTableName), "csv"));
 
                 // Init ECF Writer
-                var ecfTablefWriter = new EcfTableWriter(ecfStreamWriter);
+                var ecfTableWriter = new EcfTableWriter(ecfStreamWriter);
 
                 // Call table specific action
-                var ecfRecordCounter = await action(schildNRWDbReader, ecfTablefWriter);
+                var ecfRecordCounter = await action(schildNRWDbReader, ecfTableWriter);
 
                 // Inc counters
                 _recordCounter += ecfRecordCounter;
@@ -116,10 +114,13 @@ namespace Enbrea.Cli.SchildNRW
 
             await foreach (var course in schildNRWDbReader.CoursesAsync(_config.SchoolYear, _config.SchoolTerm))
             {
-                ecfTableWriter.TrySetValue(EcfHeaders.Id, course.Id.ToString());
-                ecfTableWriter.TrySetValue(EcfHeaders.Title, course.Name);
-                ecfTableWriter.TrySetValue(EcfHeaders.CourseTypeId, course.CourseCategory);
-                ecfTableWriter.TrySetValue(EcfHeaders.SubjectId, course.SubjectId.ToString());
+                if (ecfTableWriter.Headers.Count == 0)
+                {
+                    ecfTableWriter.SetValue(EcfHeaders.Id, course.Id.ToString());
+                    ecfTableWriter.SetValue(EcfHeaders.Title, course.Name);
+                    ecfTableWriter.SetValue(EcfHeaders.CourseTypeId, course.CourseCategory);
+                    ecfTableWriter.SetValue(EcfHeaders.SubjectId, course.SubjectId.ToString());
+                }
 
                 await ecfTableWriter.WriteAsync();
 
@@ -140,8 +141,8 @@ namespace Enbrea.Cli.SchildNRW
 
             await foreach (var courseType in schildNRWDbReader.CourseTypesAsync())
             {
-                ecfTableWriter.TrySetValue(EcfHeaders.Id, courseType.Id.ToString());
-                ecfTableWriter.TrySetValue(EcfHeaders.Code, courseType.Code);
+                ecfTableWriter.SetValue(EcfHeaders.Id, courseType.Id.ToString());
+                ecfTableWriter.SetValue(EcfHeaders.Code, courseType.Code);
                 ecfTableWriter.TrySetValue(EcfHeaders.Name, courseType.Name);
 
                 await ecfTableWriter.WriteAsync();
@@ -163,8 +164,8 @@ namespace Enbrea.Cli.SchildNRW
 
             await foreach (var schoolClass in schildNRWDbReader.SchoolClassesAsync())
             {
-                ecfTableWriter.TrySetValue(EcfHeaders.Id, schoolClass.Code);
-                ecfTableWriter.TrySetValue(EcfHeaders.Code, schoolClass.Code);
+                ecfTableWriter.SetValue(EcfHeaders.Id, schoolClass.Code);
+                ecfTableWriter.SetValue(EcfHeaders.Code, schoolClass.Code);
                 ecfTableWriter.TrySetValue(EcfHeaders.Name1, schoolClass.Name);
 
                 await ecfTableWriter.WriteAsync();
@@ -188,9 +189,9 @@ namespace Enbrea.Cli.SchildNRW
             {
                 await foreach (var attendance in schildNRWDbReader.StudentCourseAttendancesAsync(course.Id, _config.SchoolYear, _config.SchoolTerm))
                 {
-                    ecfTableWriter.TrySetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(attendance.StudentId.ToString(), course.Id.ToString()));
-                    ecfTableWriter.TrySetValue(EcfHeaders.StudentId, attendance.StudentId.ToString());
-                    ecfTableWriter.TrySetValue(EcfHeaders.CourseId, course.Id.ToString());
+                    ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(attendance.StudentId.ToString(), course.Id.ToString()));
+                    ecfTableWriter.SetValue(EcfHeaders.StudentId, attendance.StudentId.ToString());
+                    ecfTableWriter.SetValue(EcfHeaders.CourseId, course.Id.ToString());
 
                     await ecfTableWriter.WriteAsync();
 
@@ -212,9 +213,9 @@ namespace Enbrea.Cli.SchildNRW
 
             await foreach (var course in schildNRWDbReader.CoursesAsync(_config.SchoolYear, _config.SchoolTerm))
             {
-                ecfTableWriter.TrySetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(course.Teacher, course.Id.ToString()));
-                ecfTableWriter.TrySetValue(EcfHeaders.TeacherId, course.Teacher);
-                ecfTableWriter.TrySetValue(EcfHeaders.CourseId, course.Id.ToString());
+                ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(course.Teacher, course.Id.ToString()));
+                ecfTableWriter.SetValue(EcfHeaders.TeacherId, course.Teacher);
+                ecfTableWriter.SetValue(EcfHeaders.CourseId, course.Id.ToString());
 
                 await ecfTableWriter.WriteAsync();
 
@@ -238,9 +239,9 @@ namespace Enbrea.Cli.SchildNRW
 
             await foreach (var student in schildNRWDbReader.StudentsAsync(StudentStatus.Active))
             {
-                ecfTableWriter.TrySetValue(EcfHeaders.Id, student.Id.ToString());
-                ecfTableWriter.TrySetValue(EcfHeaders.LastName, student.Lastname);
-                ecfTableWriter.TrySetValue(EcfHeaders.FirstName, student.Firstname);
+                ecfTableWriter.SetValue(EcfHeaders.Id, student.Id.ToString());
+                ecfTableWriter.SetValue(EcfHeaders.LastName, student.Lastname);
+                ecfTableWriter.SetValue(EcfHeaders.FirstName, student.Firstname);
                 ecfTableWriter.TrySetValue(EcfHeaders.Gender, student.GetGenderOrDefault());
                 ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, student.GetBirthdateOrDefault());
 
@@ -256,16 +257,19 @@ namespace Enbrea.Cli.SchildNRW
         {
             var ecfRecordCounter = 0;
 
-            await ecfTableWriter.WriteHeadersAsync(
-                EcfHeaders.Id,
-                EcfHeaders.StudentId,
-                EcfHeaders.SchoolClassId);
+            if (ecfTableWriter.Headers.Count == 0)
+            {
+                await ecfTableWriter.WriteHeadersAsync(
+                    EcfHeaders.Id,
+                    EcfHeaders.StudentId,
+                    EcfHeaders.SchoolClassId);
+            }
 
             await foreach (var student in schildNRWDbReader.StudentsAsync(StudentStatus.Active))
             {
-                ecfTableWriter.TrySetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(student.Id.ToString(), student.SchoolClass));
-                ecfTableWriter.TrySetValue(EcfHeaders.StudentId, student.Id.ToString());
-                ecfTableWriter.TrySetValue(EcfHeaders.SchoolClassId, student.SchoolClass);
+                ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(student.Id.ToString(), student.SchoolClass));
+                ecfTableWriter.SetValue(EcfHeaders.StudentId, student.Id.ToString());
+                ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, student.SchoolClass);
 
                 await ecfTableWriter.WriteAsync();
 
@@ -287,8 +291,8 @@ namespace Enbrea.Cli.SchildNRW
 
             await foreach (var subject in schildNRWDbReader.SubjectsAsync())
             {
-                ecfTableWriter.TrySetValue(EcfHeaders.Id, subject.Id.ToString());
-                ecfTableWriter.TrySetValue(EcfHeaders.Code, subject.Code);
+                ecfTableWriter.SetValue(EcfHeaders.Id, subject.Id.ToString());
+                ecfTableWriter.SetValue(EcfHeaders.Code, subject.Code);
                 ecfTableWriter.TrySetValue(EcfHeaders.Name, subject.Name);
                 ecfTableWriter.TrySetValue(EcfHeaders.StatisticalCode, subject.StatisticalCode);
 
@@ -314,8 +318,8 @@ namespace Enbrea.Cli.SchildNRW
 
             await foreach (var teacher in schildNRWDbReader.TeachersAsync())
             {
-                ecfTableWriter.TrySetValue(EcfHeaders.Id, teacher.Code);
-                ecfTableWriter.TrySetValue(EcfHeaders.Code, teacher.Code);
+                ecfTableWriter.SetValue(EcfHeaders.Id, teacher.Code);
+                ecfTableWriter.SetValue(EcfHeaders.Code, teacher.Code);
                 ecfTableWriter.TrySetValue(EcfHeaders.LastName, teacher.Lastname);
                 ecfTableWriter.TrySetValue(EcfHeaders.FirstName, teacher.Firstname);
                 ecfTableWriter.TrySetValue(EcfHeaders.Gender, teacher.GetGenderOrDefault());

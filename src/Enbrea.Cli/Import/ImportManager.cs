@@ -44,10 +44,12 @@ namespace Enbrea.Cli
     public class ImportManager : CustomManager
     {
         private readonly ImportProvider _provider;
+        private readonly ProviderEcfMapping _providerEcfMapping;
         private readonly bool _skipSnapshot;
 
         public ImportManager(
             ImportProvider provider,
+            ProviderEcfMapping providerEcfMapping,
             string dataFolderName,
             Configuration config,
             bool skipSnapshot,
@@ -57,6 +59,7 @@ namespace Enbrea.Cli
             : base(config, dataFolderName, consoleWriter, cancellationEvent, cancellationToken)
         {
             _provider = provider;
+            _providerEcfMapping = providerEcfMapping;
             _skipSnapshot = skipSnapshot;
         }
 
@@ -67,6 +70,12 @@ namespace Enbrea.Cli
                 var files = GetImportFiles();
                 try
                 {
+                    // Provider ECF file mapping 
+                    if (_providerEcfMapping?.Files != null)
+                    {
+                        await EcfUtils.ApplyProviderExportFileMappings(files, _providerEcfMapping.Files);
+                    }
+
                     // Try load previous context data
                     var previousContext = await ImportContextManager.LoadFromFileAsync(GetCtxFileName(), _cancellationToken);
 
