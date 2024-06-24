@@ -36,6 +36,7 @@ namespace Enbrea.Cli.Excel
         public readonly string MiddleName = null;
         public readonly string NickName = null;
         public readonly string Salutation = null;
+        public readonly string Email = null;
 
         public ExportStudent(Configuration config, CsvTableReader csvTableReader)
         {
@@ -46,6 +47,7 @@ namespace Enbrea.Cli.Excel
             csvTableReader.TryGetValue(config.GetCsvHeaderName("Rufname"), out NickName);
             csvTableReader.TryGetValue(config.GetCsvHeaderName("Geschlecht"), out Gender);
             csvTableReader.TryGetValue(config.GetCsvHeaderName("Anrede"), out Salutation);
+            csvTableReader.TryGetValue(config.GetCsvHeaderName("Email"), out Email);
 
             if (csvTableReader.TryGetValue(config.GetCsvHeaderName("Name"), out string name))
             {

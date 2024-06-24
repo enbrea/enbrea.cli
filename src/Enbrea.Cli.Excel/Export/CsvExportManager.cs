@@ -155,7 +155,8 @@ namespace Enbrea.Cli.Excel
                 EcfHeaders.NickName,
                 EcfHeaders.Salutation,
                 EcfHeaders.Gender,
-                EcfHeaders.Birthdate);
+                EcfHeaders.Birthdate,
+                EcfHeaders.EmailAddress);
 
             while (await csvTableReader.ReadAsync() > 0)
             {
@@ -171,6 +172,7 @@ namespace Enbrea.Cli.Excel
                     ecfTableWriter.SetValue(EcfHeaders.Salutation, student.Salutation);
                     ecfTableWriter.SetValue(EcfHeaders.Gender, student.Gender);
                     ecfTableWriter.SetValue(EcfHeaders.Birthdate, student.BirthDate);
+                    ecfTableWriter.SetValue(EcfHeaders.EmailAddress, student.Email);
 
                     await ecfTableWriter.WriteAsync();
 

@@ -573,7 +573,8 @@ namespace Enbrea.Cli.Untis
                 EcfHeaders.LastName,
                 EcfHeaders.FirstName,
                 EcfHeaders.Gender,
-                EcfHeaders.Birthdate);
+                EcfHeaders.Birthdate,
+                EcfHeaders.EmailAddress);
 
             foreach (var student in untisDocument.Students)
             {
@@ -582,6 +583,7 @@ namespace Enbrea.Cli.Untis
                 ecfTableWriter.SetValue(EcfHeaders.FirstName, student.FirstName);
                 ecfTableWriter.TrySetValue(EcfHeaders.Gender, student.GetEcfGender());
                 ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, student.Birthdate);
+                ecfTableWriter.TrySetValue(EcfHeaders.EmailAddress, student.Email);
 
                 await ecfTableWriter.WriteAsync();
 
