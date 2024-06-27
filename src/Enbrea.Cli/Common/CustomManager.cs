@@ -1,6 +1,6 @@
-﻿#region ENBREA - Copyright (c) STÜBER SYSTEMS GmbH
+﻿#region Enbrea - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    ENBREA
+ *    Enbrea
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
@@ -27,7 +27,7 @@ using System.Threading;
 namespace Enbrea.Cli
 {
     /// <summary>
-    /// Abstract manager for dealing with ECF files from or to ENBREA
+    /// Abstract manager for dealing with ECF files from or to Enbrea
     /// </summary>
     public abstract class CustomManager : EcfCustomManager
     {

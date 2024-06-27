@@ -1,6 +1,6 @@
-﻿#region ENBREA - Copyright (c) STÜBER SYSTEMS GmbH
+﻿#region Enbrea - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    ENBREA
+ *    Enbrea
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
@@ -26,18 +26,18 @@ using System.Text.Json.Serialization;
 namespace Enbrea.Cli
 {
     /// <summary>
-    /// ENBREA CLI configuration
+    /// Enbrea Cli configuration
     /// </summary>
     public class Configuration
     {
         /// <summary>
-        /// Personal Access Token to be used instead of ENBREA identity call with UserName/Password
+        /// Personal Access Token to be used instead of Enbrea identity call with UserName/Password
         /// </summary>
         [JsonPropertyOrder(1)]
         public string AccessToken { get; set; } = "MyAccessToken";
 
         /// <summary>
-        /// Code of the ENBREA application process (for exporting)
+        /// Code of the Enbrea application process (for exporting)
         /// </summary>
         [JsonPropertyOrder(3)]
         public string ApplicationProcess { get; set; } 
@@ -47,6 +47,12 @@ namespace Enbrea.Cli
         /// </summary>
         [JsonPropertyOrder(10)]
         public BbsPlanung.Configuration BbsPlanung { get; set; } = new();
+
+        /// <summary>
+        /// Sub configuration for DaNiS
+        /// </summary>
+        [JsonPropertyOrder(13)]
+        public Danis.Configuration Danis { get; set; } = new();
 
         /// <summary>
         /// Sub configuration for DAVINCI
@@ -69,7 +75,7 @@ namespace Enbrea.Cli
         /// <summary>
         /// Sub configuration for Excel/CSV
         /// </summary>
-        [JsonPropertyOrder(13)]
+        [JsonPropertyOrder(14)]
         public Excel.Configuration Excel { get; set; } = new();
 
         /// <summary>
@@ -85,7 +91,7 @@ namespace Enbrea.Cli
         public SchildNRW.Configuration SchildNRW { get; set; } = new();
 
         /// <summary>
-        /// Code of the ENBREA school term (for importing or exporting)
+        /// Code of the Enbrea school term (for importing or exporting)
         /// </summary>
         [JsonPropertyOrder(2)]
         public string SchoolTerm { get; set; } = "MySchoolTerm";
@@ -97,13 +103,13 @@ namespace Enbrea.Cli
         public Untis.Configuration Untis { get; set; } = new();
 
         /// <summary>
-        /// URL to ENBREA
+        /// URL to Enbrea
         /// </summary>
         [JsonPropertyOrder(0)]
         public Uri Url { get; set; } = new Uri("https://enbrea.cloud/myschool");
 
         /// <summary>
-        /// Calculates the correct URL for the ENBREA SyncHub
+        /// Calculates the correct URL for the Enbrea SyncHub
         /// </summary>
         /// <returns>A URL</returns>
         public Uri GetSyncHubUrlWithTrailingSlash()

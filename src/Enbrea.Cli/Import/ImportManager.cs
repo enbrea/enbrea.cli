@@ -1,6 +1,6 @@
-﻿#region ENBREA - Copyright (c) STÜBER SYSTEMS GmbH
+﻿#region Enbrea - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    ENBREA
+ *    Enbrea
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
@@ -39,7 +39,7 @@ using System.Threading.Tasks;
 namespace Enbrea.Cli
 {
     /// <summary>
-    /// Import workflow from ECF to ENBREA
+    /// Import workflow from ECF to Enbrea
     /// </summary>
     public class ImportManager : CustomManager
     {
@@ -128,7 +128,7 @@ namespace Enbrea.Cli
                         // Console output
                         _consoleWriter.NewLine().Caption("Connect and create new import job");
 
-                        // Create new import job for ENBREA
+                        // Create new import job for Enbrea
                         var jobId = await CreateJob(_config, manifest);
 
                         // Console output

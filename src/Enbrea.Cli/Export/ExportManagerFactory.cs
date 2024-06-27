@@ -1,6 +1,6 @@
-﻿#region ENBREA - Copyright (c) STÜBER SYSTEMS GmbH
+﻿#region Enbrea - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    ENBREA
+ *    Enbrea
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
@@ -46,6 +46,8 @@ namespace Enbrea.Cli
                     return new BbsPlanung.ExportManager(config.BbsPlanung, consoleWriter, cancellationToken);
                 case ImportProvider.schildnrw:
                     return new SchildNRW.ExportManager(config.SchildNRW, consoleWriter, cancellationToken);
+                case ImportProvider.danis:
+                    return new Danis.ExportManager(config.Danis, consoleWriter, cancellationToken);
                 case ImportProvider.edoosys:
                     if (config.Edoosys.DataProvider == Edoosys.DataProvider.Csv)
                     {

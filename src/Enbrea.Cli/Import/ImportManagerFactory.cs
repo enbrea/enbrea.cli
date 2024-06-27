@@ -1,6 +1,6 @@
-﻿#region ENBREA - Copyright (c) STÜBER SYSTEMS GmbH
+﻿#region Enbrea - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    ENBREA
+ *    Enbrea
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
@@ -69,6 +69,8 @@ namespace Enbrea.Cli
                     return config.Edoosys.TargetFolder;
                 case ImportProvider.schildnrw:
                     return config.SchildNRW.TargetFolder;
+                case ImportProvider.danis:
+                    return config.Danis.TargetFolder;
                 case ImportProvider.excel:
                     return config.Excel.TargetFolder;
                 default:
@@ -93,6 +95,8 @@ namespace Enbrea.Cli
                     return config.Edoosys.EcfMapping;
                 case ImportProvider.schildnrw:
                     return config.SchildNRW.EcfMapping;
+                case ImportProvider.danis:
+                    return config.Danis.EcfMapping;
                 default:
                     return null;
             }

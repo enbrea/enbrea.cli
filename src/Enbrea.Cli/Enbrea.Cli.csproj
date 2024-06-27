@@ -3,11 +3,11 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Copyright>© 2024 STÜBER SYSTEMS GmbH</Copyright>
-    <Product>ENBREA CLI</Product>
+    <Product>Enbrea Cli</Product>
     <Company>STÜBER SYSTEMS GmbH</Company>
-    <Version>0.9.0</Version>
+    <Version>1.0.0</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Description>Client Tool for working with ENBREA on the command line</Description>
+    <Description>Client Tool for working with Enbrea on the command line</Description>
     <Authors>STÜBER SYSTEMS GmbH</Authors>
     <LangVersion>latest</LangVersion>
     <RootNamespace>Enbrea.Cli</RootNamespace>
@@ -20,14 +20,14 @@
     <PackageReference Include="Enbrea.Csv" Version="0.10.2" />
     <PackageReference Include="Enbrea.Ecf" Version="0.2.1" />
     <PackageReference Include="IdentityModel" Version="7.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.6" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.6" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
-    <PackageReference Include="Serilog" Version="3.1.1" />
+    <PackageReference Include="Serilog" Version="4.0.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     <PackageReference Include="System.IO.Hashing" Version="8.0.0" />
     <PackageReference Include="System.Text.Json" Version="8.0.3" />
@@ -37,6 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Enbrea.Cli.BbsPlanung\Enbrea.Cli.BbsPlanung.csproj" />
     <ProjectReference Include="..\Enbrea.Cli.Common\Enbrea.Cli.Common.csproj" />
+    <ProjectReference Include="..\Enbrea.Cli.DaNiS\Enbrea.Cli.DaNiS.csproj" />
     <ProjectReference Include="..\Enbrea.Cli.DaVinci\Enbrea.Cli.DaVinci.csproj" />
     <ProjectReference Include="..\Enbrea.Cli.Edoosys\Enbrea.Cli.Edoosys.csproj" />
     <ProjectReference Include="..\Enbrea.Cli.Excel\Enbrea.Cli.Excel.csproj" />

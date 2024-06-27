@@ -1,6 +1,6 @@
-﻿#region ENBREA - Copyright (c) STÜBER SYSTEMS GmbH
+﻿#region Enbrea - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    ENBREA
+ *    Enbrea
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
@@ -235,7 +235,8 @@ namespace Enbrea.Cli.SchildNRW
                 EcfHeaders.LastName,
                 EcfHeaders.FirstName,
                 EcfHeaders.Gender,
-                EcfHeaders.Birthdate);
+                EcfHeaders.Birthdate,
+                EcfHeaders.EmailAddress);
 
             await foreach (var student in schildNRWDbReader.StudentsAsync(StudentStatus.Active))
             {
@@ -244,6 +245,7 @@ namespace Enbrea.Cli.SchildNRW
                 ecfTableWriter.SetValue(EcfHeaders.FirstName, student.Firstname);
                 ecfTableWriter.TrySetValue(EcfHeaders.Gender, student.GetGenderOrDefault());
                 ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, student.GetBirthdateOrDefault());
+                ecfTableWriter.TrySetValue(EcfHeaders.EmailAddress, student.Email);
 
                 await ecfTableWriter.WriteAsync();
 
@@ -314,7 +316,8 @@ namespace Enbrea.Cli.SchildNRW
                 EcfHeaders.LastName,
                 EcfHeaders.FirstName,
                 EcfHeaders.Gender,
-                EcfHeaders.Birthdate);
+                EcfHeaders.Birthdate,
+                EcfHeaders.EmailAddress);
 
             await foreach (var teacher in schildNRWDbReader.TeachersAsync())
             {
@@ -324,6 +327,7 @@ namespace Enbrea.Cli.SchildNRW
                 ecfTableWriter.TrySetValue(EcfHeaders.FirstName, teacher.Firstname);
                 ecfTableWriter.TrySetValue(EcfHeaders.Gender, teacher.GetGenderOrDefault());
                 ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, teacher.GetBirthdateOrDefault());
+                ecfTableWriter.TrySetValue(EcfHeaders.EmailAddress, teacher.Email);
 
                 await ecfTableWriter.WriteAsync();
 

@@ -1,6 +1,6 @@
-﻿#region ENBREA - Copyright (c) STÜBER SYSTEMS GmbH
+﻿#region Enbrea - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    ENBREA
+ *    Enbrea
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
@@ -29,7 +29,7 @@ namespace Enbrea.Cli
     {
         public static Command Backup()
         {
-            var command = new Command("backup-offline", "Creates and downloads an ENBREA database backup for offline use")
+            var command = new Command("backup-offline", "Creates and downloads an Enbrea database backup for offline use")
             {
                 new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
                 {
@@ -51,7 +51,7 @@ namespace Enbrea.Cli
 
         public static Command CreateExportTask()
         {
-            var command = new Command("create-export-task", "Schedules a task for a data export from an ENBREA instance")
+            var command = new Command("create-export-task", "Schedules a task for a data export from an Enbrea instance")
             {
                 new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
                 {
@@ -77,7 +77,7 @@ namespace Enbrea.Cli
 
         public static Command CreateImportTask()
         {
-            var command = new Command("create-import-task", "Schedules a task for a data import to an ENBREA instance")
+            var command = new Command("create-import-task", "Schedules a task for a data import to an Enbrea instance")
             {
                 new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
                 {
@@ -103,7 +103,7 @@ namespace Enbrea.Cli
 
         public static Command CreateSnaphot()
         {
-            var command = new Command("create-snapshot", "Create a ENBREA database snapshot")
+            var command = new Command("create-snapshot", "Create a Enbrea database snapshot")
             {
                 new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
                 {
@@ -120,7 +120,7 @@ namespace Enbrea.Cli
 
         public static Command DeleteAllTasks()
         {
-            var command = new Command("delete-tasks", "Deletes all scheduled import and export tasks for ENBREA");
+            var command = new Command("delete-tasks", "Deletes all scheduled import and export tasks for Enbrea");
 
             command.SetHandler(CommandHandlers.DeleteAllTasks);
 
@@ -129,7 +129,7 @@ namespace Enbrea.Cli
 
         public static Command DeleteExportTask()
         {
-            var command = new Command("delete-export-task", "Deletes a scheduled export task for ENBREA")
+            var command = new Command("delete-export-task", "Deletes a scheduled export task for Enbrea")
             {
                 new Option<ExportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
                 {
@@ -145,7 +145,7 @@ namespace Enbrea.Cli
 
         public static Command DeleteImportTask()
         {
-            var command = new Command("delete-import-task", "Deletes a scheduled import task for ENBREA")
+            var command = new Command("delete-import-task", "Deletes a scheduled import task for Enbrea")
             {
                 new Option<ImportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
                 {
@@ -161,7 +161,7 @@ namespace Enbrea.Cli
 
         public static Command DeleteSnaphot()
         {
-            var command = new Command("delete-snapshot", "Delete an ENBREA database snapshot"){
+            var command = new Command("delete-snapshot", "Delete an Enbrea database snapshot"){
                 new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
                 {
                     IsRequired = true
@@ -182,7 +182,7 @@ namespace Enbrea.Cli
 
         public static Command DisableExportTask()
         {
-            var command = new Command("disable-export-task", "Deactivates a scheduled export task for ENBREA")
+            var command = new Command("disable-export-task", "Deactivates a scheduled export task for Enbrea")
             {
                 new Option<ExportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
                 {
@@ -198,7 +198,7 @@ namespace Enbrea.Cli
 
         public static Command DisableImportTask()
         {
-            var command = new Command("disable-import-task", "Deactivates a scheduled import task for ENBREA")
+            var command = new Command("disable-import-task", "Deactivates a scheduled import task for Enbrea")
             {
                 new Option<ImportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
                 {
@@ -214,7 +214,7 @@ namespace Enbrea.Cli
 
         public static Command EnableExportTask()
         {
-            var command = new Command("enable-export-task", "Activates a scheduled export task for ENBREA")
+            var command = new Command("enable-export-task", "Activates a scheduled export task for Enbrea")
             {
                 new Option<ExportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
                 {
@@ -230,7 +230,7 @@ namespace Enbrea.Cli
 
         public static Command EnableImportTask()
         {
-            var command = new Command("enable-import-task", "Activates a scheduled import task for ENBREA")
+            var command = new Command("enable-import-task", "Activates a scheduled import task for Enbrea")
             {
                 new Option<ImportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
                 {
@@ -246,7 +246,7 @@ namespace Enbrea.Cli
 
         public static Command Export()
         {
-            var command = new Command("export", "Exports data from an ENBREA instance to an external provider")
+            var command = new Command("export", "Exports data from an Enbrea instance to an external provider")
             {
                 new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
                 {
@@ -256,7 +256,7 @@ namespace Enbrea.Cli
                 {
                     IsRequired = true
                 },
-                new Option<bool>(new[] { "--skip-enbrea" }, delegate() { return false; }, "Skip export of ECF files from ENBREA")
+                new Option<bool>(new[] { "--skip-enbrea" }, delegate() { return false; }, "Skip export of ECF files from Enbrea")
                 {
                     IsRequired = false
                 },
@@ -282,7 +282,7 @@ namespace Enbrea.Cli
 
         public static Command Import()
         {
-            var command = new Command("import", "Imports data from external provider to an ENBREA instance")
+            var command = new Command("import", "Imports data from external provider to an Enbrea instance")
             {
                 new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
                 {
@@ -296,7 +296,7 @@ namespace Enbrea.Cli
                 {
                     IsRequired = false
                 },
-                new Option<bool>(new[] { "--skip-enbrea" }, delegate() { return false; }, "Skip import of ECF files to ENBREA")
+                new Option<bool>(new[] { "--skip-enbrea" }, delegate() { return false; }, "Skip import of ECF files to Enbrea")
                 {
                     IsRequired = false
                 },
@@ -323,7 +323,7 @@ namespace Enbrea.Cli
 
         public static Command Init()
         {
-            var command = new Command("init", "Create an ENBREA configuration file template")
+            var command = new Command("init", "Create an Enbrea configuration file template")
             {
                 new Option<FileInfo>(new[] { "--config", "-c" }, "Path for new JSON configuration file")
                 {
@@ -340,7 +340,7 @@ namespace Enbrea.Cli
 
         public static Command ListAllTasks()
         {
-            var command = new Command("list-tasks", "Get list of all scheduled import and export tasks for ENBREA");
+            var command = new Command("list-tasks", "Get list of all scheduled import and export tasks for Enbrea");
 
             command.SetHandler(CommandHandlers.ListAllTasks);
 
@@ -349,7 +349,7 @@ namespace Enbrea.Cli
 
         public static Command ListSchoolTerms()
         {
-            var command = new Command("list-schoolterms", "Get list of ENBREA school terms"){
+            var command = new Command("list-schoolterms", "Get list of Enbrea school terms"){
                 new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
                 {
                     IsRequired = true
@@ -365,7 +365,7 @@ namespace Enbrea.Cli
 
         public static Command ListSnaphots()
         {
-            var command = new Command("list-snapshots", "Get list of ENBREA database snapshots"){
+            var command = new Command("list-snapshots", "Get list of Enbrea database snapshots"){
                 new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
                 {
                     IsRequired = true
@@ -381,7 +381,7 @@ namespace Enbrea.Cli
 
         public static Command RestoreSnaphot()
         {
-            var command = new Command("restore-snapshot", "Restore an ENBREA database from an ENBREA snapshot"){
+            var command = new Command("restore-snapshot", "Restore an Enbrea database from an Enbrea snapshot"){
                 new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
                 {
                     IsRequired = true

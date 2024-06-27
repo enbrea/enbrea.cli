@@ -125,10 +125,10 @@ steps:
     targetType: 'inline'
     script: |
       $env:PATH += ';C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64'
-      signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) /d "ENBREA CLI" $(Build.ArtifactStagingDirectory)/enbrea.cli-x64-de.msi
-      signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) /d "ENBREA CLI" $(Build.ArtifactStagingDirectory)/enbrea.cli-x64-en.msi
-      signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) /d "ENBREA CLI" $(Build.ArtifactStagingDirectory)/enbrea.cli-x86-de.msi
-      signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) /d "ENBREA CLI" $(Build.ArtifactStagingDirectory)/enbrea.cli-x86-en.msi
+      signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) /d "Enbrea Cli" $(Build.ArtifactStagingDirectory)/enbrea.cli-x64-de.msi
+      signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) /d "Enbrea Cli" $(Build.ArtifactStagingDirectory)/enbrea.cli-x64-en.msi
+      signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) /d "Enbrea Cli" $(Build.ArtifactStagingDirectory)/enbrea.cli-x86-de.msi
+      signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) /d "Enbrea Cli" $(Build.ArtifactStagingDirectory)/enbrea.cli-x86-en.msi
     failOnStderr: true
     pwsh: true
 - task: ArchiveFiles@2
@@ -160,5 +160,5 @@ steps:
     action: 'create'
     target: '$(Build.SourceVersion)'
     tagSource: 'gitTag'
-    title: '$(SemVersion) Release of ENBREA CLI'
+    title: '$(SemVersion) Release of Enbrea Cli'
     addChangeLog: false

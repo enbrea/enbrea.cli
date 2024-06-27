@@ -1,6 +1,6 @@
-﻿#region ENBREA - Copyright (c) STÜBER SYSTEMS GmbH
+﻿#region Enbrea - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    ENBREA
+ *    Enbrea
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
@@ -34,7 +34,7 @@ namespace Enbrea.Cli
             // Create dependency injection container
             var serviceCollection = new ServiceCollection();
 
-            // Register ENBREA Http Client
+            // Register Enbrea Http Client
             serviceCollection.AddHttpClient<IEnbreaHttpClient, EnbreaHttpClient>(c =>
             {
                 c.DefaultRequestHeaders.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue(AssemblyInfo.GetAgentName(), AssemblyInfo.GetVersion()));

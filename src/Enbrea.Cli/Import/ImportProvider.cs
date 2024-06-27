@@ -1,6 +1,6 @@
-﻿#region ENBREA - Copyright (c) STÜBER SYSTEMS GmbH
+﻿#region Enbrea - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    ENBREA
+ *    Enbrea
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
@@ -23,6 +23,6 @@ namespace Enbrea.Cli
 {
     public enum ImportProvider
     {
-        davinci, untis, magellan, edoosys, schildnrw, bbsplanung, excel
+        davinci, untis, magellan, edoosys, schildnrw, bbsplanung, danis, excel
     }
 }

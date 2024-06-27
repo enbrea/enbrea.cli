@@ -3,8 +3,8 @@ This file contains the declaration of all the localizable strings.
 -->
 <WixLocalization xmlns="http://wixtoolset.org/schemas/v4/wxl" Culture="en-US">
 
-  <String Id="AppName" Value="ENBREA CLI" />
-  <String Id="AppDescription" Value="Client Tool for working with ENBREA on the command line" />
+  <String Id="AppName" Value="Enbrea Cli" />
+  <String Id="AppDescription" Value="Client Tool for working with Enbrea on the command line" />
   <String Id="AppFolder" Value="Enbrea" />
   <String Id="Manufacturer" Value="STÜBER SYSTEMS GmbH" />
   <String Id="ProjectFolder" Value="Stueber Systems" />

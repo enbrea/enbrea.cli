@@ -1,9 +1,9 @@
 {
   "$id": "https://github.com/enbrea/enbrea.cli/schema/config-schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$comment": "v-0.1.0",
-  "title": "ENBREA CLI JSON Configuration Schema Specification",
-  "description": "Spezifikation des JSON Schemas der ENBREA CLI Konfigurationsdatei",
+  "$comment": "v-0.2.0",
+  "title": "Enbrea Cli JSON Configuration Schema Specification",
+  "description": "Spezifikation des JSON Schemas der Enbrea Cli Konfigurationsdatei",
   "type": "object",
   "required": [
     "Url",
@@ -13,16 +13,16 @@
   "properties": {
     "Url": {
       "type": "string",
-      "description": "URL der ENBREA-Instanz",
+      "description": "URL der Enbrea-Instanz",
       "format": "uri"
     },
     "AccessToken": {
       "type": "string",
-      "description": "ENBREA-Zugriffstoken"
+      "description": "Enbrea-Zugriffstoken"
     },
     "SchoolTerm": {
       "type": "string",
-      "description": "Kürzel des ENBREA-Zeitraums in den importiert bzw. aus dem exportiert werden soll"
+      "description": "Kürzel des Enbrea-Zeitraums in den importiert bzw. aus dem exportiert werden soll"
     },
     "DaVinci": {
       "oneOf": [
@@ -44,12 +44,12 @@
             },
             "TargetFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von DAVINCI nach ENBREA",
+              "description": "Ordnerpfad für die Synchronisation von DAVINCI nach Enbrea",
               "default": ".\\davinci\\export"
             },
             "SourceFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von ENBREA nach DAVINCI",
+              "description": "Ordnerpfad für die Synchronisation von Enbrea nach DAVINCI",
               "default": ".\\davinci\\import"
             }
           }
@@ -94,12 +94,12 @@
             },
             "TargetFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von DAVINCI nach ENBREA",
+              "description": "Ordnerpfad für die Synchronisation von DAVINCI nach Enbrea",
               "default": ".\\davinci\\export"
             },
             "SourceFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von ENBREA nach DAVINCI",
+              "description": "Ordnerpfad für die Synchronisation von Enbrea nach DAVINCI",
               "default": ".\\davinci\\import"
             }
           }
@@ -146,7 +146,7 @@
             },
             "TargetFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von Untis nach ENBREA",
+              "description": "Ordnerpfad für die Synchronisation von Untis nach Enbrea",
               "default": ".\\untis\\export"
             }
           }
@@ -204,7 +204,7 @@
             },
             "TargetFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von Untis nach ENBREA",
+              "description": "Ordnerpfad für die Synchronisation von Untis nach Enbrea",
               "default": ".\\untis\\export"
             }
           }
@@ -242,7 +242,7 @@
             },
             "TargetFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von Untis nach ENBREA",
+              "description": "Ordnerpfad für die Synchronisation von Untis nach Enbrea",
               "default": ".\\untis\\export"
             }
           }
@@ -272,12 +272,12 @@
         },
         "TargetFolder": {
           "type": "string",
-          "description": "Ordnerpfad für die Synchronisation von MAGELLAN nach ENBREA",
+          "description": "Ordnerpfad für die Synchronisation von MAGELLAN nach Enbrea",
           "default": ".\\magellan\\export"
         },
         "SourceFolder": {
           "type": "string",
-          "description": "Ordnerpfad für die Synchronisation von ENBREA nach MAGELLAN",
+          "description": "Ordnerpfad für die Synchronisation von Enbrea nach MAGELLAN",
           "default": ".\\magellan\\import"
         }
       }
@@ -300,8 +300,31 @@
         },
         "TargetFolder": {
           "type": "string",
-          "description": "Ordnerpfad für die Synchronisation von BBS-Planung nach ENBREA",
+          "description": "Ordnerpfad für die Synchronisation von BBS-Planung nach Enbrea",
           "default": ".\\bbsplanung\\export"
+        }
+      }
+    },
+    "Danis": {
+      "type": "object",
+      "description": "Konfiguration der Synchronisation mit DaNiS",
+      "required": [
+        "DatabaseConnection",
+        "Year"
+      ],
+      "properties": {
+        "DatabaseConnection": {
+          "type": "string",
+          "description": "Ein Connection-String zur MariaDB-Datenbank von DaNiS"
+        },
+        "Year": {
+          "type": "integer",
+          "description": "Kalendarjahr, in dem das Schuljahr beginnt"
+        },
+        "TargetFolder": {
+          "type": "string",
+          "description": "Ordnerpfad für die Synchronisation von DaNiS nach Enbrea",
+          "default": ".\\danis\\export"
         }
       }
     },
@@ -340,7 +363,7 @@
             },
             "TargetFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von edoo.sys nach ENBREA",
+              "description": "Ordnerpfad für die Synchronisation von edoo.sys nach Enbrea",
               "default": ".\\edoosys\\export"
             }
           }
@@ -388,7 +411,7 @@
             },
             "TargetFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von edoo.sys nach ENBREA",
+              "description": "Ordnerpfad für die Synchronisation von edoo.sys nach Enbrea",
               "default": ".\\edoosys\\export"
             }
           }
@@ -423,7 +446,7 @@
         },
         "TargetFolder": {
           "type": "string",
-          "description": "Ordnerpfad für die Synchronisation von Schild-NRW nach ENBREA",
+          "description": "Ordnerpfad für die Synchronisation von Schild-NRW nach Enbrea",
           "default": ".\\schildnrw\\export"
         }
       }
@@ -499,15 +522,15 @@
                       "Fach19",
                       "Fach20"
                     ],
-                    "description": "Name der von ENBREA unterstützten Tabellenspalte"
+                    "description": "Name der von Enbrea unterstützten Tabellenspalte"
                   }
                 }
               }
             },
             "TargetFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von edoo.sys nach ENBREA",
-              "default": ".\\edoosys\\export"
+              "description": "Ordnerpfad für die Synchronisation von Excel (XLSX-Format) nach Enbrea",
+              "default": ".\\excel\\export"
             }
           }
         },
@@ -585,15 +608,15 @@
                       "Fach19",
                       "Fach20"
                     ],
-                    "description": "Name der von ENBREA unterstützten Tabellenspalte"
+                    "description": "Name der von Enbrea unterstützten Tabellenspalte"
                   }
                 }
               }
             },
             "TargetFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von edoo.sys nach ENBREA",
-              "default": ".\\edoosys\\export"
+              "description": "Ordnerpfad für die Synchronisation von Excel (CSV-Format) nach Enbrea",
+              "default": ".\\excel\\export"
             }
           }
         }
