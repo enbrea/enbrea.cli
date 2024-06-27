@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Copyright>© 2024 STÜBER SYSTEMS GmbH</Copyright>
-    <Product>ENBREA CLI Module for Excel/CSV</Product>
+    <Product>Enbrea Cli Module for Excel/CSV</Product>
     <Company>STÜBER SYSTEMS GmbH</Company>
     <Version>0.0.1</Version>
     <Description>Generating ECF files from a simple Excel sheet or CSV</Description>

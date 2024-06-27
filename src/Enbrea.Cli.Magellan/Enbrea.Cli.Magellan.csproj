@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Copyright>© 2024 STÜBER SYSTEMS GmbH</Copyright>
-    <Product>ENBREA CLI Module for MAGELLAN</Product>
+    <Product>Enbrea Cli Module for MAGELLAN</Product>
     <Company>STÜBER SYSTEMS GmbH</Company>
     <Version>0.0.1</Version>
     <Description>Generating ECF files from MAGELLAN and back</Description>
@@ -19,7 +19,7 @@
   <ItemGroup>
     <PackageReference Include="Enbrea.Ecf" Version="0.2.1" />
     <PackageReference Include="Enbrea.GuidFactory" Version="0.9.2" />
-    <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="10.0.0" />
+    <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="10.3.1" />
   </ItemGroup>
 
   <ItemGroup>

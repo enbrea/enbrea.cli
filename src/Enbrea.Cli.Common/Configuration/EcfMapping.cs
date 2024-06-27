@@ -1,6 +1,6 @@
-﻿#region ENBREA - Copyright (c) STÜBER SYSTEMS GmbH
+﻿#region Enbrea - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    ENBREA
+ *    Enbrea
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
@@ -24,10 +24,10 @@ using System.Collections.Generic;
 namespace Enbrea.Cli.Common
 {
     /// <summary>
-    /// Mapping of ECF files to ENBREA.
+    /// Mapping of ECF files to Enbrea.
     /// </summary>
     /// <remarks>
-    /// The mapping defines which ECF files should be imported to ENBREA or exported from ENBREA and what
+    /// The mapping defines which ECF files should be imported to Enbrea or exported from Enbrea and what
     /// is the unique key of each ECF file.
     /// </remarks>
     public class EcfMapping

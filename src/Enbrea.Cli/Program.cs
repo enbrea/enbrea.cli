@@ -1,6 +1,6 @@
-﻿#region ENBREA - Copyright (c) STÜBER SYSTEMS GmbH
+﻿#region Enbrea - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    ENBREA
+ *    Enbrea
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
@@ -33,7 +33,7 @@ namespace Enbrea.Cli
             Console.Title = AssemblyInfo.GetTitle();
 
             // Build up command line api
-            var rootCommand = new RootCommand(description: "Tool for synchronizing external data provider with ENBREA")
+            var rootCommand = new RootCommand(description: "Tool for synchronizing external data provider with Enbrea")
             {
                 CommandDefinitions.Init(),
                 CommandDefinitions.Export(),

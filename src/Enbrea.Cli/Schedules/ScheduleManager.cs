@@ -1,6 +1,6 @@
-﻿#region ENBREA - Copyright (c) STÜBER SYSTEMS GmbH
+﻿#region Enbrea - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    ENBREA
+ *    Enbrea
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
@@ -65,7 +65,7 @@ namespace Enbrea.Cli
                 {
                     var taskDefinition = TaskService.Instance.NewTask();
 
-                    taskDefinition.RegistrationInfo.Description = $"ENBREA Export to {provider}";
+                    taskDefinition.RegistrationInfo.Description = $"Enbrea Export to {provider}";
                     taskDefinition.Settings.Enabled = false;
                     taskDefinition.Principal.Id = NetServiceAccount;
                     taskDefinition.Principal.LogonType = TaskLogonType.ServiceAccount;
@@ -127,7 +127,7 @@ namespace Enbrea.Cli
                 {
                     var taskDefinition = TaskService.Instance.NewTask();
 
-                    taskDefinition.RegistrationInfo.Description = $"ENBREA Import from {provider}";
+                    taskDefinition.RegistrationInfo.Description = $"Enbrea Import from {provider}";
                     taskDefinition.Settings.Enabled = false;
                     taskDefinition.Principal.Id = NetServiceAccount;
                     taskDefinition.Principal.LogonType = TaskLogonType.ServiceAccount;
@@ -246,7 +246,7 @@ namespace Enbrea.Cli
                 }
                 else
                 {
-                    throw new ScheduleException($"No ENBREA tasks found");
+                    throw new ScheduleException($"No Enbrea tasks found");
                 }
             }
             catch
@@ -280,7 +280,7 @@ namespace Enbrea.Cli
                 }
                 else
                 {
-                    throw new ScheduleException($"No ENBREA tasks found");
+                    throw new ScheduleException($"No Enbrea tasks found");
                 }
             }
             catch
@@ -315,7 +315,7 @@ namespace Enbrea.Cli
                 }
                 else
                 {
-                    throw new ScheduleException($"No ENBREA tasks found");
+                    throw new ScheduleException($"No Enbrea tasks found");
                 }
             }
             catch
@@ -350,7 +350,7 @@ namespace Enbrea.Cli
                 }
                 else
                 {
-                    throw new ScheduleException($"No ENBREA tasks found");
+                    throw new ScheduleException($"No Enbrea tasks found");
                 }
             }
             catch
@@ -385,7 +385,7 @@ namespace Enbrea.Cli
                 }
                 else
                 {
-                    throw new ScheduleException($"No ENBREA tasks found");
+                    throw new ScheduleException($"No Enbrea tasks found");
                 }
             }
             catch
@@ -420,7 +420,7 @@ namespace Enbrea.Cli
                 }
                 else
                 {
-                    throw new ScheduleException($"No ENBREA tasks found");
+                    throw new ScheduleException($"No Enbrea tasks found");
                 }
             }
             catch

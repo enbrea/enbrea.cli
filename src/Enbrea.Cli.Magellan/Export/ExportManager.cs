@@ -1,6 +1,6 @@
-﻿#region ENBREA - Copyright (c) STÜBER SYSTEMS GmbH
+﻿#region Enbrea - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    ENBREA
+ *    Enbrea
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
@@ -56,7 +56,7 @@ namespace Enbrea.Cli.Magellan
 
                 if (_version < 7)
                 {
-                    throw new Exception("ENBREA CLI only supports MAGELLAN version 7 and higher.");
+                    throw new Exception("Enbrea Cli only supports MAGELLAN version 7 and higher.");
                 }
 
                 // Report status
