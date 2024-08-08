@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Copyright>© 2024 STÜBER SYSTEMS GmbH</Copyright>
-    <Product>Enbrea Cli Module for BBS-Planung</Product>
+    <Product>Enbrea CLI Module for BBS-Planung</Product>
     <Company>STÜBER SYSTEMS GmbH</Company>
     <Version>0.0.1</Version>
     <Description>Generating ECF files from a BBS-Planung database</Description>

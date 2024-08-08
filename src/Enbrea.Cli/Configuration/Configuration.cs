@@ -26,7 +26,7 @@ using System.Text.Json.Serialization;
 namespace Enbrea.Cli
 {
     /// <summary>
-    /// Enbrea Cli configuration
+    /// Enbrea CLI configuration
     /// </summary>
     public class Configuration
     {

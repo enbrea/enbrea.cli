@@ -56,7 +56,7 @@ namespace Enbrea.Cli.Magellan
 
                 if (_version < 7)
                 {
-                    throw new Exception("Enbrea Cli only supports MAGELLAN version 7 and higher.");
+                    throw new Exception("Enbrea CLI only supports MAGELLAN version 7 and higher.");
                 }
 
                 // Report status

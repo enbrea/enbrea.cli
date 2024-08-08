@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Copyright>© 2024 STÜBER SYSTEMS GmbH</Copyright>
-    <Product>Enbrea Cli Module for Untis</Product>
+    <Product>Enbrea CLI Module for Untis</Product>
     <Company>STÜBER SYSTEMS GmbH</Company>
     <Version>0.0.1</Version>
     <Description>Generating ECF files from Untis</Description>

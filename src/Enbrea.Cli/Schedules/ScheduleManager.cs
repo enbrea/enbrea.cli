@@ -72,7 +72,7 @@ namespace Enbrea.Cli
 
                     var weekTrigger = new WeeklyTrigger
                     {
-                        StartBoundary = DateTime.Now,
+                        StartBoundary = DateTime.Now.AddSeconds(15),
                         DaysOfWeek = DaysOfTheWeek.AllDays,
                         WeeksInterval = 1
                     };
@@ -134,7 +134,7 @@ namespace Enbrea.Cli
 
                     var weekTrigger = new WeeklyTrigger
                     {
-                        StartBoundary = DateTime.Now,
+                        StartBoundary = DateTime.Now.AddSeconds(15),
                         DaysOfWeek = DaysOfTheWeek.AllDays,
                         WeeksInterval = 1
                     };
@@ -373,6 +373,11 @@ namespace Enbrea.Cli
 
                     if (task != null)
                     {
+                        if (task.Definition.Triggers.Count > 0)
+                        {
+                            task.Definition.Triggers[0].StartBoundary = DateTime.Now.AddSeconds(15);
+                        }
+
                         task.Definition.Settings.Enabled = true;
                         task.RegisterChanges();
 
@@ -408,6 +413,11 @@ namespace Enbrea.Cli
 
                     if (task != null)
                     {
+                        if (task.Definition.Triggers.Count > 0)
+                        {
+                            task.Definition.Triggers[0].StartBoundary = DateTime.Now.AddSeconds(15);
+                        }
+
                         task.Definition.Settings.Enabled = true;
                         task.RegisterChanges();
 
