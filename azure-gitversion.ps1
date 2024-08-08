@@ -86,7 +86,7 @@ elseif ($CurrentBranch -match "release")
         throw "Could not extract version info from Git branch name " + $CurrentBranchName
     }
 }
-elseif ($CurrentBranch -match "features")
+elseif ($CurrentBranch -match "feature")
 {
 	$VersionSuffix = if ($NumberOfCommits -eq 0) { "-" + $CurrentBranchName } else { "-" + $CurrentBranchName + "." + [string]$NumberOfCommits }
     $SemVersion = [string]$MajorVersion + "." + [string]$MinorVersion + "." + [string]$PatchVersion + $VersionSuffix
