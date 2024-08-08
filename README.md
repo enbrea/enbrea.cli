@@ -4,9 +4,9 @@
 
 ## Einführung
 
-Das Enbrea Client Interface (kurz: Enbrea Cli) ist eine plattformunabhängige Konsolenanwendung. Sie erlaubt es, mit einer Enbrea-Instanz von einer lokalen Kommandozeile aus zu kommunizieren.
+Das Enbrea Client Interface (kurz: Enbrea CLI) ist eine plattformunabhängige Konsolenanwendung. Sie erlaubt es, mit einer Enbrea-Instanz von einer lokalen Kommandozeile aus zu kommunizieren.
 
-Enbrea Cli dient administrativen Zwecken und bietet folgende Funktionen:
+Enbrea CLI dient administrativen Zwecken und bietet folgende Funktionen:
 
 + Manueller oder automatisierter Import von Daten aus unterstützten Fachanwendungen nach Enbrea.
 + Manueller oder automatisierter Export von Daten aus Enbrea in unterstützte Fachanwendungen.
