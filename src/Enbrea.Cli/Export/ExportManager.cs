@@ -307,10 +307,10 @@ namespace Enbrea.Cli
                 await ThrowExportException("Start extracting failed.", response);
             }
 
-            WaitHandle.WaitAny(new[]
-            {
+            WaitHandle.WaitAny(
+            [
                 finishEvent, _cancellationEvent
-            });
+            ]);
 
             if (!successfullExtract)
             {

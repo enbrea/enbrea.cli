@@ -359,7 +359,7 @@ namespace Enbrea.Cli
             });
         }
 
-        public static async Task Import(FileInfo configFile, ImportProvider provider, bool skipProvider, bool skipEnbrea, bool skipSnapshot, string logFile)
+        public static async Task Import(FileInfo configFile, ImportProvider provider, ImportBehaviour behaviour, bool skipProvider, bool skipEnbrea, bool skipSnapshot, string logFile)
         {
             await Execute(async (cancellationEvent, cancellationToken) =>
             {
@@ -379,7 +379,7 @@ namespace Enbrea.Cli
 
                     if (!skipEnbrea)
                     {
-                        var importManager = ImportManagerFactory.CreateImportToEnbreaManager(provider, config, skipSnapshot, consoleWriter, cancellationEvent, cancellationToken);
+                        var importManager = ImportManagerFactory.CreateImportToEnbreaManager(provider, config, behaviour, skipSnapshot, consoleWriter, cancellationEvent, cancellationToken);
                         if (importManager != null)
                         {
                             await importManager.Execute();

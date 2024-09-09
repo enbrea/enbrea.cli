@@ -31,11 +31,11 @@ namespace Enbrea.Cli
         {
             var command = new Command("backup-offline", "Creates and downloads an Enbrea database backup for offline use")
             {
-                new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
+                new Option<FileInfo>(["--config", "-c"], "Path to existing JSON configuration file")
                 {
                     IsRequired = true
                 },
-                new Option<FileInfo>(new[] { "--out", "-o" }, "Path to output file")
+                new Option<FileInfo>(["--out", "-o"], "Path to output file")
                 {
                     IsRequired = true
                 }
@@ -53,15 +53,15 @@ namespace Enbrea.Cli
         {
             var command = new Command("create-export-task", "Schedules a task for a data export from an Enbrea instance")
             {
-                new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
+                new Option<FileInfo>(["--config", "-c"], "Path to existing JSON configuration file")
                 {
                     IsRequired = true
                 },
-                new Option<ExportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
+                new Option<ExportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
                 },
-                new Option<uint>(new[] { "--interval", "-i" }, delegate() { return 10; }, "Time interval in minutes")
+                new Option<uint>(["--interval", "-i"], delegate() { return 10; }, "Time interval in minutes")
                 {
                     IsRequired = true
                 }
@@ -79,15 +79,15 @@ namespace Enbrea.Cli
         {
             var command = new Command("create-import-task", "Schedules a task for a data import to an Enbrea instance")
             {
-                new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
+                new Option<FileInfo>(["--config", "-c"], "Path to existing JSON configuration file")
                 {
                     IsRequired = true
                 },
-                new Option<ImportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
+                new Option<ImportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
                 },
-                new Option<uint>(new[] { "--interval", "-i" }, delegate() { return 10; }, "Time interval in minutes")
+                new Option<uint>(["--interval", "-i"], delegate() { return 10; }, "Time interval in minutes")
                 {
                     IsRequired = true
                 }
@@ -105,7 +105,7 @@ namespace Enbrea.Cli
         {
             var command = new Command("create-snapshot", "Create a Enbrea database snapshot")
             {
-                new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
+                new Option<FileInfo>(["--config", "-c"], "Path to existing JSON configuration file")
                 {
                     IsRequired = true
                 }
@@ -131,7 +131,7 @@ namespace Enbrea.Cli
         {
             var command = new Command("delete-export-task", "Deletes a scheduled export task for Enbrea")
             {
-                new Option<ExportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
+                new Option<ExportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
                 }
@@ -147,7 +147,7 @@ namespace Enbrea.Cli
         {
             var command = new Command("delete-import-task", "Deletes a scheduled import task for Enbrea")
             {
-                new Option<ImportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
+                new Option<ImportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
                 }
@@ -162,11 +162,11 @@ namespace Enbrea.Cli
         public static Command DeleteSnaphot()
         {
             var command = new Command("delete-snapshot", "Delete an Enbrea database snapshot"){
-                new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
+                new Option<FileInfo>(["--config", "-c"], "Path to existing JSON configuration file")
                 {
                     IsRequired = true
                 },
-                new Option<Guid>(new[] { "--id", "-id" }, "Unique ID of the snapshot")
+                new Option<Guid>(["--id", "-id"], "Unique ID of the snapshot")
                 {
                     IsRequired = true
                 }
@@ -184,7 +184,7 @@ namespace Enbrea.Cli
         {
             var command = new Command("disable-export-task", "Deactivates a scheduled export task for Enbrea")
             {
-                new Option<ExportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
+                new Option<ExportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
                 }
@@ -200,7 +200,7 @@ namespace Enbrea.Cli
         {
             var command = new Command("disable-import-task", "Deactivates a scheduled import task for Enbrea")
             {
-                new Option<ImportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
+                new Option<ImportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
                 }
@@ -216,7 +216,7 @@ namespace Enbrea.Cli
         {
             var command = new Command("enable-export-task", "Activates a scheduled export task for Enbrea")
             {
-                new Option<ExportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
+                new Option<ExportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
                 }
@@ -232,7 +232,7 @@ namespace Enbrea.Cli
         {
             var command = new Command("enable-import-task", "Activates a scheduled import task for Enbrea")
             {
-                new Option<ImportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
+                new Option<ImportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
                 }
@@ -248,23 +248,23 @@ namespace Enbrea.Cli
         {
             var command = new Command("export", "Exports data from an Enbrea instance to an external provider")
             {
-                new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
+                new Option<FileInfo>(["--config", "-c"], "Path to existing JSON configuration file")
                 {
                     IsRequired = true
                 },
-                new Option<ExportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
+                new Option<ExportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
                 },
-                new Option<bool>(new[] { "--skip-enbrea" }, delegate() { return false; }, "Skip export of ECF files from Enbrea")
+                new Option<bool>(["--skip-enbrea"], delegate() { return false; }, "Skip export of ECF files from Enbrea")
                 {
                     IsRequired = false
                 },
-                new Option<bool>(new[] { "--skip-provider" }, delegate() { return false; }, "Skip import of ECF files to external provider")
+                new Option<bool>(["--skip-provider"], delegate() { return false; }, "Skip import of ECF files to external provider")
                 {
                     IsRequired = false
                 },
-                new Option<string>(new[] { "--log", "-l" }, delegate () { return null; }, "Log file folder")
+                new Option<string>(["--log", "-l"], delegate () { return null; }, "Log file folder")
                 {
                     IsRequired = false
                 }
@@ -284,27 +284,31 @@ namespace Enbrea.Cli
         {
             var command = new Command("import", "Imports data from external provider to an Enbrea instance")
             {
-                new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
+                new Option<FileInfo>(["--config", "-c"], "Path to existing JSON configuration file")
                 {
                     IsRequired = true
                 },
-                new Option<ImportProvider>(new[] { "--provider", "-p" }, "Name of external data provider")
+                new Option<ImportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
                 },
-                new Option<bool>(new[] { "--skip-provider" }, delegate() { return false; }, "Skip import of ECF files from external provider")
+                new Option<ImportBehaviour>(["--behaviour", "-b"], delegate() { return ImportBehaviour.diff; }, "Import behaviour")
                 {
                     IsRequired = false
                 },
-                new Option<bool>(new[] { "--skip-enbrea" }, delegate() { return false; }, "Skip import of ECF files to Enbrea")
+                new Option<bool>(["--skip-provider"], delegate() { return false; }, "Skip import of ECF files from external provider")
                 {
                     IsRequired = false
                 },
-                new Option<bool>(new[] { "--skip-snapshot" }, delegate() { return false; }, "Skip creating of a snapshot")
+                new Option<bool>(["--skip-enbrea"], delegate() { return false; }, "Skip import of ECF files to Enbrea")
                 {
                     IsRequired = false
                 },
-                new Option<string>(new[] { "--log", "-l" }, delegate () { return null; }, "Log file folder")
+                new Option<bool>(["--skip-snapshot"], delegate() { return false; }, "Skip creating of a snapshot")
+                {
+                    IsRequired = false
+                },
+                new Option<string>(["--log", "-l"], delegate () { return null; }, "Log file folder")
                 {
                     IsRequired = false
                 }
@@ -313,10 +317,11 @@ namespace Enbrea.Cli
             command.SetHandler(CommandHandlers.Import,
                 command.Options[0] as Option<FileInfo>,
                 command.Options[1] as Option<ImportProvider>,
-                command.Options[2] as Option<bool>,
+                command.Options[2] as Option<ImportBehaviour>,
                 command.Options[3] as Option<bool>,
                 command.Options[4] as Option<bool>,
-                command.Options[5] as Option<string>);
+                command.Options[5] as Option<bool>,
+                command.Options[6] as Option<string>);
 
             return command;
         }
@@ -325,7 +330,7 @@ namespace Enbrea.Cli
         {
             var command = new Command("init", "Create an Enbrea configuration file template")
             {
-                new Option<FileInfo>(new[] { "--config", "-c" }, "Path for new JSON configuration file")
+                new Option<FileInfo>(["--config", "-c"], "Path for new JSON configuration file")
                 {
                     IsRequired = true
                 }
@@ -350,7 +355,7 @@ namespace Enbrea.Cli
         public static Command ListSchoolTerms()
         {
             var command = new Command("list-schoolterms", "Get list of Enbrea school terms"){
-                new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
+                new Option<FileInfo>(["--config", "-c"], "Path to existing JSON configuration file")
                 {
                     IsRequired = true
                 }
@@ -366,7 +371,7 @@ namespace Enbrea.Cli
         public static Command ListSnaphots()
         {
             var command = new Command("list-snapshots", "Get list of Enbrea database snapshots"){
-                new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
+                new Option<FileInfo>(["--config", "-c"], "Path to existing JSON configuration file")
                 {
                     IsRequired = true
                 }
@@ -382,11 +387,11 @@ namespace Enbrea.Cli
         public static Command RestoreSnaphot()
         {
             var command = new Command("restore-snapshot", "Restore an Enbrea database from an Enbrea snapshot"){
-                new Option<FileInfo>(new[] { "--config", "-c" }, "Path to existing JSON configuration file")
+                new Option<FileInfo>(["--config", "-c"], "Path to existing JSON configuration file")
                 {
                     IsRequired = true
                 },
-                new Option<Guid>(new[] { "--id", "-id" }, "Unique ID of the snapshot")
+                new Option<Guid>(["--id", "-id"], "Unique ID of the snapshot")
                 {
                     IsRequired = true
                 }

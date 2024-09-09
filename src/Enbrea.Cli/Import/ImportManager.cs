@@ -19,6 +19,7 @@
  */
 #endregion
 
+using DocumentFormat.OpenXml.Wordprocessing;
 using Enbrea.Cli.Common;
 using Enbrea.Csv;
 using Enbrea.Ecf;
@@ -43,6 +44,7 @@ namespace Enbrea.Cli
     /// </summary>
     public class ImportManager : CustomManager
     {
+        private readonly ImportBehaviour _behaviour;
         private readonly ImportProvider _provider;
         private readonly ProviderEcfMapping _providerEcfMapping;
         private readonly bool _skipSnapshot;
@@ -52,6 +54,7 @@ namespace Enbrea.Cli
             ProviderEcfMapping providerEcfMapping,
             string dataFolderName,
             Configuration config,
+            ImportBehaviour behaviour,
             bool skipSnapshot,
             ConsoleWriter consoleWriter, 
             EventWaitHandle cancellationEvent, 
@@ -61,6 +64,7 @@ namespace Enbrea.Cli
             _provider = provider;
             _providerEcfMapping = providerEcfMapping;
             _skipSnapshot = skipSnapshot;
+            _behaviour = behaviour;
         }
 
         public override async Task Execute()
@@ -88,7 +92,7 @@ namespace Enbrea.Cli
                     // Has context changed?
                     if ((previousContext.SchoolTerm != _config.SchoolTerm) ||
                         (previousContext.ValidFrom != manifest.ValidFrom) ||
-                        (previousContext.ValidTo != manifest.ValidTo))
+                        (previousContext.ValidTo != manifest.ValidTo) || _behaviour == ImportBehaviour.full)
                     {
                         // Console output
                         _consoleWriter.Caption("Delete previous ECF files");
@@ -108,8 +112,8 @@ namespace Enbrea.Cli
                         var changedOnlyFileCount = await GenerateChangedOnlyFiles(files);
                         var deletedOnlyFileCount = await GenerateDeletedOnlyFiles(files);
 
-                       // Do we have something to import?
-                       newImportDataAvailable = changedOnlyFileCount > 0 || deletedOnlyFileCount > 0;
+                        // Do we have something to import?
+                        newImportDataAvailable = changedOnlyFileCount > 0 || deletedOnlyFileCount > 0;
                     }
 
                     // Do we have data to import?
@@ -359,28 +363,36 @@ namespace Enbrea.Cli
                     {
                         if (File.Exists(file.FullNameForPreviousRows))
                         {
-                            var numberOfAffectedRows = 0;
-
-                            using var ecfTextReader = File.OpenText(file.FullName);
-                            using var ecfTextReaderForPreviousRows = File.OpenText(file.FullNameForPreviousRows);
-                            using (var ecfTextWriterForChangedOnlyRows = File.CreateText(file.FullNameForChangedOnlyRows))
+                            if (_behaviour == ImportBehaviour.smartfull)
                             {
-                                var ecfTableReader = new EcfTableReader(ecfTextReader);
-                                var ecfTableReaderForPreviousRows = new EcfTableReader(ecfTextReaderForPreviousRows);
-                                var ecfTableDiff = new CsvDiff(ecfTextWriterForChangedOnlyRows, new EcfConfiguration(), EcfHeaders.Id);
+                                File.Copy(file.FullName, file.FullNameForChangedOnlyRows, overwrite: true);
 
-                                numberOfAffectedRows = await ecfTableDiff.GenerateAsync(CsvDiffType.AddedOrUpdatedOnly, ecfTableReaderForPreviousRows, ecfTableReader, _cancellationToken);
-                            }
-
-                            if (numberOfAffectedRows == 0)
-                            {
-                                File.Delete(file.FullNameForChangedOnlyRows);
+                                _consoleWriter.ContinueProgress(++fileCount);
                             }
                             else
                             {
-                                _consoleWriter.ContinueProgress(++fileCount);
-                            }
+                                var numberOfAffectedRows = 0;
 
+                                using var ecfTextReader = File.OpenText(file.FullName);
+                                using var ecfTextReaderForPreviousRows = File.OpenText(file.FullNameForPreviousRows);
+                                using (var ecfTextWriterForChangedOnlyRows = File.CreateText(file.FullNameForChangedOnlyRows))
+                                {
+                                    var ecfTableReader = new EcfTableReader(ecfTextReader);
+                                    var ecfTableReaderForPreviousRows = new EcfTableReader(ecfTextReaderForPreviousRows);
+                                    var ecfTableDiff = new CsvDiff(ecfTextWriterForChangedOnlyRows, new EcfConfiguration(), EcfHeaders.Id);
+
+                                    numberOfAffectedRows = await ecfTableDiff.GenerateAsync(CsvDiffType.AddedOrUpdatedOnly, ecfTableReaderForPreviousRows, ecfTableReader, _cancellationToken);
+                                }
+
+                                if (numberOfAffectedRows == 0)
+                                {
+                                    File.Delete(file.FullNameForChangedOnlyRows);
+                                }
+                                else
+                                {
+                                    _consoleWriter.ContinueProgress(++fileCount);
+                                }
+                            }
                         }
                         else
                         {
@@ -558,10 +570,7 @@ namespace Enbrea.Cli
                 await ThrowImportException("Start merging failed", response);
             }
 
-            WaitHandle.WaitAny(new[]
-            {
-                finishEvent, _cancellationEvent
-            });
+            WaitHandle.WaitAny([finishEvent, _cancellationEvent]);
 
             if (!successfullMerge)
             {
