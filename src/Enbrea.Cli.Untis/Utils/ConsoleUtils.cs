@@ -53,12 +53,12 @@ namespace Enbrea.Cli.Untis
 
                 // Execute Untis 
                 var result = await CliWrap.Cli.Wrap(GetUntisPath())
-                    .WithArguments(new[] {
+                    .WithArguments([
                         $"DB~{schoolNo}~{schoolYear}~{version}",
                         $"/backup={outputFile}",
                         $"/user={userName}",
                         $"/pwd={password}"
-                    })
+                    ])
                     .WithValidation(CommandResultValidation.None)
                     .ExecuteAsync(cancellationToken);
 
@@ -148,10 +148,10 @@ namespace Enbrea.Cli.Untis
 
                 // Execute Untis
                 var result = await CliWrap.Cli.Wrap(GetUntisPath())
-                    .WithArguments(new[] {
+                    .WithArguments([
                         $"{untisFile}",
                         $"/exp{outputType}={outputFile}"
-                    })
+                    ])
                     .WithValidation(CommandResultValidation.None)
                     .ExecuteAsync(cancellationToken);
 
@@ -193,10 +193,10 @@ namespace Enbrea.Cli.Untis
 
                 // Execute Untis 
                 var result = await CliWrap.Cli.Wrap(GetUntisPath())
-                    .WithArguments(new[] {
+                    .WithArguments([
                     $"{untisFile}",
                     $"/xml={outputFile}"
-                    })
+                    ])
                     .WithValidation(CommandResultValidation.None)
                     .ExecuteAsync(cancellationToken);
 

@@ -47,14 +47,14 @@ namespace Enbrea.Cli.DaVinci
             // Create command for DAVINCI CONSOLE 
             var cmd = _config.DataProvider == DataProvider.File ?
                 CliWrap.Cli.Wrap(ConsoleUtils.GetConsolePath())
-                    .WithArguments(new[] {
+                    .WithArguments([
                         "import", "-minimal-display",
                         "-s", "file",
                         "-i", GetEcfFolderName(),
                         "-fn", _config.DataFile
-                    }) :
+                    ]) :
                 CliWrap.Cli.Wrap(ConsoleUtils.GetConsolePath())
-                    .WithArguments(new[] {
+                    .WithArguments([
                         "import", "-minimal-display",
                         "-s", "server",
                         "-i", GetEcfFolderName(),
@@ -63,7 +63,7 @@ namespace Enbrea.Cli.DaVinci
                         "-un", _config.ServerUserName,
                         "-up", _config.ServerPassword,
                         "-sf", $"{{{_config.ServerFileId}}}"
-                    });
+                    ]);
 
             // Excecute DAVINCI CONSOLE
             await foreach (var cmdEvent in cmd.ListenAsync(_cancellationToken))
