@@ -27,6 +27,7 @@ using FirebirdSql.Data.FirebirdClient;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,6 +38,7 @@ namespace Enbrea.Cli.Magellan
         private readonly Configuration _config;
         private int _tableCounter = 0;
         private int _version = 0;
+        private readonly HashSet<int> _studentsCache = [];
 
         public ExportManager(Configuration config, ConsoleWriter consoleWriter, CancellationToken cancellationToken)
             : base(config.TargetFolder, consoleWriter, cancellationToken)
@@ -461,7 +463,6 @@ namespace Enbrea.Cli.Magellan
 
             using var reader = await fbCommand.ExecuteReaderAsync(_cancellationToken);
 
-            var ecfCache = new HashSet<int>();
             var ecfRecordCounter = 0;
 
             await ecfTableWriter.WriteHeadersAsync(
@@ -494,7 +495,7 @@ namespace Enbrea.Cli.Magellan
             {
                 var studentId = (int)reader["ID"];
 
-                if (!ecfCache.Contains(studentId))
+                if (!_studentsCache.Contains(studentId))
                 {
                     ecfTableWriter.SetValue(EcfHeaders.Id, studentId);
                     ecfTableWriter.SetValue(EcfHeaders.LastName, reader["Nachname"]);
@@ -523,7 +524,7 @@ namespace Enbrea.Cli.Magellan
 
                     await ecfTableWriter.WriteAsync(_cancellationToken);
 
-                    ecfCache.Add(studentId);
+                    _studentsCache.Add(studentId);
 
                     _consoleWriter.ContinueProgress(++ecfRecordCounter);
                 }
@@ -572,29 +573,33 @@ namespace Enbrea.Cli.Magellan
             while (await reader.ReadAsync(_cancellationToken))
             {
                 var studentId = (int)reader["Schueler"];
-
-                if (!reader.IsNullOrEmpty("ZugangAm"))
+                if (_studentsCache.Contains(studentId))
                 {
-                    ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValue($"{studentId}+1"));
-                    ecfTableWriter.SetValue(EcfHeaders.StudentId, studentId);
-                    ecfTableWriter.TrySetValue(EcfHeaders.EntryDate, reader.GetDateOrDefault("ZugangAm"));
-                    ecfTableWriter.TrySetValue(EcfHeaders.ExitDate, reader.GetDateOrDefault("AbgangAm"));
+                    ecfTableWriter.SetValue(EcfHeaders.Id, studentId);
 
-                    await ecfTableWriter.WriteAsync(_cancellationToken);
+                    if (!reader.IsNullOrEmpty("ZugangAm"))
+                    {
+                        ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValue($"{studentId}+1"));
+                        ecfTableWriter.SetValue(EcfHeaders.StudentId, studentId);
+                        ecfTableWriter.TrySetValue(EcfHeaders.EntryDate, reader.GetDateOrDefault("ZugangAm"));
+                        ecfTableWriter.TrySetValue(EcfHeaders.ExitDate, reader.GetDateOrDefault("AbgangAm"));
 
-                    _consoleWriter.ContinueProgress(++ecfRecordCounter);
-                }
+                        await ecfTableWriter.WriteAsync(_cancellationToken);
 
-                if (!reader.IsNullOrEmpty("Zugang2Am"))
-                {
-                    ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValue($"{studentId}+2"));
-                    ecfTableWriter.SetValue(EcfHeaders.StudentId, studentId);
-                    ecfTableWriter.TrySetValue(EcfHeaders.EntryDate, reader.GetDateOrDefault("Zugang2Am"));
-                    ecfTableWriter.TrySetValue(EcfHeaders.ExitDate, reader.GetDateOrDefault("Abgang2Am"));
+                        _consoleWriter.ContinueProgress(++ecfRecordCounter);
+                    }
 
-                    await ecfTableWriter.WriteAsync(_cancellationToken);
+                    if (!reader.IsNullOrEmpty("Zugang2Am"))
+                    {
+                        ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValue($"{studentId}+2"));
+                        ecfTableWriter.SetValue(EcfHeaders.StudentId, studentId);
+                        ecfTableWriter.TrySetValue(EcfHeaders.EntryDate, reader.GetDateOrDefault("Zugang2Am"));
+                        ecfTableWriter.TrySetValue(EcfHeaders.ExitDate, reader.GetDateOrDefault("Abgang2Am"));
 
-                    _consoleWriter.ContinueProgress(++ecfRecordCounter);
+                        await ecfTableWriter.WriteAsync(_cancellationToken);
+
+                        _consoleWriter.ContinueProgress(++ecfRecordCounter);
+                    }
                 }
             }
 
@@ -661,15 +666,19 @@ namespace Enbrea.Cli.Magellan
 
             while (await reader.ReadAsync(_cancellationToken))
             {
-                ecfTableWriter.SetValue(EcfHeaders.Id, reader["ID"]);
-                ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, reader["Klasse"]);
-                ecfTableWriter.SetValue(EcfHeaders.StudentId, reader["Schueler"]);
-                ecfTableWriter.TrySetValue(EcfHeaders.EntryDate, reader.GetYoungestDateOrDefault("KlasseZugangAm", "SchuelerZugangAm"));
-                ecfTableWriter.TrySetValue(EcfHeaders.ExitDate, reader.GetOldestDateOrDefault("KlasseAbgangAm", "SchuelerAbgangAm"));
+                var studentId = (int)reader["Schueler"];
+                if (_studentsCache.Contains(studentId))
+                {
+                    ecfTableWriter.SetValue(EcfHeaders.Id, reader["ID"]);
+                    ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, reader["Klasse"]);
+                    ecfTableWriter.SetValue(EcfHeaders.StudentId, studentId);
+                    ecfTableWriter.TrySetValue(EcfHeaders.EntryDate, reader.GetYoungestDateOrDefault("KlasseZugangAm", "SchuelerZugangAm"));
+                    ecfTableWriter.TrySetValue(EcfHeaders.ExitDate, reader.GetOldestDateOrDefault("KlasseAbgangAm", "SchuelerAbgangAm"));
 
-                await ecfTableWriter.WriteAsync(_cancellationToken);
+                    await ecfTableWriter.WriteAsync(_cancellationToken);
 
-                _consoleWriter.ContinueProgress(++ecfRecordCounter);
+                    _consoleWriter.ContinueProgress(++ecfRecordCounter);
+                }
             }
 
             return ecfRecordCounter;
@@ -824,22 +833,26 @@ namespace Enbrea.Cli.Magellan
 
             while (await reader.ReadAsync(_cancellationToken))
             {
-                ecfTableWriter.SetValue(EcfHeaders.Id, reader["ID"]);
-                ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, reader["Klasse"]);
-                ecfTableWriter.SetValue(EcfHeaders.TeacherId, reader["Lehrer"]);
-                ecfTableWriter.SetValue(EcfHeaders.StudentId, reader["Schueler"]);
-                ecfTableWriter.SetValue(EcfHeaders.CourseNo, reader.GetShortOrDefault("KursNr", 0));
-                ecfTableWriter.SetValue(EcfHeaders.CourseTypeId, reader["Unterrichtsart"]);
-                ecfTableWriter.SetValue(EcfHeaders.CourseCategoryId, reader["Fachstatus"]);
-                ecfTableWriter.SetValue(EcfHeaders.SubjectId, reader["Fach"]);
-                ecfTableWriter.TrySetValue(EcfHeaders.SubjectLevelId, reader["Niveau"]);
-                ecfTableWriter.TrySetValue(EcfHeaders.SubjectFocusId, reader["Schwerpunkt"]);
-                ecfTableWriter.TrySetValue(EcfHeaders.EntryDate, reader.GetYoungestDateOrDefault("KlasseZugangAm", "SchuelerZugangAm"));
-                ecfTableWriter.TrySetValue(EcfHeaders.ExitDate, reader.GetOldestDateOrDefault("KlasseAbgangAm", "SchuelerAbgangAm"));
+                var studentId = (int)reader["Schueler"];
+                if (_studentsCache.Contains(studentId))
+                {
+                    ecfTableWriter.SetValue(EcfHeaders.Id, reader["ID"]);
+                    ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, reader["Klasse"]);
+                    ecfTableWriter.SetValue(EcfHeaders.TeacherId, reader["Lehrer"]);
+                    ecfTableWriter.SetValue(EcfHeaders.StudentId, studentId);
+                    ecfTableWriter.SetValue(EcfHeaders.CourseNo, reader.GetShortOrDefault("KursNr", 0));
+                    ecfTableWriter.SetValue(EcfHeaders.CourseTypeId, reader["Unterrichtsart"]);
+                    ecfTableWriter.SetValue(EcfHeaders.CourseCategoryId, reader["Fachstatus"]);
+                    ecfTableWriter.SetValue(EcfHeaders.SubjectId, reader["Fach"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.SubjectLevelId, reader["Niveau"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.SubjectFocusId, reader["Schwerpunkt"]);
+                    ecfTableWriter.TrySetValue(EcfHeaders.EntryDate, reader.GetYoungestDateOrDefault("KlasseZugangAm", "SchuelerZugangAm"));
+                    ecfTableWriter.TrySetValue(EcfHeaders.ExitDate, reader.GetOldestDateOrDefault("KlasseAbgangAm", "SchuelerAbgangAm"));
 
-                await ecfTableWriter.WriteAsync(_cancellationToken);
+                    await ecfTableWriter.WriteAsync(_cancellationToken);
 
-                _consoleWriter.ContinueProgress(++ecfRecordCounter);
+                    _consoleWriter.ContinueProgress(++ecfRecordCounter);
+                }
             }
 
             return ecfRecordCounter;
