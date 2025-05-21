@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Copyright>© 2024 STÜBER SYSTEMS GmbH</Copyright>
+    <TargetFramework>net9.0</TargetFramework>
     <Product>Enbrea CLI</Product>
     <Company>STÜBER SYSTEMS GmbH</Company>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Description>Client Tool for working with Enbrea on the command line</Description>
     <Authors>STÜBER SYSTEMS GmbH</Authors>
+    <Copyright>© 2025 STÜBER SYSTEMS GmbH</Copyright>
     <LangVersion>latest</LangVersion>
     <RootNamespace>Enbrea.Cli</RootNamespace>
     <AssemblyName>Enbrea</AssemblyName>
@@ -17,21 +17,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Enbrea.Csv" Version="0.10.2" />
-    <PackageReference Include="Enbrea.Ecf" Version="0.2.1" />
+    <PackageReference Include="Enbrea.Csv" Version="0.11.1" />
+    <PackageReference Include="Enbrea.Ecf" Version="0.3.0" />
     <PackageReference Include="IdentityModel" Version="7.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.8" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
-    <PackageReference Include="Serilog" Version="4.0.1" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
+    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
-    <PackageReference Include="System.IO.Hashing" Version="8.0.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
-    <PackageReference Include="TaskScheduler" Version="2.11.0" />
+    <PackageReference Include="System.IO.Hashing" Version="9.0.5" />
+    <PackageReference Include="System.Text.Json" Version="9.0.5" />
+    <PackageReference Include="TaskScheduler" Version="2.12.1" />
   </ItemGroup>
 
   <ItemGroup>

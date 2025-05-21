@@ -1,21 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Product>Enbrea CLI Common part</Product>
-    <Copyright>© 2024 STÜBER SYSTEMS GmbH</Copyright>
     <Company>STÜBER SYSTEMS GmbH</Company>
     <Authors>STÜBER SYSTEMS GmbH</Authors>
+    <Copyright>© 2025 STÜBER SYSTEMS GmbH</Copyright>
     <Version>0.0.1</Version>
     <Description>Common Classes and Types for Enbrea CLI</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Enbrea.Ecf" Version="0.2.1" />
-    <PackageReference Include="Enbrea.GuidFactory" Version="0.9.2" />
-    <PackageReference Include="Enbrea.Konsoli" Version="0.0.4" />
-    <PackageReference Include="Serilog" Version="4.0.1" />
-    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="Enbrea.Ecf" Version="0.3.0" />
+    <PackageReference Include="Enbrea.GuidFactory" Version="0.10.0" />
+    <PackageReference Include="Enbrea.Konsoli" Version="0.1.1" />
+    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
   </ItemGroup>
 
 </Project>

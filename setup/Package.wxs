@@ -19,7 +19,6 @@
   <?define SourceFolder = "..\src\Enbrea.Cli\bin\Publish\win-x86" ?>
   <?endif?>
   
-
   <!-- Package definition -->
   <Package
       Name="!(loc.AppName)"
@@ -65,13 +64,13 @@
 
     </InstallExecuteSequence>
 
-    <!-- Compatibility check for .NET 7 -->
+    <!-- Compatibility check for .NET 9 -->
     <netfx:DotNetCompatibilityCheck
       Property="DOTNETRUNTIMECHECK"
       Platform="$(var.Platform)"
       RollForward="major"
       RuntimeType="core"
-      Version="8.0.0"/>
+      Version="9.0.0"/>
 
     <!-- Embed cab files into msi -->
     <MediaTemplate EmbedCab="yes"/>
@@ -91,7 +90,7 @@
 
     <!-- Directory and file structure -->
     <StandardDirectory Id="ProgramFiles6432Folder">
-      <Directory Id="ProjectFolder" Name="!(loc.ProjectFolder)">
+      <Directory Id="ProjectFolder" Name="!(loc.ManufacturerFolder)">
         <Directory Id="INSTALLDIR" Name="!(loc.AppFolder)">
 
           <!-- EXE file -->
@@ -104,7 +103,7 @@
 
           <!-- Registry entries -->
           <Component Id="Registry.InstallLocation" Guid="af5657a1-4d0f-4d2e-a0b8-b4f91ae913b8">
-            <RegistryKey Root="HKLM" Key="Software\!(loc.Manufacturer)\!(loc.AppName)">
+            <RegistryKey Root="HKLM" Key="Software\!(loc.ManufacturerFolder)\!(loc.AppName)">
               <RegistryValue
                 Name="InstallLocation"
                 Value="[INSTALLDIR]"

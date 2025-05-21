@@ -27,7 +27,7 @@ namespace Enbrea.Cli
 {
     public static class ImportManagerFactory
     {
-        public static EcfCustomManager CreateImportToEnbreaManager(ImportProvider provider, Configuration config, ImportBehaviour behaviour, bool skipSnapshot, 
+        public static EcfCustomManager CreateImportToEnbreaManager(ImportProvider provider, Configuration config, ImportBehaviour behaviour, bool skipSnapshot, bool skipImport,
             ConsoleWriter consoleWriter, EventWaitHandle cancellationEvent, CancellationToken cancellationToken)
         {
             return new ImportManager(
@@ -37,6 +37,7 @@ namespace Enbrea.Cli
                 config,
                 behaviour,
                 skipSnapshot,
+                skipImport,
                 consoleWriter, 
                 cancellationEvent, 
                 cancellationToken);

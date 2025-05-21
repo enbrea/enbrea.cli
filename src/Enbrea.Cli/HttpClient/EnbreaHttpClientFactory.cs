@@ -38,6 +38,7 @@ namespace Enbrea.Cli
             serviceCollection.AddHttpClient<IEnbreaHttpClient, EnbreaHttpClient>(c =>
             {
                 c.DefaultRequestHeaders.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue(AssemblyInfo.GetAgentName(), AssemblyInfo.GetVersion()));
+                c.Timeout = TimeSpan.FromMinutes(3); 
             })
 
             // Configure HTTP client for automatic retry

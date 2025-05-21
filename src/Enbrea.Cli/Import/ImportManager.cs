@@ -19,7 +19,6 @@
  */
 #endregion
 
-using DocumentFormat.OpenXml.Wordprocessing;
 using Enbrea.Cli.Common;
 using Enbrea.Csv;
 using Enbrea.Ecf;
@@ -48,6 +47,7 @@ namespace Enbrea.Cli
         private readonly ImportProvider _provider;
         private readonly ProviderEcfMapping _providerEcfMapping;
         private readonly bool _skipSnapshot;
+        private readonly bool _skipImport;
 
         public ImportManager(
             ImportProvider provider,
@@ -56,6 +56,7 @@ namespace Enbrea.Cli
             Configuration config,
             ImportBehaviour behaviour,
             bool skipSnapshot,
+            bool skipImport,
             ConsoleWriter consoleWriter, 
             EventWaitHandle cancellationEvent, 
             CancellationToken cancellationToken)
@@ -64,6 +65,7 @@ namespace Enbrea.Cli
             _provider = provider;
             _providerEcfMapping = providerEcfMapping;
             _skipSnapshot = skipSnapshot;
+            _skipImport = skipImport;
             _behaviour = behaviour;
         }
 
@@ -117,7 +119,7 @@ namespace Enbrea.Cli
                     }
 
                     // Do we have data to import?
-                    if (newImportDataAvailable)
+                    if (!_skipImport && newImportDataAvailable)
                     {
                         // Should we create a database snapshot?
                         if (!_skipSnapshot)

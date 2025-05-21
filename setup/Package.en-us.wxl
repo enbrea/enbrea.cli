@@ -7,7 +7,7 @@ This file contains the declaration of all the localizable strings.
   <String Id="AppDescription" Value="Client Tool for working with Enbrea on the command line" />
   <String Id="AppFolder" Value="Enbrea" />
   <String Id="Manufacturer" Value="STÜBER SYSTEMS GmbH" />
-  <String Id="ProjectFolder" Value="Stueber Systems" />
+  <String Id="ManufacturerFolder" Value="Stueber Systems" />
   <String Id="DowngradeError" Value="A newer version of [ProductName] is already installed." />
 
   <String Id="FeaturesCompleteTitle" Value="Complete installation" />

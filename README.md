@@ -1,6 +1,6 @@
 ![GitHub](https://img.shields.io/github/license/enbrea/enbrea.cli)
 
-# Enbrea Cli
+# Enbrea CLI
 
 ## Einführung
 

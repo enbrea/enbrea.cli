@@ -1,19 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Copyright>© 2024 STÜBER SYSTEMS GmbH</Copyright>
+    <TargetFramework>net9.0</TargetFramework>
     <Product>Enbrea CLI Module for SchildNRW</Product>
-    <Company>STÜBER SYSTEMS GmbH</Company>
-    <Version>0.0.1</Version>
     <Description>Generating ECF files from SchildNRW</Description>
+    <Company>STÜBER SYSTEMS GmbH</Company>
     <Authors>STÜBER SYSTEMS GmbH</Authors>
+    <Copyright>© 2025 STÜBER SYSTEMS GmbH</Copyright>
     <RootNamespace>Enbrea.CLI.SchildNRW</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Enbrea.Ecf" Version="0.2.1" />
-    <PackageReference Include="Enbrea.SchildNRW.Db" Version="0.3.0" />
+    <PackageReference Include="Enbrea.Ecf" Version="0.3.0" />
+    <PackageReference Include="Enbrea.SchildNRW.Db" Version="0.4.0" />
   </ItemGroup>
 
   <ItemGroup>
