@@ -35,7 +35,7 @@ namespace Enbrea.Cli.Untis
             {
                 UntisGender.Female => EcfGender.Female,
                 UntisGender.Male => EcfGender.Male,
-                UntisGender.Divers => EcfGender.Diverse,
+                UntisGender.Diverse => EcfGender.Diverse,
                 _ => null,
             };
         }

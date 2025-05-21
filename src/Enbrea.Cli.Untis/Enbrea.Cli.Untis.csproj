@@ -1,21 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Copyright>© 2024 STÜBER SYSTEMS GmbH</Copyright>
+    <TargetFramework>net9.0</TargetFramework>
     <Product>Enbrea CLI Module for Untis</Product>
-    <Company>STÜBER SYSTEMS GmbH</Company>
-    <Version>0.0.1</Version>
     <Description>Generating ECF files from Untis</Description>
+    <Company>STÜBER SYSTEMS GmbH</Company>
     <Authors>STÜBER SYSTEMS GmbH</Authors>
+    <Copyright>© 2025 STÜBER SYSTEMS GmbH</Copyright>
     <RootNamespace>Enbrea.CLI.Untis</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CliWrap" Version="3.6.6" />
-    <PackageReference Include="Enbrea.Ecf" Version="0.2.1" />
-    <PackageReference Include="Enbrea.Untis.Gpu" Version="0.9.2" />
-    <PackageReference Include="Enbrea.Untis.Xml" Version="0.9.2" />
+    <PackageReference Include="CliWrap" Version="3.8.2" />
+    <PackageReference Include="Enbrea.Ecf" Version="0.3.0" />
+    <PackageReference Include="Enbrea.Untis.Gpu" Version="0.9.3" />
+    <PackageReference Include="Enbrea.Untis.Xml" Version="0.10.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -379,7 +379,7 @@ namespace Enbrea.Cli
 
                     if (!skipEnbrea)
                     {
-                        var importManager = ImportManagerFactory.CreateImportToEnbreaManager(provider, config, behaviour, skipSnapshot, consoleWriter, cancellationEvent, cancellationToken);
+                        var importManager = ImportManagerFactory.CreateImportToEnbreaManager(provider, config, behaviour, skipSnapshot, skipEnbrea, consoleWriter, cancellationEvent, cancellationToken);
                         if (importManager != null)
                         {
                             await importManager.Execute();

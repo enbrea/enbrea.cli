@@ -1,4 +1,4 @@
-﻿<Project Sdk="WixToolset.Sdk/5.0.0">
+﻿<Project Sdk="WixToolset.Sdk/6.0.0">
   <PropertyGroup>
     <OutputName>enbrea.cli-$(Platform)</OutputName>
     <OutputType>Package</OutputType>
@@ -16,7 +16,7 @@
     <SuppressPdbOutput>true</SuppressPdbOutput>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="WixToolset.Netfx.wixext" Version="5.0.1" />
-    <PackageReference Include="WixToolset.UI.wixext" Version="5.0.1" />
+    <PackageReference Include="WixToolset.Netfx.wixext" Version="6.0.0" />
+    <PackageReference Include="WixToolset.UI.wixext" Version="6.0.0" />
   </ItemGroup>
 </Project>

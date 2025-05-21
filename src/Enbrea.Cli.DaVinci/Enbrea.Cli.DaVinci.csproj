@@ -1,18 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Copyright>© 2024 STÜBER SYSTEMS GmbH</Copyright>
+    <TargetFramework>net9.0</TargetFramework>
     <Product>Enbrea CLI Module for DAVINCI</Product>
-    <Company>STÜBER SYSTEMS GmbH</Company>
-    <Version>0.0.1</Version>
     <Description>Generating ECF files from DAVINCI and back</Description>
+    <Company>STÜBER SYSTEMS GmbH</Company>
     <Authors>STÜBER SYSTEMS GmbH</Authors>
+    <Copyright>© 2025 STÜBER SYSTEMS GmbH</Copyright>
     <RootNamespace>Enbrea.CLI.DaVinci</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CliWrap" Version="3.6.6" />
+    <PackageReference Include="CliWrap" Version="3.8.2" />
   </ItemGroup>
 
   <ItemGroup>
