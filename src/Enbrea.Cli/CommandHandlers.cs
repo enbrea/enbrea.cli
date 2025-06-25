@@ -51,7 +51,7 @@ namespace Enbrea.Cli
             });
         }
 
-        public static async Task CreateExportTask(FileInfo configFile, ExportProvider provider, uint interval)
+        public static async Task CreateExportTask(FileInfo configFile, ExportProvider provider, uint interval, string suffix)
         {
             await Execute(async (cancellationEvent, cancellationToken) =>
             {
@@ -62,7 +62,7 @@ namespace Enbrea.Cli
                     {
                         var config = await ConfigurationManager.LoadFromFile(configFile, cancellationToken);
                         var scheduleManager = new ScheduleManager();
-                        scheduleManager.CreateExportTask(configFile.FullName, config, provider, interval);
+                        scheduleManager.CreateExportTask(configFile.FullName, config, provider, interval, suffix);
                         await Task.CompletedTask;
                     }
                     else
@@ -78,7 +78,7 @@ namespace Enbrea.Cli
             });
         }
 
-        public static async Task CreateImportTask(FileInfo configFile, ImportProvider provider, uint interval)
+        public static async Task CreateImportTask(FileInfo configFile, ImportProvider provider, uint interval, string suffix)
         {
             await Execute(async (cancellationEvent, cancellationToken) =>
             {
@@ -89,7 +89,7 @@ namespace Enbrea.Cli
                     {
                         var config = await ConfigurationManager.LoadFromFile(configFile, cancellationToken);
                         var scheduleManager = new ScheduleManager();
-                        scheduleManager.CreateImportTask(configFile.FullName, config, provider, interval);
+                        scheduleManager.CreateImportTask(configFile.FullName, config, provider, interval, suffix);
                         await Task.CompletedTask;
                     }
                     else
@@ -150,7 +150,7 @@ namespace Enbrea.Cli
             });
         }
 
-        public static async Task DeleteExportTask(ExportProvider provider)
+        public static async Task DeleteExportTask(ExportProvider provider, string suffix)
         {
             await Execute(async (cancellationEvent, cancellationToken) =>
             {
@@ -160,7 +160,7 @@ namespace Enbrea.Cli
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         var scheduleManager = new ScheduleManager();
-                        scheduleManager.DeleteExportTask(provider);
+                        scheduleManager.DeleteExportTask(provider, suffix);
                         await Task.CompletedTask;
                     }
                     else
@@ -176,7 +176,7 @@ namespace Enbrea.Cli
             });
         }
 
-        public static async Task DeleteImportTask(ImportProvider provider)
+        public static async Task DeleteImportTask(ImportProvider provider, string suffix)
         {
             await Execute(async (cancellationEvent, cancellationToken) =>
             {
@@ -186,7 +186,7 @@ namespace Enbrea.Cli
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         var scheduleManager = new ScheduleManager();
-                        scheduleManager.DeleteImportTask(provider);
+                        scheduleManager.DeleteImportTask(provider, suffix);
                         await Task.CompletedTask;
                     }
                     else
@@ -222,7 +222,7 @@ namespace Enbrea.Cli
             });
         }
 
-        public static async Task DisableExportTask(ExportProvider provider)
+        public static async Task DisableExportTask(ExportProvider provider, string suffix)
         {
             await Execute(async (cancellationEvent, cancellationToken) =>
             {
@@ -232,7 +232,7 @@ namespace Enbrea.Cli
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         var scheduleManager = new ScheduleManager();
-                        scheduleManager.DisableExportTask(provider);
+                        scheduleManager.DisableExportTask(provider, suffix);
                         await Task.CompletedTask;
                     }
                     else
@@ -248,7 +248,7 @@ namespace Enbrea.Cli
             });
         }
 
-        public static async Task DisableImportTask(ImportProvider provider)
+        public static async Task DisableImportTask(ImportProvider provider, string suffix)
         {
             await Execute(async (cancellationEvent, cancellationToken) =>
             {
@@ -258,7 +258,7 @@ namespace Enbrea.Cli
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         var scheduleManager = new ScheduleManager();
-                        scheduleManager.DisableImportTask(provider);
+                        scheduleManager.DisableImportTask(provider, suffix);
                         await Task.CompletedTask;
                     }
                     else
@@ -274,7 +274,7 @@ namespace Enbrea.Cli
             });
         }
 
-        public static async Task EnableExportTask(ExportProvider provider)
+        public static async Task EnableExportTask(ExportProvider provider, string suffix)
         {
             await Execute(async (cancellationEvent, cancellationToken) =>
             {
@@ -284,7 +284,7 @@ namespace Enbrea.Cli
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         var scheduleManager = new ScheduleManager();
-                        scheduleManager.EnableExportTask(provider);
+                        scheduleManager.EnableExportTask(provider, suffix);
                         await Task.CompletedTask;
                     }
                     else
@@ -299,7 +299,7 @@ namespace Enbrea.Cli
                 }
             });
         }
-        public static async Task EnableImportTask(ImportProvider provider)
+        public static async Task EnableImportTask(ImportProvider provider, string suffix)
         {
             await Execute(async (cancellationEvent, cancellationToken) =>
             {
@@ -309,7 +309,7 @@ namespace Enbrea.Cli
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         var scheduleManager = new ScheduleManager();
-                        scheduleManager.EnableImportTask(provider);
+                        scheduleManager.EnableImportTask(provider, suffix);
                         await Task.CompletedTask;
                     }
                     else
