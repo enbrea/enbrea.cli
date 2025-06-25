@@ -152,6 +152,8 @@ stages:
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/enbrea.cli-portable.zip'
         replaceExistingArchive: true
+    - publish: '$(Build.ArtifactStagingDirectory)'
+      artifact: drop
       
 - stage: GitHub
   jobs:
