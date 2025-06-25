@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Enbrea.Cli
 {
@@ -39,14 +40,15 @@ namespace Enbrea.Cli
             _consoleWriter = ConsoleWriterFactory.CreateConsoleWriter(ProgressUnit.Count);
         }
 
-        public void CreateExportTask(string configFile, Configuration config, ExportProvider provider, uint interval)
+        public void CreateExportTask(string configFile, Configuration config, ExportProvider provider, uint interval, string suffix)
         {
             _consoleWriter.StartProgress($"Create or update an export task to {provider}");
             try
             {
                 Directory.CreateDirectory(GetLogFolderName(config, provider));
 
-                var task = GetTask(provider);
+                var taskName = GetEnbreaTaskName(provider, suffix);
+                var task = GetTask(taskName);
 
                 if (task != null)
                 {
@@ -88,8 +90,8 @@ namespace Enbrea.Cli
 
                     var taskFolder = AddEnbreaTaskFolder();
 
-                    taskFolder.RegisterTaskDefinition($"enbrea.to.{provider}", taskDefinition, TaskCreation.CreateOrUpdate,
-                        NetServiceAccount, null, TaskLogonType.ServiceAccount);
+                   taskFolder.RegisterTaskDefinition(taskName, taskDefinition, TaskCreation.CreateOrUpdate,
+                     NetServiceAccount, null, TaskLogonType.ServiceAccount);
 
                     _consoleWriter.FinishProgress().Success($"Task successfully created");
                 }
@@ -101,14 +103,15 @@ namespace Enbrea.Cli
             }
         }
 
-        public void CreateImportTask(string configFile, Configuration config, ImportProvider provider, uint interval)
+        public void CreateImportTask(string configFile, Configuration config, ImportProvider provider, uint interval, string suffix)
         {
             _consoleWriter.StartProgress($"Create or update an import task from {provider}");
             try
             {
                 Directory.CreateDirectory(GetLogFolderName(config, provider));
 
-                var task = GetTask(provider);
+                var taskName = GetEnbreaTaskName(provider, suffix);
+                var task = GetTask(taskName);
 
                 if (task != null)
                 {
@@ -150,7 +153,7 @@ namespace Enbrea.Cli
 
                     var taskFolder = AddEnbreaTaskFolder();
 
-                    taskFolder.RegisterTaskDefinition($"enbrea.from.{provider}", taskDefinition, TaskCreation.CreateOrUpdate,
+                    taskFolder.RegisterTaskDefinition(taskName, taskDefinition, TaskCreation.CreateOrUpdate,
                         NetServiceAccount, null, TaskLogonType.ServiceAccount);
 
                     _consoleWriter.FinishProgress().Success($"Task successfully created");
@@ -174,24 +177,14 @@ namespace Enbrea.Cli
                 {
                     var tasks = new List<Task>();
 
-                    foreach (ImportProvider provider in Enum.GetValues(typeof(ImportProvider)))
+                    foreach (ImportProvider provider in Enum.GetValues<ImportProvider>())
                     {
-                        var task = GetTask(provider);
-
-                        if (task != null)
-                        {
-                            tasks.Add(task);
-                        }
+                        tasks.AddRange(FindAllTasks(taskFolder, provider));
                     }
 
-                    foreach (ExportProvider provider in Enum.GetValues(typeof(ExportProvider)))
+                    foreach (ExportProvider provider in Enum.GetValues<ExportProvider>())
                     {
-                        var task = GetTask(provider);
-
-                        if (task != null)
-                        {
-                            tasks.Add(task);
-                        }
+                        tasks.AddRange(FindAllTasks(taskFolder, provider));
                     }
 
                     _consoleWriter.FinishProgress();
@@ -222,7 +215,7 @@ namespace Enbrea.Cli
             }
         }
 
-        public void DeleteExportTask(ExportProvider provider)
+        public void DeleteExportTask(ExportProvider provider, string suffix)
         {
             _consoleWriter.StartProgress("Delete export task");
             try
@@ -231,7 +224,8 @@ namespace Enbrea.Cli
 
                 if (taskFolder != null)
                 {
-                    var task = GetTask(provider);
+                    var taskName = GetEnbreaTaskName(provider, suffix);
+                    var task = GetTask(taskName);
 
                     if (task != null)
                     {
@@ -241,7 +235,7 @@ namespace Enbrea.Cli
                     }
                     else
                     {
-                        throw new ScheduleException($"The task enbrea.export.{provider} does not exists");
+                        throw new ScheduleException($"The task {taskName} does not exists");
                     }
                 }
                 else
@@ -256,7 +250,7 @@ namespace Enbrea.Cli
             }
         }
 
-        public void DeleteImportTask(ImportProvider provider)
+        public void DeleteImportTask(ImportProvider provider, string suffix)
         {
             _consoleWriter.StartProgress("Delete import task");
             try
@@ -265,7 +259,8 @@ namespace Enbrea.Cli
 
                 if (taskFolder != null)
                 {
-                    var task = GetTask(provider);
+                    var taskName = GetEnbreaTaskName(provider, suffix);
+                    var task = GetTask(taskName);
 
                     if (task != null)
                     {
@@ -275,7 +270,7 @@ namespace Enbrea.Cli
                     }
                     else
                     {
-                        throw new ScheduleException($"The task enbrea.import.{provider} does not exists");
+                        throw new ScheduleException($"The task {taskName} does not exists");
                     }
                 }
                 else
@@ -290,7 +285,7 @@ namespace Enbrea.Cli
             }
         }
 
-        public void DisableExportTask(ExportProvider provider)
+        public void DisableExportTask(ExportProvider provider, string suffix)
         {
             _consoleWriter.StartProgress("Disable export task");
             try
@@ -299,7 +294,8 @@ namespace Enbrea.Cli
 
                 if (taskFolder != null)
                 {
-                    var task = GetTask(provider);
+                    var taskName = GetEnbreaTaskName(provider, suffix);
+                    var task = GetTask(taskName);
 
                     if (task != null)
                     {
@@ -310,7 +306,7 @@ namespace Enbrea.Cli
                     }
                     else
                     {
-                        throw new ScheduleException($"The task enbrea.import.{provider} does not exists");
+                        throw new ScheduleException($"The task {taskName} does not exists");
                     }
                 }
                 else
@@ -325,7 +321,7 @@ namespace Enbrea.Cli
             }
         }
 
-        public void DisableImportTask(ImportProvider provider)
+        public void DisableImportTask(ImportProvider provider, string suffix)
         {
             _consoleWriter.StartProgress("Disable import task");
             try
@@ -334,7 +330,8 @@ namespace Enbrea.Cli
 
                 if (taskFolder != null)
                 {
-                    var task = GetTask(provider);
+                    var taskName = GetEnbreaTaskName(provider, suffix);
+                    var task = GetTask(taskName);
 
                     if (task != null)
                     {
@@ -345,7 +342,7 @@ namespace Enbrea.Cli
                     }
                     else
                     {
-                        throw new ScheduleException($"The task enbrea.import.{provider} does not exists");
+                        throw new ScheduleException($"The task {taskName} does not exists");
                     }
                 }
                 else
@@ -360,7 +357,7 @@ namespace Enbrea.Cli
             }
         }
 
-        public void EnableExportTask(ExportProvider provider)
+        public void EnableExportTask(ExportProvider provider, string suffix)
         {
             _consoleWriter.StartProgress("Enable export task");
             try
@@ -369,7 +366,8 @@ namespace Enbrea.Cli
 
                 if (taskFolder != null)
                 {
-                    var task = GetTask(provider);
+                    var taskName = GetEnbreaTaskName(provider, suffix);
+                    var task = GetTask(taskName);
 
                     if (task != null)
                     {
@@ -385,7 +383,7 @@ namespace Enbrea.Cli
                     }
                     else
                     {
-                        throw new ScheduleException($"The task enbrea.import.{provider} does not exists");
+                        throw new ScheduleException($"The task {taskName} does not exists");
                     }
                 }
                 else
@@ -400,7 +398,7 @@ namespace Enbrea.Cli
             }
         }
 
-        public void EnableImportTask(ImportProvider provider)
+        public void EnableImportTask(ImportProvider provider, string suffix)
         {
             _consoleWriter.StartProgress("Enable import task");
             try
@@ -409,7 +407,8 @@ namespace Enbrea.Cli
 
                 if (taskFolder != null)
                 {
-                    var task = GetTask(provider);
+                    var taskName = GetEnbreaTaskName(provider, suffix);
+                    var task = GetTask(taskName);
 
                     if (task != null)
                     {
@@ -425,7 +424,7 @@ namespace Enbrea.Cli
                     }
                     else
                     {
-                        throw new ScheduleException($"The task enbrea.import.{provider} does not exists");
+                        throw new ScheduleException($"The task {taskName} does not exists");
                     }
                 }
                 else
@@ -445,45 +444,44 @@ namespace Enbrea.Cli
             _consoleWriter.StartProgress("List all import and export tasks...");
             try
             {
-                var tasks = new List<Task>();
+                var taskFolder = GetEnbreaTaskFolder();
 
-                foreach (ImportProvider provider in Enum.GetValues(typeof(ImportProvider)))
+                if (taskFolder != null)
                 {
-                    var task = GetTask(provider);
+                    var tasks = new List<Task>();
 
-                    if (task != null)
+                    foreach (ImportProvider provider in Enum.GetValues(typeof(ImportProvider)))
                     {
-                        tasks.Add(task);
-                    }
-                }
-
-                foreach (ExportProvider provider in Enum.GetValues(typeof(ExportProvider)))
-                {
-                    var task = GetTask(provider);
-
-                    if (task != null)
-                    {
-                        tasks.Add(task);
-                    }
-                }
-
-                _consoleWriter.FinishProgress();
-
-                if (tasks.Count > 0)
-                {
-                    _consoleWriter.NewLine();
-                    _consoleWriter.Message($"Task name                 | Enabled | Interval");
-                    _consoleWriter.Message($"------------------------- | ------- | --------");
-
-                    foreach (var task in tasks)
-                    {
-                        _consoleWriter.Message($"{task.Name,-25} | {task.Definition.Settings.Enabled, -7} | {task.Definition.Triggers.FirstOrDefault()?.Repetition?.Interval}");
+                        tasks.AddRange(FindAllTasks(taskFolder, provider));
                     }
 
-                    _consoleWriter.NewLine();
-                }
+                    foreach (ExportProvider provider in Enum.GetValues(typeof(ExportProvider)))
+                    {
+                        tasks.AddRange(FindAllTasks(taskFolder, provider));
+                    }
 
-                _consoleWriter.Success($"{tasks.Count} tasks found");
+                    _consoleWriter.FinishProgress();
+
+                    if (tasks.Count > 0)
+                    {
+                        _consoleWriter.NewLine();
+                        _consoleWriter.Message($" Enabled | Interval | Task name");
+                        _consoleWriter.Message($" ------- | -------- | ---------");
+
+                        foreach (var task in tasks)
+                        {
+                            _consoleWriter.Message($"{task.Definition.Settings.Enabled, -7} | {task.Definition.Triggers.FirstOrDefault()?.Repetition?.Interval, -8} | {task.Name} ");
+                        }
+
+                        _consoleWriter.NewLine();
+                    }
+
+                    _consoleWriter.Success($"{tasks.Count} tasks found");
+                }
+                else
+                {
+                    throw new ScheduleException($"No Enbrea tasks found");
+                }
             }
             catch
             {
@@ -533,20 +531,48 @@ namespace Enbrea.Cli
             return TaskService.Instance.RootFolder.CreateFolder("Enbrea", exceptionOnExists: false);
         }
 
+        private TaskCollection FindAllTasks(TaskFolder folder, ImportProvider provider)
+        {
+            return folder.GetTasks(new Regex(@$"enbrea\.from\.{provider}(\..+)?"));
+        }
+
+        private TaskCollection FindAllTasks(TaskFolder folder, ExportProvider provider)
+        {
+            return folder.GetTasks(new Regex(@$"enbrea\.to\.{provider}(\..+)?"));
+        }
+
         private TaskFolder GetEnbreaTaskFolder()
         {
             return TaskService.Instance.GetFolder("Enbrea");
         }
 
-        private Task GetTask(ImportProvider provider)
+        private string GetEnbreaTaskName(ImportProvider provider, string suffix)
         {
-            return TaskService.Instance.GetTask($"Enbrea\\enbrea.from.{provider}");
+            if (string.IsNullOrWhiteSpace(suffix))
+            {
+                return $"enbrea.from.{provider}";
+            }
+            else
+            {
+                return $"enbrea.from.{provider}.{suffix}";
+            }
         }
 
-        private Task GetTask(ExportProvider provider)
+        private string GetEnbreaTaskName(ExportProvider provider, string suffix)
         {
-            return TaskService.Instance.GetTask($"Enbrea\\enbrea.to.{provider}");
+            if (string.IsNullOrWhiteSpace(suffix))
+            {
+                return $"enbrea.to.{provider}";
+            }
+            else
+            {
+                return $"enbrea.to.{provider}.{suffix}";
+            }
         }
 
+        private Task GetTask(string taskName)
+        {
+            return TaskService.Instance.GetTask($"Enbrea\\{taskName}");
+        }
     }
 }

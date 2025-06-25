@@ -64,13 +64,18 @@ namespace Enbrea.Cli
                 new Option<uint>(["--interval", "-i"], delegate() { return 10; }, "Time interval in minutes")
                 {
                     IsRequired = true
+                },
+                new Option<string>(["--suffix", "-s"], "Suffix of the task name")
+                {
+                    IsRequired = false
                 }
             };
 
             command.SetHandler(CommandHandlers.CreateExportTask,
                 command.Options[0] as Option<FileInfo>,
                 command.Options[1] as Option<ExportProvider>,
-                command.Options[2] as Option<uint>);
+                command.Options[2] as Option<uint>,
+                command.Options[3] as Option<string>);
 
             return command;
         }
@@ -90,13 +95,18 @@ namespace Enbrea.Cli
                 new Option<uint>(["--interval", "-i"], delegate() { return 10; }, "Time interval in minutes")
                 {
                     IsRequired = true
+                },
+                new Option<string>(["--suffix", "-s"], "Suffix of the task name")
+                {
+                    IsRequired = false
                 }
             };
 
             command.SetHandler(CommandHandlers.CreateImportTask,
                 command.Options[0] as Option<FileInfo>,
                 command.Options[1] as Option<ImportProvider>,
-                command.Options[2] as Option<uint>);
+                command.Options[2] as Option<uint>,
+                command.Options[3] as Option<string>);
 
             return command;
         }
@@ -134,11 +144,16 @@ namespace Enbrea.Cli
                 new Option<ExportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
+                },
+                new Option<string>(["--suffix", "-s"], "Suffix of the task name")
+                {
+                    IsRequired = false
                 }
             };
 
             command.SetHandler(CommandHandlers.DeleteExportTask,
-                command.Options[0] as Option<ExportProvider>);
+                command.Options[0] as Option<ExportProvider>,
+                command.Options[1] as Option<string>);
 
             return command;
         }
@@ -150,11 +165,16 @@ namespace Enbrea.Cli
                 new Option<ImportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
+                },
+                new Option<string>(["--suffix", "-s"], "Suffix of the task name")
+                {
+                    IsRequired = false
                 }
             };
 
             command.SetHandler(CommandHandlers.DeleteImportTask,
-                command.Options[0] as Option<ImportProvider>);
+                command.Options[0] as Option<ImportProvider>,
+                command.Options[1] as Option<string>);
 
             return command;
         }
@@ -187,11 +207,16 @@ namespace Enbrea.Cli
                 new Option<ExportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
+                },
+                new Option<string>(["--suffix", "-s"], "Suffix of the task name")
+                {
+                    IsRequired = false
                 }
             };
 
             command.SetHandler(CommandHandlers.DisableExportTask,
-                command.Options[0] as Option<ExportProvider>);
+                command.Options[0] as Option<ExportProvider>,
+                command.Options[1] as Option<string>);
 
             return command;
         }
@@ -203,11 +228,16 @@ namespace Enbrea.Cli
                 new Option<ImportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
+                },
+                new Option<string>(["--suffix", "-s"], "Suffix of the task name")
+                {
+                    IsRequired = false
                 }
             };
 
             command.SetHandler(CommandHandlers.DisableImportTask,
-                command.Options[0] as Option<ImportProvider>);
+                command.Options[0] as Option<ImportProvider>,
+                command.Options[1] as Option<string>);
 
             return command;
         }
@@ -219,11 +249,16 @@ namespace Enbrea.Cli
                 new Option<ExportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
+                },
+                new Option<string>(["--suffix", "-s"], "Suffix of the task name")
+                {
+                    IsRequired = false
                 }
             };
 
             command.SetHandler(CommandHandlers.EnableExportTask,
-                command.Options[0] as Option<ExportProvider>);
+                command.Options[0] as Option<ExportProvider>,
+                command.Options[1] as Option<string>);
 
             return command;
         }
@@ -235,11 +270,16 @@ namespace Enbrea.Cli
                 new Option<ImportProvider>(["--provider", "-p"], "Name of external data provider")
                 {
                     IsRequired = true
+                },
+                new Option<string>(["--suffix", "-s"], "Suffix of the task name")
+                {
+                    IsRequired = false
                 }
             };
 
             command.SetHandler(CommandHandlers.EnableImportTask,
-                command.Options[0] as Option<ImportProvider>);
+                command.Options[0] as Option<ImportProvider>,
+                command.Options[1] as Option<string>);
 
             return command;
         }

@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CliWrap" Version="3.8.2" />
+    <PackageReference Include="CliWrap" Version="3.9.0" />
     <PackageReference Include="Enbrea.Ecf" Version="0.3.0" />
     <PackageReference Include="Enbrea.Untis.Gpu" Version="0.9.3" />
     <PackageReference Include="Enbrea.Untis.Xml" Version="0.10.0" />

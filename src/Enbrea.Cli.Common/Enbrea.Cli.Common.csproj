@@ -6,7 +6,6 @@
     <Company>STÜBER SYSTEMS GmbH</Company>
     <Authors>STÜBER SYSTEMS GmbH</Authors>
     <Copyright>© 2025 STÜBER SYSTEMS GmbH</Copyright>
-    <Version>0.0.1</Version>
     <Description>Common Classes and Types for Enbrea CLI</Description>
   </PropertyGroup>
 
