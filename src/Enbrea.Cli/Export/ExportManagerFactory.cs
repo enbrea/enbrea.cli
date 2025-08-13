@@ -27,12 +27,21 @@ namespace Enbrea.Cli
 {
     public static class ExportManagerFactory
     {
-        public static EcfCustomManager CreateExportFromEnbreaManager(ExportProvider provider, Configuration config, ConsoleWriter consoleWriter, EventWaitHandle cancellationEvent, CancellationToken cancellationToken)
+        public static EcfCustomManager CreateExportFromEnbreaManager(
+            ExportProvider provider, 
+            Configuration config, 
+            ConsoleWriter consoleWriter, 
+            EventWaitHandle cancellationEvent, 
+            CancellationToken cancellationToken)
         {
             return new ExportManager(provider, GetEnbreaEcfTarget(provider, config), config, consoleWriter, cancellationEvent, cancellationToken);
         }
 
-        public static EcfCustomManager CreateExportFromProviderManager(ImportProvider provider, Configuration config, ConsoleWriter consoleWriter, CancellationToken cancellationToken)
+        public static EcfCustomManager CreateExportFromProviderManager(
+            ImportProvider provider, 
+            Configuration config, 
+            ConsoleWriter consoleWriter, 
+            CancellationToken cancellationToken)
         {
             switch (provider)
             {
@@ -48,6 +57,8 @@ namespace Enbrea.Cli
                     return new SchildNRW.ExportManager(config.SchildNRW, consoleWriter, cancellationToken);
                 case ImportProvider.danis:
                     return new Danis.ExportManager(config.Danis, consoleWriter, cancellationToken);
+                case ImportProvider.saxsvs:
+                    return new SaxSVS.ExportManager(config.SaxSVS, consoleWriter, cancellationToken);
                 case ImportProvider.edoosys:
                     if (config.Edoosys.DataProvider == Edoosys.DataProvider.Csv)
                     {
@@ -71,7 +82,9 @@ namespace Enbrea.Cli
             }
         }
 
-        private static string GetEnbreaEcfTarget(ExportProvider provider, Configuration config)
+        private static string GetEnbreaEcfTarget(
+            ExportProvider provider, 
+            Configuration config)
         {
             switch (provider)
             {

@@ -27,7 +27,7 @@ namespace Enbrea.Cli
 {
     class Program
     {
-        public static async Task Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
             // Conole window title
             Console.Title = AssemblyInfo.GetTitle();
@@ -57,7 +57,8 @@ namespace Enbrea.Cli
             };
 
             // Parse the incoming args and invoke the handler
-            await rootCommand.InvokeAsync(args);
+            var parseResult = rootCommand.Parse(args);
+            return await parseResult.InvokeAsync();
         }
     }
 }

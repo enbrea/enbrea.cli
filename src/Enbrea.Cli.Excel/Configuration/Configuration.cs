@@ -34,12 +34,12 @@ namespace Enbrea.Cli.Excel
         /// Mapping of CSV file headers to ECF file headers
         /// </summary>
         [JsonPropertyOrder(8)]
-        public ICollection<CsvMapping> CsvMappings { get; set; } = new List<CsvMapping>()
-        {
+        public ICollection<CsvMapping> CsvMappings { get; set; } =
+        [
             new() { FromHeader = "VNAME", ToHeader = "Vorname" },
             new() { FromHeader = "NNAME", ToHeader = "Nachname" },
             new() { FromHeader = "KLASSE", ToHeader = "Klasse" },
-        };
+        ];
 
         /// <summary>
         /// Quote char for export from CSV file
@@ -88,12 +88,12 @@ namespace Enbrea.Cli.Excel
         /// Mapping of XLSX file headers to ECF file headers
         /// </summary>
         [JsonPropertyOrder(5)]
-        public ICollection<XlsxMapping> XlsxMappings { get; set; } = new List<XlsxMapping>() 
-        {
+        public ICollection<XlsxMapping> XlsxMappings { get; set; } =
+        [
             new() { FromHeader = "A", ToHeader = "Vorname" },
             new() { FromHeader = "B", ToHeader = "Nachname" },
             new() { FromHeader = "C", ToHeader = "Klasse" },
-        };
+        ];
 
         /// <summary>
         /// Name of the Excel sheet for export from XLSX file

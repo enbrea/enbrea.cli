@@ -22,18 +22,18 @@
 using Enbrea.Cli.Common;
 using System.Text.Json.Serialization;
 
-namespace Enbrea.Cli.Danis
+namespace Enbrea.Cli.SaxSVS
 {
     /// <summary>
-    /// Configuration for DaNiS
+    /// Configuration for SaxSVS
     /// </summary>
     public class Configuration
     {
         /// <summary>
-        /// PostgreSQL database connection for direct DaNiS access
+        /// Name of the exported SaxSVS XML file
         /// </summary>
         [JsonPropertyOrder(1)]
-        public string DatabaseConnection { get; set; } = "Server=127.0.0.1;Port=5432;Database=danis;User Id=myUsername;Password=myPassword;";
+        public string DataFile { get; set; } = ".\\excel\\saxsvs.xml";
 
         /// <summary>
         /// Mapping for export to ECF
@@ -42,15 +42,15 @@ namespace Enbrea.Cli.Danis
         public ProviderEcfMapping EcfMapping { get; set; }
 
         /// <summary>
-        /// Target folder for ECF file generation
-        /// </summary>
-        [JsonPropertyOrder(3)]
-        public string TargetFolder { get; set; } = ".\\danis\\export";
-
-        /// <summary>
-        /// Year number (Jahr, in dem das Schuljahr beginnt)
+        /// School year (Schuljahr)
         /// </summary>
         [JsonPropertyOrder(2)]
-        public int Year { get; set; } = 2025;
+        public string SchoolYear { get; set; } = "2024/2025";
+
+        /// <summary>
+        /// Target folder for ECF files, log files etc.
+        /// </summary>
+        [JsonPropertyOrder(3)]
+        public string TargetFolder { get; set; } = ".\\saxsvs\\export";
     }
 }

@@ -2,19 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <Product>Enbrea CLI Module for BBS-Planung</Product>
+    <Product>Enbrea CLI Module for SaxSVS</Product>
+    <Description>Generating ECF files from SaxSVS</Description>
     <Company>STÜBER SYSTEMS GmbH</Company>
-    <Description>Generating ECF files from a BBS-Planung database</Description>
     <Authors>STÜBER SYSTEMS GmbH</Authors>
     <Copyright>© 2025 STÜBER SYSTEMS GmbH</Copyright>
-    <RootNamespace>Enbrea.CLI.BbsPlanung</RootNamespace>
-    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>Enbrea.CLI.SaxSVS</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Enbrea.BbsPlanung.Db" Version="0.3.1-develop.4" />
     <PackageReference Include="Enbrea.Ecf" Version="0.3.0" />
-    <PackageReference Include="System.Data.Odbc" Version="9.0.8" />
+    <PackageReference Include="Enbrea.SaxSVS" Version="0.1.0" />
   </ItemGroup>
 
   <ItemGroup>

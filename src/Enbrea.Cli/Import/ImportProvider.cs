@@ -23,6 +23,6 @@ namespace Enbrea.Cli
 {
     public enum ImportProvider
     {
-        davinci, untis, magellan, edoosys, schildnrw, bbsplanung, danis, excel
+        davinci, untis, magellan, edoosys, schildnrw, bbsplanung, danis, saxsvs, excel
     }
 }

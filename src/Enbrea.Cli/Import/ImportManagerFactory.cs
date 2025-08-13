@@ -27,8 +27,15 @@ namespace Enbrea.Cli
 {
     public static class ImportManagerFactory
     {
-        public static EcfCustomManager CreateImportToEnbreaManager(ImportProvider provider, Configuration config, ImportBehaviour behaviour, bool skipSnapshot, bool skipImport,
-            ConsoleWriter consoleWriter, EventWaitHandle cancellationEvent, CancellationToken cancellationToken)
+        public static EcfCustomManager CreateImportToEnbreaManager(
+            ImportProvider provider, 
+            Configuration config, 
+            ImportBehaviour behaviour, 
+            bool skipSnapshot, 
+            bool skipImport,
+            ConsoleWriter consoleWriter, 
+            EventWaitHandle cancellationEvent, 
+            CancellationToken cancellationToken)
         {
             return new ImportManager(
                 provider,
@@ -43,8 +50,11 @@ namespace Enbrea.Cli
                 cancellationToken);
         }
 
-        public static EcfCustomManager CreateImportToProviderManager(ExportProvider provider, Configuration config, 
-            ConsoleWriter consoleWriter, CancellationToken cancellationToken)
+        public static EcfCustomManager CreateImportToProviderManager(
+            ExportProvider provider, 
+            Configuration config, 
+            ConsoleWriter consoleWriter, 
+            CancellationToken cancellationToken)
         {
             switch (provider)
             {
@@ -57,7 +67,9 @@ namespace Enbrea.Cli
             }
         }
 
-        private static string GetEnbreaEcfTarget(ImportProvider provider, Configuration config)
+        private static string GetEnbreaEcfTarget(
+            ImportProvider provider, 
+            Configuration config)
         {
             switch (provider)
             {
@@ -75,6 +87,8 @@ namespace Enbrea.Cli
                     return config.SchildNRW.TargetFolder;
                 case ImportProvider.danis:
                     return config.Danis.TargetFolder;
+                case ImportProvider.saxsvs:
+                    return config.SaxSVS.TargetFolder;
                 case ImportProvider.excel:
                     return config.Excel.TargetFolder;
                 default:
@@ -83,7 +97,9 @@ namespace Enbrea.Cli
             }
         }
 
-        private static ProviderEcfMapping GetProviderEcfMapping(ImportProvider provider, Configuration config)
+        private static ProviderEcfMapping GetProviderEcfMapping(
+            ImportProvider provider, 
+            Configuration config)
         {
             switch (provider)
             {
@@ -101,6 +117,8 @@ namespace Enbrea.Cli
                     return config.SchildNRW.EcfMapping;
                 case ImportProvider.danis:
                     return config.Danis.EcfMapping;
+                case ImportProvider.saxsvs:
+                    return config.SaxSVS.EcfMapping;
                 default:
                     return null;
             }
