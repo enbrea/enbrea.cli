@@ -59,6 +59,7 @@ namespace Enbrea.Cli.Untis
         /// </summary>
         [JsonPropertyOrder(7)]
         public string ExportFolder { get; set; } = ".\\untis\\export\\gpu";
+
         /// <summary>
         /// Quote char for GPU files export from Untis
         /// </summary>

@@ -498,10 +498,10 @@ namespace Enbrea.Cli.Untis
 
             await ecfTableWriter.WriteHeadersAsync(
                 EcfHeaders.Id,
-                EcfHeaders.RoomId,
+                EcfHeaders.SchoolClassId,
                 EcfHeaders.StartTimepoint,
                 EcfHeaders.EndTimepoint,
-                EcfHeaders.SchoolClassId,
+                EcfHeaders.ReasonId,
                 EcfHeaders.Description);
 
             var gpuReader = new GpuReader<GpuAbsence>(csvReader);
