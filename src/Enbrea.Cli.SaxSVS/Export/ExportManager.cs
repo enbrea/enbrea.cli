@@ -25,6 +25,7 @@ using Enbrea.Ecf;
 using Enbrea.Konsoli;
 using Enbrea.SaxSVS;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -61,6 +62,7 @@ namespace Enbrea.Cli.SaxSVS
             PrepareEcfFolder();
 
             // Education
+            await Execute(EcfTables.Subjects, saxSVSDocument, ExportSubjects);
             await Execute(EcfTables.Teachers, saxSVSDocument, ExportTeachers);
             await Execute(EcfTables.SchoolClasses, saxSVSDocument, ExportSchoolClasses);
             await Execute(EcfTables.Students, saxSVSDocument, ExportStudents);
@@ -119,7 +121,7 @@ namespace Enbrea.Cli.SaxSVS
                     ecfTableWriter.SetValue(EcfHeaders.Teacher1Id, schoolClass.FormTeacherId);
                     ecfTableWriter.SetValue(EcfHeaders.Teacher2Id, schoolClass.DeputyFormTeacherId);
 
-                    await ecfTableWriter.WriteAsync();
+                    await ecfTableWriter.WriteAsync(_cancellationToken);
 
                     _consoleWriter.ContinueProgress(++ecfRecordCounter);
                 }
@@ -149,7 +151,7 @@ namespace Enbrea.Cli.SaxSVS
                     ecfTableWriter.TrySetValue(EcfHeaders.Gender, student.Gender?.Code);
                     ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, student.BirthDate);
 
-                    await ecfTableWriter.WriteAsync();
+                    await ecfTableWriter.WriteAsync(_cancellationToken);
 
                     _consoleWriter.ContinueProgress(++ecfRecordCounter);
                 }
@@ -177,7 +179,7 @@ namespace Enbrea.Cli.SaxSVS
                         ecfTableWriter.SetValue(EcfHeaders.StudentId, studentAttendance.StudentId);
                         ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, schoolClass.Id);
 
-                        await ecfTableWriter.WriteAsync();
+                        await ecfTableWriter.WriteAsync(_cancellationToken);
 
                         _consoleWriter.ContinueProgress(++ecfRecordCounter);
                     }
@@ -250,6 +252,36 @@ namespace Enbrea.Cli.SaxSVS
             return ecfRecordCounter;
         }
 
+        private async Task<int> ExportSubjects(SaxSVSDocument saxSVSDocument, EcfTableWriter ecfTableWriter)
+        {
+            var ecfCache = new HashSet<string>();
+            var ecfRecordCounter = 0;
+
+            await ecfTableWriter.WriteHeadersAsync(
+                EcfHeaders.Id,
+                EcfHeaders.Code);
+
+            foreach (var lesson in saxSVSDocument.Lessons)
+            {
+                if (lesson.AcademicYear == saxSVSDocument.AcademicYear)
+                {
+                    if (!string.IsNullOrEmpty(lesson.Subject?.Name) && !ecfCache.Contains(lesson.Subject?.Name))
+                    {
+                        ecfTableWriter.SetValue(EcfHeaders.Id, lesson.Subject?.Name);
+                        ecfTableWriter.SetValue(EcfHeaders.Code, lesson.Subject?.Name);
+
+                        await ecfTableWriter.WriteAsync(_cancellationToken);
+
+                        ecfCache.Add(lesson.Subject?.Name);
+
+                        _consoleWriter.ContinueProgress(++ecfRecordCounter);
+                    }
+                }
+            }
+
+            return ecfRecordCounter;
+        }
+
         private async Task<int> ExportTeachers(SaxSVSDocument saxSVSDocument, EcfTableWriter ecfTableWriter)
         {
             var ecfRecordCounter = 0;
@@ -271,7 +303,7 @@ namespace Enbrea.Cli.SaxSVS
                 ecfTableWriter.TrySetValue(EcfHeaders.Gender, workforce.Gender?.Code);
                 ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, workforce.BirthDate);
 
-                await ecfTableWriter.WriteAsync();
+                await ecfTableWriter.WriteAsync(_cancellationToken);
 
                 _consoleWriter.ContinueProgress(++ecfRecordCounter);
             }
