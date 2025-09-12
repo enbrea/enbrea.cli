@@ -114,7 +114,7 @@ namespace Enbrea.Cli.SaxSVS
 
             foreach (var schoolClass in saxSVSDocument.Classes)
             {
-                if (schoolClass.AcademicYear == saxSVSDocument.AcademicYear)
+                if (schoolClass.AcademicYear == _config.SchoolYear)
                 {
                     ecfTableWriter.SetValue(EcfHeaders.Id, schoolClass.Id);
                     ecfTableWriter.SetValue(EcfHeaders.Code, schoolClass.Name);
@@ -143,7 +143,7 @@ namespace Enbrea.Cli.SaxSVS
 
             foreach (var student in saxSVSDocument.Students)
             {
-                if (saxSVSDocument.DoesStudentAttendAcademicYear(student.Id, saxSVSDocument.AcademicYear))
+                if (saxSVSDocument.DoesStudentAttendAcademicYear(student.Id, _config.SchoolYear))
                 {
                     ecfTableWriter.SetValue(EcfHeaders.Id, student.Id.ToString());
                     ecfTableWriter.SetValue(EcfHeaders.LastName, student.FamilyName);
@@ -171,7 +171,7 @@ namespace Enbrea.Cli.SaxSVS
 
             foreach (var schoolClass in saxSVSDocument.Classes)
             {
-                if (schoolClass.AcademicYear == saxSVSDocument.AcademicYear)
+                if (schoolClass.AcademicYear == _config.SchoolYear)
                 {
                     foreach (var studentAttendance in schoolClass.Students)
                     {
@@ -202,7 +202,7 @@ namespace Enbrea.Cli.SaxSVS
 
             foreach (var lesson in saxSVSDocument.Lessons)
             {
-                if (lesson.AcademicYear == saxSVSDocument.AcademicYear)
+                if (lesson.AcademicYear == _config.SchoolYear)
                 {
                     if (lesson.Students.Count > 0)
                     {
@@ -263,7 +263,7 @@ namespace Enbrea.Cli.SaxSVS
 
             foreach (var lesson in saxSVSDocument.Lessons)
             {
-                if (lesson.AcademicYear == saxSVSDocument.AcademicYear)
+                if (lesson.AcademicYear == _config.SchoolYear)
                 {
                     if (!string.IsNullOrEmpty(lesson.Subject?.Name) && !ecfCache.Contains(lesson.Subject?.Name))
                     {
