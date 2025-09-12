@@ -402,6 +402,7 @@ namespace Enbrea.Cli
                             {
                                 File.Delete(file.FullNameForChangedOnlyRows);
                             }
+                            _consoleWriter.ContinueProgress(++fileCount);
                         }
                     }
                 }
