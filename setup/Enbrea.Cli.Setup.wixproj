@@ -16,7 +16,7 @@
     <SuppressPdbOutput>true</SuppressPdbOutput>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="WixToolset.Netfx.wixext" Version="6.0.1" />
-    <PackageReference Include="WixToolset.UI.wixext" Version="6.0.1" />
+    <PackageReference Include="WixToolset.Netfx.wixext" Version="6.0.2" />
+    <PackageReference Include="WixToolset.UI.wixext" Version="6.0.2" />
   </ItemGroup>
 </Project>

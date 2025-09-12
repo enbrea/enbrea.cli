@@ -45,7 +45,7 @@ namespace Enbrea.Cli.SaxSVS
         /// School year (Schuljahr)
         /// </summary>
         [JsonPropertyOrder(2)]
-        public string SchoolYear { get; set; } = "2024/2025";
+        public string SchoolYear { get; set; } = "2025/2026";
 
         /// <summary>
         /// Target folder for ECF files, log files etc.
