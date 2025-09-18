@@ -21,53 +21,53 @@
 Set-StrictMode -Version Latest          
 $ErrorActionPreference = 'Stop'
 
-# ------------------------------
+# -------------
 # Configuration
-# ------------------------------
-$TagPrefix         = 'v-'               # required tag prefix, e.g. v-1.2.3
-$DevelopSuffix     = 'develop'          # prerelease suffix for develop
-$ReleaseSuffix     = 'preview'          # prerelease suffix for release/*
-$HotfixSuffix      = 'hotfix'           # prerelease suffix for hotfix/*
+# -------------
+$TagPrefix         = 'v-'       # required tag prefix, e.g. v-1.2.3
+$DevelopSuffix     = 'develop'  # prerelease suffix for develop
+$ReleaseSuffix     = 'preview'  # prerelease suffix for release/*
+$HotfixSuffix      = 'hotfix'   # prerelease suffix for hotfix/*
 
-# ------------------------------
+# ----------------------------------------------
 # State variables (defaults if repo has no tags)
-# ------------------------------
+# ----------------------------------------------
 $MajorVersion    = 0
 $MinorVersion    = 0
 $PatchVersion    = 0
 $VersionSuffix   = ''
 $NumberOfCommits = 0
 
-# ------------------------------
+# ---------------
 # Regex constants
-# ------------------------------
+# ---------------
 $ExactTagPattern        = "^$([regex]::Escape($TagPrefix))(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)$"
 $DescribeLongTagPattern = "^$([regex]::Escape($TagPrefix))(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)-(?<commits>0|[1-9]\d*)-g(?<sha>[0-9a-f]+)$"
 $SemVerPattern          = '^(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)$'
 
-# ------------------------------
+# -------
 # Helpers
-# ------------------------------
+# -------
 function Sanitize-Prerelease([string]$s) {
     # SemVer prerelease identifiers allow only [0-9A-Za-z-] and dot separators.
     # We sanitize the whole branch name into a single identifier (no dots).
     $s = $s.ToLowerInvariant()
-    $s = $s -replace '[^0-9a-z-]+','-'    # replace anything not allowed with '-'
-    $s = $s -replace '-{2,}','-'          # collapse dup dashes
+    $s = $s -replace '[^0-9a-z-]+','-'  # replace anything not allowed with '-'
+    $s = $s -replace '-{2,}','-'        # collapse dup dashes
     $s = $s.Trim('-')
     if ([string]::IsNullOrWhiteSpace($s)) { $s = 'ci' }  # last resort
     return $s
 }
 
-# ------------------------------
-# Environment (no PR handling)
-# ------------------------------
+# -----------
+# Environment
+# -----------
 $BranchRef  = $Env:BUILD_SOURCEBRANCH       # e.g. refs/heads/main
 $BranchName = $Env:BUILD_SOURCEBRANCHNAME   # e.g. main
 
-# ------------------------------
+# -------------------------------------------
 # Detect exact tag vs. distance from last tag
-# ------------------------------
+# -------------------------------------------
 # Is HEAD exactly on a tag like v-1.2.3 ?
 $ExactTag    = git describe --tags --exact-match HEAD 2>$null
 $HasExactTag = ($LASTEXITCODE -eq 0) -and ($ExactTag -like "$TagPrefix*")
@@ -87,7 +87,6 @@ else {
     # Not exactly on a tag: describe distance from most recent matching tag
     $Desc = git describe --tags --long --match "$TagPrefix[0-9]*" HEAD 2>$null
     if ($LASTEXITCODE -eq 0 -and $Desc) {
-        # Example: v-1.2.0-5-gabcdef
         if ($Desc -match $DescribeLongTagPattern) {
             $MajorVersion    = [int]$Matches.major
             $MinorVersion    = [int]$Matches.minor
@@ -104,9 +103,9 @@ else {
     }
 }
 
-# ------------------------------
+# ----------------------------
 # Build SemVer based on branch
-# ------------------------------
+# ----------------------------
 if ($BranchRef -eq 'refs/heads/main') {
     # Enforce tagging on main
     if (-not $HasExactTag) {
@@ -151,12 +150,12 @@ else {
 	# Any other branch (feature/, bugfix/, fix/, etc.)
 	$Safe = Sanitize-Prerelease ($BranchRef -replace '^refs/heads/','')
 	$VersionSuffix = if ($NumberOfCommits -eq 0) { "-$Safe" } else { "-$Safe.$NumberOfCommits" }
-	$SemVersion = "$MajorVersion.$MinorVersion.$PatchVersion$VersionSuffix"
+	$SemVersion    = "$MajorVersion.$MinorVersion.$PatchVersion$VersionSuffix"
 }
 
-# ------------------------------
+# -------
 # Logging
-# ------------------------------
+# -------
 Write-Host "Branch: $BranchRef"
 Write-Host "Branch name: $BranchName"
 Write-Host "Has exact tag: $HasExactTag"
@@ -167,9 +166,9 @@ Write-Host "Patch version: $PatchVersion"
 Write-Host "Version Suffix: $VersionSuffix"
 Write-Host "Sem version: $SemVersion"
 
-# ------------------------------
+# -------------------------------------------------------
 # Export variables for later steps / jobs in Azure DevOps
-# ------------------------------
+# -------------------------------------------------------
 Write-Host "##vso[task.setvariable variable=HasExactTag;isOutput=true]$HasExactTag"
 Write-Host "##vso[task.setvariable variable=NumberOfCommits;isOutput=true]$NumberOfCommits"
 Write-Host "##vso[task.setvariable variable=MajorVersion;isOutput=true]$MajorVersion"

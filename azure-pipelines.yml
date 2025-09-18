@@ -3,7 +3,6 @@ pool:
 
 variables:
 - group: 'code-sign-config'
-- group: 'dotnet-config'
 - group: 'github-config'
 
 stages:
@@ -29,6 +28,7 @@ stages:
   displayName: Build Application
   dependsOn: versioning
   variables:
+    BuildConfiguration: 'release'
     SemVersion: $[ stageDependencies.versioning.get_version.outputs['gitver.SemVersion'] ]
     MajorVersion: $[ stageDependencies.versioning.get_version.outputs['gitver.MajorVersion'] ]
     MinorVersion: $[ stageDependencies.versioning.get_version.outputs['gitver.MinorVersion'] ]
@@ -74,6 +74,7 @@ stages:
         InformationalVersion: '$(SemVersion)'
         LogLevel: 'verbose'
         FailOnWarning: false
+        DisableTelemetry: true
     - task: DotNetCoreCLI@2
       displayName: 'Restore'
       inputs:
@@ -230,14 +231,15 @@ stages:
 
 - stage: deploy
   displayName: Deploy
-  dependsOn: [github, versioning] 
+  dependsOn: [github, build]
   variables:
     SemVersion: $[ stageDependencies.versioning.get_version.outputs['gitver.SemVersion'] ]
   jobs:
   - job: create_github_release
-    displayName: Create GitHub Release
+    displayName: Upload Package
     steps:
     - download: current
+      displayName: 'Download artifacts'
       artifact: drop
     - task: GitHubRelease@1
       displayName: 'Create GitHub Release'
