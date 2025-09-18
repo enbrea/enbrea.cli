@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Enbrea.Ecf" Version="0.3.0" />
-    <PackageReference Include="Enbrea.SaxSVS" Version="0.1.0" />
+    <PackageReference Include="Enbrea.SaxSVS" Version="0.2.0" />
   </ItemGroup>
 
   <ItemGroup>
