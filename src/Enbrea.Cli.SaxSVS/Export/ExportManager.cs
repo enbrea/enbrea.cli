@@ -148,7 +148,7 @@ namespace Enbrea.Cli.SaxSVS
                     ecfTableWriter.SetValue(EcfHeaders.Id, student.Id.ToString());
                     ecfTableWriter.SetValue(EcfHeaders.LastName, student.FamilyName);
                     ecfTableWriter.SetValue(EcfHeaders.FirstName, student.GivenName);
-                    ecfTableWriter.TrySetValue(EcfHeaders.Gender, student.Gender?.Code);
+                    ecfTableWriter.TrySetValue(EcfHeaders.Gender, ValueConverter.GetGenderOrDefault(student.Gender));
                     ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, student.BirthDate);
 
                     await ecfTableWriter.WriteAsync(_cancellationToken);
@@ -198,7 +198,8 @@ namespace Enbrea.Cli.SaxSVS
                 EcfHeaders.SchoolClassId,
                 EcfHeaders.TeacherId,
                 EcfHeaders.StudentId,
-                EcfHeaders.SubjectId);
+                EcfHeaders.SubjectId,
+                EcfHeaders.Description);
 
             foreach (var lesson in saxSVSDocument.Lessons)
             {
@@ -212,11 +213,17 @@ namespace Enbrea.Cli.SaxSVS
                             {
                                 if (saxSVSDocument.DoesStudentAttendClass(classRelation.ClassId, studentAttendance.StudentId))
                                 {
-                                    ecfTableWriter.SetValue(EcfHeaders.Id, lesson.Id);
+                                    ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(
+                                        lesson.Id.ToString(),
+                                        lesson.Subject?.Name,
+                                        lesson.TeacherId?.ToString(),
+                                        studentAttendance.StudentId.ToString(),
+                                        classRelation.ClassId.ToString()));
                                     ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, classRelation.ClassId);
                                     ecfTableWriter.SetValue(EcfHeaders.TeacherId, lesson.TeacherId);
                                     ecfTableWriter.SetValue(EcfHeaders.StudentId, studentAttendance.StudentId);
                                     ecfTableWriter.SetValue(EcfHeaders.SubjectId, lesson.Subject?.Name);
+                                    ecfTableWriter.SetValue(EcfHeaders.Description, lesson.GroupName);
 
                                     await ecfTableWriter.WriteAsync(_cancellationToken);
 
@@ -233,11 +240,17 @@ namespace Enbrea.Cli.SaxSVS
                             {
                                 if (saxSVSDocument.DoesStudentAttendClass(classRelation.ClassId, student.Id))
                                 {
-                                    ecfTableWriter.SetValue(EcfHeaders.Id, lesson.Id);
+                                    ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(
+                                        lesson.Id.ToString(),
+                                        lesson.Subject?.Name,
+                                        lesson.TeacherId?.ToString(),
+                                        student.Id.ToString(),
+                                        classRelation.ClassId.ToString()));
                                     ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, classRelation.ClassId);
                                     ecfTableWriter.SetValue(EcfHeaders.TeacherId, lesson.TeacherId);
                                     ecfTableWriter.SetValue(EcfHeaders.StudentId, student.Id);
                                     ecfTableWriter.SetValue(EcfHeaders.SubjectId, lesson.Subject?.Name);
+                                    ecfTableWriter.SetValue(EcfHeaders.Description, lesson.GroupName);
 
                                     await ecfTableWriter.WriteAsync(_cancellationToken);
 
@@ -300,7 +313,7 @@ namespace Enbrea.Cli.SaxSVS
                 ecfTableWriter.SetValue(EcfHeaders.Code, workforce.ShortName);
                 ecfTableWriter.TrySetValue(EcfHeaders.LastName, workforce.FamilyName);
                 ecfTableWriter.TrySetValue(EcfHeaders.FirstName, workforce.GivenName);
-                ecfTableWriter.TrySetValue(EcfHeaders.Gender, workforce.Gender?.Code);
+                ecfTableWriter.TrySetValue(EcfHeaders.Gender, ValueConverter.GetGenderOrDefault(workforce.Gender));
                 ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, workforce.BirthDate);
 
                 await ecfTableWriter.WriteAsync(_cancellationToken);
