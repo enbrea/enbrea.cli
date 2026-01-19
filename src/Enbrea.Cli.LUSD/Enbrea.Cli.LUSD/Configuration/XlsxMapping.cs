@@ -19,10 +19,11 @@
  */
 #endregion
 
-namespace Enbrea.Cli
+namespace Enbrea.Cli.LUSD
 {
-    public enum ImportProvider
+    public class XlsxMapping
     {
-        davinci, untis, magellan, edoosys, schildnrw, bbsplanung, danis, saxsvs, lusd, excel
+        public string FromHeader { get; set; }
+        public string ToHeader { get; set; }
     }
 }

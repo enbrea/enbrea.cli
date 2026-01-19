@@ -31,13 +31,13 @@ namespace Enbrea.Cli.SchildNRW
     public class Configuration
     {
         /// <summary>
-        /// MS SQL Server or MySQL database connection for direct SchildNRW access
+        /// MS Access, MS SQL Server or MySQL database connection for direct SchildNRW access
         /// </summary>
         [JsonPropertyOrder(1)]
         public string DatabaseConnection { get; set; } = "server=localhost;port=3306;database=schild;uid=myUsername;pwd=myPassword";
 
         /// <summary>
-        /// Data provider for SchildNRW (either MS SQL Server or MySQL)
+        /// Data provider for SchildNRW (either MS Access, MS SQL Server or MySQL)
         /// </summary>
         [JsonPropertyOrder(0)]
         [JsonConverter(typeof(JsonStringEnumConverter))]

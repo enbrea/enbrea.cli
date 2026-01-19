@@ -59,6 +59,8 @@ namespace Enbrea.Cli
                     return new Danis.ExportManager(config.Danis, consoleWriter, cancellationToken);
                 case ImportProvider.saxsvs:
                     return new SaxSVS.ExportManager(config.SaxSVS, consoleWriter, cancellationToken);
+                case ImportProvider.lusd:
+                    return new LUSD.XlsxExportManager(config.LUSD, consoleWriter, cancellationToken);
                 case ImportProvider.edoosys:
                     if (config.Edoosys.DataProvider == Edoosys.DataProvider.Csv)
                     {

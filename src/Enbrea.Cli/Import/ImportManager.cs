@@ -383,7 +383,7 @@ namespace Enbrea.Cli
                                     var ecfTableReaderForPreviousRows = new EcfTableReader(ecfTextReaderForPreviousRows);
                                     var ecfTableDiff = new CsvDiff(ecfTextWriterForChangedOnlyRows, new EcfConfiguration(), EcfHeaders.Id);
 
-                                    numberOfAffectedRows = await ecfTableDiff.GenerateAsync(CsvDiffType.AddedOrUpdatedOnly, ecfTableReaderForPreviousRows, ecfTableReader, _cancellationToken);
+                                    numberOfAffectedRows = await ecfTableDiff.GenerateAsync(CsvDiffStrategy.AddedOrUpdatedOnly, ecfTableReaderForPreviousRows, ecfTableReader, _cancellationToken);
                                 }
 
                                 if (numberOfAffectedRows == 0)
@@ -440,7 +440,7 @@ namespace Enbrea.Cli
                                 var ecfTableReaderForPreviousRows = new EcfTableReader(ecfTextReaderForPreviousRows);
                                 var ecfTableDiff = new CsvDiff(ecfTextWriterForDeletedOnlyRows, new EcfConfiguration(), EcfHeaders.Id);
 
-                                numberOfAffectedRows = await ecfTableDiff.GenerateAsync(CsvDiffType.DeletedOnly, ecfTableReaderForPreviousRows, ecfTableReader, _cancellationToken);
+                                numberOfAffectedRows = await ecfTableDiff.GenerateAsync(CsvDiffStrategy.DeletedOnly, ecfTableReaderForPreviousRows, ecfTableReader, _cancellationToken);
                             }
 
                             if (numberOfAffectedRows == 0)

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Product>Enbrea CLI Module for edoo.sys</Product>
     <Description>Generating ECF files from edoo.sys</Description>
     <Company>STÜBER SYSTEMS GmbH</Company>
@@ -12,8 +12,8 @@
 
   <ItemGroup>
     <PackageReference Include="Enbrea.Ecf" Version="0.3.0" />
-    <PackageReference Include="Enbrea.Edoosys.Db" Version="0.4.0" />
-    <PackageReference Include="Enbrea.GuidFactory" Version="0.10.0" />
+    <PackageReference Include="Enbrea.Edoosys.Db" Version="0.5.0" />
+    <PackageReference Include="Enbrea.GuidFactory" Version="0.11.0" />
   </ItemGroup>
 
   <ItemGroup>

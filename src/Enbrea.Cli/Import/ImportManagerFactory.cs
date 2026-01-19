@@ -89,6 +89,8 @@ namespace Enbrea.Cli
                     return config.Danis.TargetFolder;
                 case ImportProvider.saxsvs:
                     return config.SaxSVS.TargetFolder;
+                case ImportProvider.lusd:
+                    return config.LUSD.TargetFolder;
                 case ImportProvider.excel:
                     return config.Excel.TargetFolder;
                 default:

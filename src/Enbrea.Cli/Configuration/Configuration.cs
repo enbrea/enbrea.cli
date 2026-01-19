@@ -75,7 +75,7 @@ namespace Enbrea.Cli
         /// <summary>
         /// Sub configuration for Excel/CSV
         /// </summary>
-        [JsonPropertyOrder(15)]
+        [JsonPropertyOrder(16)]
         public Excel.Configuration Excel { get; set; } = new();
 
         /// <summary>
@@ -89,6 +89,12 @@ namespace Enbrea.Cli
         /// </summary>
         [JsonPropertyOrder(14)]
         public SaxSVS.Configuration SaxSVS { get; set; } = new();
+
+        /// <summary>
+        /// Sub configuration for LUSD
+        /// </summary>
+        [JsonPropertyOrder(15)]
+        public LUSD.Configuration LUSD { get; set; } = new();
 
         /// <summary>
         /// Sub configuration for SchildNRW

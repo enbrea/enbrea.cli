@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Product>Enbrea CLI Module for Excel/CSV</Product>
     <Description>Generating ECF files from a simple Excel sheet or CSV</Description>
     <Company>STÜBER SYSTEMS GmbH</Company>
@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="Enbrea.Ecf" Version="0.3.0" />
-    <PackageReference Include="Enbrea.GuidFactory" Version="0.10.0" />
+    <PackageReference Include="Enbrea.GuidFactory" Version="0.11.0" />
   </ItemGroup>
 
   <ItemGroup>

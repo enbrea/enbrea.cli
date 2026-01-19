@@ -19,10 +19,19 @@
  */
 #endregion
 
-namespace Enbrea.Cli
+namespace Enbrea.Cli.LUSD
 {
-    public enum ImportProvider
+    public class ExportTeacher
     {
-        davinci, untis, magellan, edoosys, schildnrw, bbsplanung, danis, saxsvs, lusd, excel
+        public readonly string Code;
+        public readonly string Id;
+
+        public ExportTeacher(Configuration config, XlsxReader xlsReader)
+        {
+            if (xlsReader.TryGetValue(config.GetXlsxColumnName("Lehrer"), out Id))
+            {
+                Code = Id;
+            }
+        }
     }
 }

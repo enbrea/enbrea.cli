@@ -15,6 +15,6 @@ This file contains the declaration of all the localizable strings.
   <String Id="FeatureCoreTitle" Value="Kernkomponenten" />
   <String Id="FeatureCoreDescription" Value="Installation der Kernkomponenten." />
 
-  <String Id="WelcomeDlgDescription" Value="Der Setup-Assistent wird [Produktname] Version [ProduktVersion] auf Ihrem Computer installieren. Klicken Sie auf Weiter, um fortzufahren, oder auf Abbrechen, um den Setup-Assistenten zu beenden." />
+  <String Id="WelcomeDlgDescription" Value="Der Setup-Assistent wird [ProductName] Version [ProductVersion] auf Ihrem Computer installieren. Klicken Sie auf Weiter, um fortzufahren, oder auf Abbrechen, um den Setup-Assistenten zu beenden." />
 
 </WixLocalization>

@@ -19,10 +19,18 @@
  */
 #endregion
 
-namespace Enbrea.Cli
+using System;
+
+namespace Enbrea.Cli.LUSD
 {
-    public enum ImportProvider
+    public class XlsReaderException : Exception
     {
-        davinci, untis, magellan, edoosys, schildnrw, bbsplanung, danis, saxsvs, lusd, excel
+        /// <summary>
+        /// Initializes a new instance of <see cref="XlsReaderException"/>.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        public XlsReaderException(string message) : base(message)
+        {
+        }
     }
 }

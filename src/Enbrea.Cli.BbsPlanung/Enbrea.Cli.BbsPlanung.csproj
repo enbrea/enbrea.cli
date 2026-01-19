@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Product>Enbrea CLI Module for BBS-Planung</Product>
     <Company>STÜBER SYSTEMS GmbH</Company>
     <Description>Generating ECF files from a BBS-Planung database</Description>
@@ -12,9 +12,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Enbrea.BbsPlanung.Db" Version="0.4.0" />
+    <PackageReference Include="Enbrea.BbsPlanung.Db" Version="0.5.0" />
     <PackageReference Include="Enbrea.Ecf" Version="0.3.0" />
-    <PackageReference Include="System.Data.Odbc" Version="9.0.9" />
+    <PackageReference Include="System.Data.Odbc" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>

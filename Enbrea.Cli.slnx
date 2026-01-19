@@ -1,0 +1,24 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="setup/Enbrea.Cli.Setup.wixproj" Type="b7dd6f7e-def8-4e67-b5b7-07ef123db6f0">
+    <Platform Solution="*|Any CPU" Project="x64" />
+    <Build Project="false" />
+  </Project>
+  <Project Path="src/Enbrea.Cli.BbsPlanung/Enbrea.Cli.BbsPlanung.csproj" />
+  <Project Path="src/Enbrea.Cli.Common/Enbrea.Cli.Common.csproj" />
+  <Project Path="src/Enbrea.Cli.DaNiS/Enbrea.Cli.DaNiS.csproj" />
+  <Project Path="src/Enbrea.Cli.DaVinci/Enbrea.Cli.DaVinci.csproj" />
+  <Project Path="src/Enbrea.Cli.Edoosys/Enbrea.Cli.Edoosys.csproj" />
+  <Project Path="src/Enbrea.Cli.Excel/Enbrea.Cli.Excel.csproj" />
+  <Project Path="src/Enbrea.Cli.LUSD/Enbrea.Cli.LUSD/Enbrea.Cli.LUSD.csproj" />
+  <Project Path="src/Enbrea.Cli.Magellan/Enbrea.Cli.Magellan.csproj" />
+  <Project Path="src/Enbrea.Cli.SaxSVS/Enbrea.Cli.SaxSVS.csproj" />
+  <Project Path="src/Enbrea.Cli.SchildNRW/Enbrea.Cli.SchildNRW.csproj" />
+  <Project Path="src/Enbrea.Cli.Untis/Enbrea.Cli.Untis.csproj" />
+  <Project Path="src/Enbrea.Cli/Enbrea.Cli.csproj" />
+</Solution>

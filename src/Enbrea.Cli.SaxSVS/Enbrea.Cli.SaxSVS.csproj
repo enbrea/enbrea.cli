@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Product>Enbrea CLI Module for SaxSVS</Product>
     <Description>Generating ECF files from SaxSVS</Description>
     <Company>STÜBER SYSTEMS GmbH</Company>
@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Enbrea.Ecf" Version="0.3.0" />
-    <PackageReference Include="Enbrea.SaxSVS" Version="0.2.0" />
+    <PackageReference Include="Enbrea.SaxSVS" Version="0.3.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,23 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Product>Enbrea CLI Module for edoo.sys</Product>
-    <Description>Generating ECF files from DaNiS</Description>
+    <Product>Enbrea CLI Module for LUSD</Product>
+    <Description>Generating ECF files from LUSD</Description>
     <Company>STÜBER SYSTEMS GmbH</Company>
     <Authors>STÜBER SYSTEMS GmbH</Authors>
     <Copyright>© 2025 STÜBER SYSTEMS GmbH</Copyright>
-    <RootNamespace>Enbrea.CLI.DaNiS</RootNamespace>
+    <RootNamespace>Enbrea.Cli.LUSD</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Enbrea.Danis.Db" Version="0.3.0" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="Enbrea.Ecf" Version="0.3.0" />
     <PackageReference Include="Enbrea.GuidFactory" Version="0.11.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Enbrea.Cli.Common\Enbrea.Cli.Common.csproj" />
+    <ProjectReference Include="..\..\Enbrea.Cli.Common\Enbrea.Cli.Common.csproj" />
   </ItemGroup>
 
 </Project>

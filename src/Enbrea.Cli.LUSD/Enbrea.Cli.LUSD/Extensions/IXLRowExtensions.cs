@@ -1,6 +1,6 @@
 ﻿#region Enbrea - Copyright (c) STÜBER SYSTEMS GmbH
 /*    
- *    Enbrea
+ *    Enbrea 
  *    
  *    Copyright (c) STÜBER SYSTEMS GmbH
  *
@@ -19,10 +19,26 @@
  */
 #endregion
 
-namespace Enbrea.Cli
+using ClosedXML.Excel;
+
+namespace Enbrea.Cli.LUSD
 {
-    public enum ImportProvider
+    /// <summary>
+    /// Extensions for <see cref="IXLRow"/>
+    /// </summary>
+    public static class IXLRowExtensions
     {
-        davinci, untis, magellan, edoosys, schildnrw, bbsplanung, danis, saxsvs, lusd, excel
+        public static bool TryGetCellValue<T>(this IXLRow xlsRow, string xlsColumnName, out T value)
+        {
+            if (xlsColumnName != null)
+            {
+                return xlsRow.Cell(xlsColumnName).TryGetValue(out value);
+            }
+            else
+            {
+                value = default;
+                return false;
+            }
+        }
     }
 }

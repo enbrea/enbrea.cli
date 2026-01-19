@@ -377,13 +377,10 @@ namespace Enbrea.Cli
                         }
                     }
 
-                    if (!skipEnbrea)
+                    var importManager = ImportManagerFactory.CreateImportToEnbreaManager(provider, config, behaviour, skipSnapshot, skipEnbrea, consoleWriter, cancellationEvent, cancellationToken);
+                    if (importManager != null)
                     {
-                        var importManager = ImportManagerFactory.CreateImportToEnbreaManager(provider, config, behaviour, skipSnapshot, skipEnbrea, consoleWriter, cancellationEvent, cancellationToken);
-                        if (importManager != null)
-                        {
-                            await importManager.Execute();
-                        }
+                        await importManager.Execute();
                     }
                 }
                 catch (Exception ex)

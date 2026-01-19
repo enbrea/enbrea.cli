@@ -1,6 +1,12 @@
-![GitHub](https://img.shields.io/github/license/enbrea/enbrea.cli)
-
+<div align="center">
+  
 # Enbrea CLI
+
+[![.Net](https://img.shields.io/badge/.NET-5C2D91?style=for-the-badge&logo=.net&logoColor=white)](https://dotnet.microsoft.com/)
+[![GitHub Lizenz](https://img.shields.io/github/license/enbrea/enbrea.cli?style=for-the-badge)](./LICENSE)
+[![Dokumentation](https://img.shields.io/badge/docs-available-brightgreen?style=for-the-badge)](https://github.com/enbrea/enbrea.cli/wiki)
+
+</div>
 
 ## Einführung
 

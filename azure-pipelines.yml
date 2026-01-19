@@ -79,7 +79,7 @@ stages:
       displayName: 'Restore'
       inputs:
         command: 'restore'
-        projects: '*.sln'
+        projects: '*.slnx'
         feedsToUse: 'select'
         vstsFeed: 'b0890edd-bcca-4a1c-b63c-d22daf6e4407/24f47e68-5eca-4ba8-8ab3-905662347d75'
     - task: DotNetCoreCLI@2
@@ -117,7 +117,7 @@ stages:
         SM_HOST : $(SM_HOST)
       inputs:
         targetType: 'inline'
-        script: |
+        script:
           $env:PATH += ';C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64'
           signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) $(Build.SourcesDirectory)/src/Enbrea.Cli/bin/Publish/win-x64/Enbrea.exe
           signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) $(Build.SourcesDirectory)/src/Enbrea.Cli/bin/Publish/win-x86/Enbrea.exe

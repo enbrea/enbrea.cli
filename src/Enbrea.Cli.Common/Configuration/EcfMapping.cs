@@ -35,8 +35,8 @@ namespace Enbrea.Cli.Common
         /// <summary>
         /// The list of mappings
         /// </summary>
-        public ICollection<EcfFileMapping> Files { get; set; } = new List<EcfFileMapping>()
-        {
+        public ICollection<EcfFileMapping> Files { get; set; } =
+        [
             new() { Name = "Announcements", KeyHeaders = ["Id"] },
             new() { Name = "ApplicationAssessments", KeyHeaders = ["Id"] },
             new() { Name = "ApplicationEnrollmentSupports", KeyHeaders = ["Id"] },
@@ -60,6 +60,7 @@ namespace Enbrea.Cli.Common
             new() { Name = "EducationalContents", KeyHeaders = ["Code"] },
             new() { Name = "EducationalMaterials", KeyHeaders = ["Code"] },
             new() { Name = "EducationalPrograms", KeyHeaders = ["Code"] },
+            new() { Name = "Events", KeyHeaders = ["Id"] },
             new() { Name = "EventTypes", KeyHeaders = ["Code"] },
             new() { Name = "ExamTypes", KeyHeaders = ["Code"] },
             new() { Name = "ForeignLanguages", KeyHeaders = ["Code"] },
@@ -80,6 +81,7 @@ namespace Enbrea.Cli.Common
             new() { Name = "Rooms", KeyHeaders = ["Code"] },
             new() { Name = "RoomTypes", KeyHeaders = ["Code"] },
             new() { Name = "ScheduledLessons", KeyHeaders = ["Id"] },
+            new() { Name = "ScheduledSupervisions", KeyHeaders = ["Id"] },
             new() { Name = "SchoolClassAbsenceReasons", KeyHeaders = ["Code"] },
             new() { Name = "SchoolClassAbsences", KeyHeaders = ["Id"] },
             new() { Name = "SchoolClasses", KeyHeaders = ["Code"] },
@@ -102,6 +104,7 @@ namespace Enbrea.Cli.Common
             new() { Name = "Subjects", KeyHeaders = ["Code"] },
             new() { Name = "SubjectTypes", KeyHeaders = ["Code"] },
             new() { Name = "SubstituteLessons", KeyHeaders = ["Id"] },
+            new() { Name = "SubstituteSupervisions", KeyHeaders = ["Id"] },
             new() { Name = "SubstitutionQualities", KeyHeaders = ["Code"] },
             new() { Name = "TeacherAbsenceReasonDifferentiations", KeyHeaders = ["Code"] },
             new() { Name = "TeacherAbsenceReasons", KeyHeaders = ["Code"] },
@@ -114,6 +117,6 @@ namespace Enbrea.Cli.Common
             new() { Name = "TimeAccountEntryTypes", KeyHeaders = ["Code"] },
             new() { Name = "TimeFrames", KeyHeaders = ["Code"] },
             new() { Name = "VocationalFields", KeyHeaders = ["Code" ] }
-       };
+       ];
     }
 }

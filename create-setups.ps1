@@ -18,7 +18,7 @@ param(
 )
 
 # Restore
-dotnet restore "Enbrea.Cli.sln"
+dotnet restore "Enbrea.Cli.slnx"
 # Publish x64
 dotnet publish "./src/Enbrea.Cli/Enbrea.Cli.csproj" /p:PublishProfile=x64
 # Publish x86

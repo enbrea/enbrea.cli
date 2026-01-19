@@ -24,6 +24,7 @@ using Enbrea.Ecf;
 using Enbrea.Konsoli;
 using Enbrea.SchildNRW.Db;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace Enbrea.Cli.SchildNRW
     public class ExportManager : EcfCustomManager
     {
         private readonly Configuration _config;
+        private Dictionary<int, string> _ecfStudentsCache = [];
         private int _recordCounter = 0;
         private int _tableCounter = 0;
 
@@ -56,18 +58,13 @@ namespace Enbrea.Cli.SchildNRW
             // Preperation
             PrepareEcfFolder();
 
-            // Catalogs
-            await Execute(EcfTables.CourseTypes, schildNRWDbReader, ExportCourseTypes);
-
             // Education
             await Execute(EcfTables.Teachers, schildNRWDbReader, ExportTeachers);
             await Execute(EcfTables.Subjects, schildNRWDbReader, ExportSubjects);
             await Execute(EcfTables.SchoolClasses, schildNRWDbReader, ExportSchoolClasses);
             await Execute(EcfTables.Students, schildNRWDbReader, ExportStudents);
             await Execute(EcfTables.StudentSchoolClassAttendances, schildNRWDbReader, ExportStudentSchoolClassAttendances);
-            await Execute(EcfTables.Courses, schildNRWDbReader, ExportCourses);
-            await Execute(EcfTables.StudentCourseAttendances, schildNRWDbReader, ExportStudentCourseAttendances);
-            await Execute(EcfTables.TeacherCourseAttendances, schildNRWDbReader, ExportTeacherCourseAttendances);
+            await Execute(EcfTables.StudentSubjects, schildNRWDbReader, ExportStudentSubjects);
 
             // Report status
             _consoleWriter.Success($"{_tableCounter} table(s) and {_recordCounter} record(s) extracted").NewLine();
@@ -102,57 +99,6 @@ namespace Enbrea.Cli.SchildNRW
             }
         }
 
-        private async Task<int> ExportCourses(SchildNRWDbReader schildNRWDbReader, EcfTableWriter ecfTableWriter)
-        {
-            var ecfRecordCounter = 0;
-
-            await ecfTableWriter.WriteHeadersAsync(
-                EcfHeaders.Id,
-                EcfHeaders.Title,
-                EcfHeaders.CourseTypeId,
-                EcfHeaders.SubjectId);
-
-            await foreach (var course in schildNRWDbReader.CoursesAsync(_config.SchoolYear, _config.SchoolTerm))
-            {
-                if (ecfTableWriter.Headers.Count == 0)
-                {
-                    ecfTableWriter.SetValue(EcfHeaders.Id, course.Id.ToString());
-                    ecfTableWriter.SetValue(EcfHeaders.Title, course.Name);
-                    ecfTableWriter.SetValue(EcfHeaders.CourseTypeId, course.CourseCategory);
-                    ecfTableWriter.SetValue(EcfHeaders.SubjectId, course.SubjectId.ToString());
-                }
-
-                await ecfTableWriter.WriteAsync();
-
-                _consoleWriter.ContinueProgress(++ecfRecordCounter);
-            }
-
-            return ecfRecordCounter;
-        }
-
-        private async Task<int> ExportCourseTypes(SchildNRWDbReader schildNRWDbReader, EcfTableWriter ecfTableWriter)
-        {
-            var ecfRecordCounter = 0;
-
-            await ecfTableWriter.WriteHeadersAsync(
-                EcfHeaders.Id,
-                EcfHeaders.Code,
-                EcfHeaders.Name);
-
-            await foreach (var courseType in schildNRWDbReader.CourseTypesAsync())
-            {
-                ecfTableWriter.SetValue(EcfHeaders.Id, courseType.Id.ToString());
-                ecfTableWriter.SetValue(EcfHeaders.Code, courseType.Code);
-                ecfTableWriter.TrySetValue(EcfHeaders.Name, courseType.Name);
-
-                await ecfTableWriter.WriteAsync();
-
-                _consoleWriter.ContinueProgress(++ecfRecordCounter);
-            }
-
-            return ecfRecordCounter;
-        }
-
         private async Task<int> ExportSchoolClasses(SchildNRWDbReader schildNRWDbReader, EcfTableWriter ecfTableWriter)
         {
             var ecfRecordCounter = 0;
@@ -176,56 +122,6 @@ namespace Enbrea.Cli.SchildNRW
             return ecfRecordCounter;
         }
 
-        private async Task<int> ExportStudentCourseAttendances(SchildNRWDbReader schildNRWDbReader, EcfTableWriter ecfTableWriter)
-        {
-            var ecfRecordCounter = 0;
-
-            await ecfTableWriter.WriteHeadersAsync(
-                EcfHeaders.Id,
-                EcfHeaders.StudentId,
-                EcfHeaders.CourseId);
-
-            await foreach (var course in schildNRWDbReader.CoursesAsync(_config.SchoolYear, _config.SchoolTerm))
-            {
-                await foreach (var attendance in schildNRWDbReader.StudentCourseAttendancesAsync(course.Id, _config.SchoolYear, _config.SchoolTerm))
-                {
-                    ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(attendance.StudentId.ToString(), course.Id.ToString()));
-                    ecfTableWriter.SetValue(EcfHeaders.StudentId, attendance.StudentId.ToString());
-                    ecfTableWriter.SetValue(EcfHeaders.CourseId, course.Id.ToString());
-
-                    await ecfTableWriter.WriteAsync();
-
-                    _consoleWriter.ContinueProgress(++ecfRecordCounter);
-                }
-            }
-
-            return ecfRecordCounter;
-        }
-
-        private async Task<int> ExportTeacherCourseAttendances(SchildNRWDbReader schildNRWDbReader, EcfTableWriter ecfTableWriter)
-        {
-            var ecfRecordCounter = 0;
-
-            await ecfTableWriter.WriteHeadersAsync(
-                EcfHeaders.Id,
-                EcfHeaders.TeacherId,
-                EcfHeaders.CourseId);
-
-            await foreach (var course in schildNRWDbReader.CoursesAsync(_config.SchoolYear, _config.SchoolTerm))
-            {
-                ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(course.Teacher, course.Id.ToString()));
-                ecfTableWriter.SetValue(EcfHeaders.TeacherId, course.Teacher);
-                ecfTableWriter.SetValue(EcfHeaders.CourseId, course.Id.ToString());
-
-                await ecfTableWriter.WriteAsync();
-
-                _consoleWriter.ContinueProgress(++ecfRecordCounter);
-            }
-
-            return ecfRecordCounter;
-        }
-
-
         private async Task<int> ExportStudents(SchildNRWDbReader schildNRWDbReader, EcfTableWriter ecfTableWriter)
         {
             var ecfRecordCounter = 0;
@@ -247,6 +143,8 @@ namespace Enbrea.Cli.SchildNRW
                 ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, student.GetBirthdateOrDefault());
                 ecfTableWriter.TrySetValue(EcfHeaders.EmailAddress, student.Email);
 
+                _ecfStudentsCache.Add(student.Id, student.SchoolClass);
+
                 await ecfTableWriter.WriteAsync();
 
                 _consoleWriter.ContinueProgress(++ecfRecordCounter);
@@ -259,23 +157,56 @@ namespace Enbrea.Cli.SchildNRW
         {
             var ecfRecordCounter = 0;
 
-            if (ecfTableWriter.Headers.Count == 0)
-            {
-                await ecfTableWriter.WriteHeadersAsync(
-                    EcfHeaders.Id,
-                    EcfHeaders.StudentId,
-                    EcfHeaders.SchoolClassId);
-            }
+            await ecfTableWriter.WriteHeadersAsync(
+                EcfHeaders.Id,
+                EcfHeaders.StudentId,
+                EcfHeaders.SchoolClassId);
 
             await foreach (var student in schildNRWDbReader.StudentsAsync(StudentStatus.Active))
             {
-                ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(student.Id.ToString(), student.SchoolClass));
-                ecfTableWriter.SetValue(EcfHeaders.StudentId, student.Id.ToString());
-                ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, student.SchoolClass);
+                if (!string.IsNullOrWhiteSpace(student.SchoolClass))
+                {
+                    ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(student.Id.ToString(), student.SchoolClass));
+                    ecfTableWriter.SetValue(EcfHeaders.StudentId, student.Id.ToString());
+                    ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, student.SchoolClass);
 
-                await ecfTableWriter.WriteAsync();
+                    await ecfTableWriter.WriteAsync();
 
-                _consoleWriter.ContinueProgress(++ecfRecordCounter);
+                    _consoleWriter.ContinueProgress(++ecfRecordCounter);
+                }
+            }
+
+            return ecfRecordCounter;
+        }
+
+        private async Task<int> ExportStudentSubjects(SchildNRWDbReader schildNRWDbReader, EcfTableWriter ecfTableWriter)
+        {
+            var ecfRecordCounter = 0;
+
+            await ecfTableWriter.WriteHeadersAsync(
+                EcfHeaders.Id,
+                EcfHeaders.StudentId,
+                EcfHeaders.SchoolClassId,
+                EcfHeaders.SubjectId,
+                EcfHeaders.TeacherId);
+
+            await foreach (var course in schildNRWDbReader.CoursesAsync(_config.SchoolYear, _config.SchoolTerm))
+            {
+                await foreach (var attendance in schildNRWDbReader.StudentCourseAttendancesAsync(course.Id, _config.SchoolYear, _config.SchoolTerm))
+                {
+                    if (_ecfStudentsCache.TryGetValue(attendance.StudentId, out string schoolClass) && !string.IsNullOrWhiteSpace(schoolClass))
+                    {
+                        ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(attendance.StudentId.ToString(), course.Id.ToString()));
+                        ecfTableWriter.SetValue(EcfHeaders.StudentId, attendance.StudentId.ToString());
+                        ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, schoolClass);
+                        ecfTableWriter.SetValue(EcfHeaders.SubjectId, course.SubjectId);
+                        ecfTableWriter.SetValue(EcfHeaders.TeacherId, course.Teacher);
+
+                        await ecfTableWriter.WriteAsync();
+
+                        _consoleWriter.ContinueProgress(++ecfRecordCounter);
+                    }
+                }
             }
 
             return ecfRecordCounter;

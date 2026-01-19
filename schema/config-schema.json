@@ -1,7 +1,7 @@
 {
   "$id": "https://github.com/enbrea/enbrea.cli/schema/config-schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$comment": "v-0.2.0",
+  "$comment": "v-0.2.1",
   "title": "Enbrea Cli JSON Configuration Schema Specification",
   "description": "Spezifikation des JSON Schemas der Enbrea Cli Konfigurationsdatei",
   "type": "object",
@@ -28,7 +28,7 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Konfiguration der Synchronisation mit lokaler DAVINCI-Datei",
+          "description": "Konfiguration der Synchronisation mit lokaler DaVinci-Datei",
           "required": [
             "DataProvider",
             "DataFile"
@@ -36,27 +36,27 @@
           "properties": {
             "DataProvider": {
               "const": "File",
-              "description": "Direkter Zugriff auf lokale DAVINCI-Datei"
+              "description": "Direkter Zugriff auf lokale DaVinci-Datei"
             },
             "DataFile": {
               "type": "string",
-              "description": "Dateipfad für lokale DAVINCI-Datei"
+              "description": "Dateipfad für lokale DaVinci-Datei"
             },
             "TargetFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von DAVINCI nach Enbrea",
+              "description": "Ordnerpfad für die Synchronisation von DaVinci nach Enbrea",
               "default": ".\\davinci\\export"
             },
             "SourceFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von Enbrea nach DAVINCI",
+              "description": "Ordnerpfad für die Synchronisation von Enbrea nach DaVinci",
               "default": ".\\davinci\\import"
             }
           }
         },
         {
           "type": "object",
-          "description": "Konfiguration der Synchronisation mit DAVINCI-SERVER",
+          "description": "Konfiguration der Synchronisation mit DaVinci-Server",
           "required": [
             "DataProvider",
             "ServerName",
@@ -67,39 +67,39 @@
           "properties": {
             "DataProvider": {
               "const": "Server",
-              "description": "Zugriff auf DAVINCI-SERVER"
+              "description": "Zugriff auf DaVinci-SERVER"
             },
             "ServerName": {
               "type": "string",
-              "description": "IP-Adresse oder Netzwerkname des DAVINCI SERVER",
-			  "format": "hostname",
+              "description": "IP-Adresse oder Netzwerkname des DaVinci-Server",
+              "format": "hostname",
               "default": "localhost"
             },
             "ServerPort": {
               "type": "integer",
-              "description": "Netzwerkport des DAVINCI SERVER",
+              "description": "Netzwerkport des DaVinci-Server",
               "default": 8100
             },
             "ServerUserName": {
               "type": "string",
-              "description": "Benutzername für die Authenfizierung gegenüber dem DAVINCI SERVER"
+              "description": "Benutzername für die Authenfizierung gegenüber dem DaVinci-Server"
             },
             "ServerPassword": {
               "type": "string",
-              "description": "Kennwort für die Authenfizierung gegenüber dem DAVINCI SERVER"
+              "description": "Kennwort für die Authenfizierung gegenüber dem DaVinci-Server"
             },
             "ServerFileId": {
               "type": "string",
-              "description": "Guid der DAVINCI-Datei auf dem DAVINCI SERVER"
+              "description": "Guid der DaVinci-Datei auf dem DaVinci-Server"
             },
             "TargetFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von DAVINCI nach Enbrea",
+              "description": "Ordnerpfad für die Synchronisation von DaVinci nach Enbrea",
               "default": ".\\davinci\\export"
             },
             "SourceFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von Enbrea nach DAVINCI",
+              "description": "Ordnerpfad für die Synchronisation von Enbrea nach DaVinci",
               "default": ".\\davinci\\import"
             }
           }
@@ -251,7 +251,7 @@
     },
     "Magellan": {
       "type": "object",
-      "description": "Konfiguration der Synchronisation mit MAGELLAN",
+      "description": "Konfiguration der Synchronisation mit Magellan",
       "required": [
         "DatabaseConnection",
         "TenantId",
@@ -260,24 +260,24 @@
       "properties": {
         "DatabaseConnection": {
           "type": "string",
-          "description": "Ein Connection-String zur MAGELLAN-Firebird-Datenbank"
+          "description": "Ein Connection-String zur Magellan-Firebird-Datenbank"
         },
         "TenantId": {
           "type": "integer",
-          "description": "ID des MAGELLAN-Mandanten"
+          "description": "ID des Magellan-Mandanten"
         },
         "SchoolTermId": {
           "type": "integer",
-          "description": "ID des MAGELLAN-Zeitraums"
+          "description": "ID des Magellan-Zeitraums"
         },
         "TargetFolder": {
           "type": "string",
-          "description": "Ordnerpfad für die Synchronisation von MAGELLAN nach Enbrea",
+          "description": "Ordnerpfad für die Synchronisation von Magellan nach Enbrea",
           "default": ".\\magellan\\export"
         },
         "SourceFolder": {
           "type": "string",
-          "description": "Ordnerpfad für die Synchronisation von Enbrea nach MAGELLAN",
+          "description": "Ordnerpfad für die Synchronisation von Enbrea nach Magellan",
           "default": ".\\magellan\\import"
         }
       }
@@ -419,245 +419,284 @@
       ]
     },
     "SchildNRW": {
-      "type": "object",
-      "description": "Konfiguration der Synchronisation mit Schild-NRW",
-      "required": [
-        "DataProvider",
-        "DatabaseConnection",
-        "SchoolYear",
-        "SchoolTerm"
-      ],
-      "properties": {
-        "DataProvider": {
-          "const": "MySql",
-          "description": "Zugriff auf eine MySQL-Datenbank"
-        },
-        "DatabaseConnection": {
-          "type": "string",
-          "description": "Ein Connection-String zur MySQL-Datenbank von Schild-NRW"
-        },
-        "SchoolYear": {
-          "type": "integer",
-          "description": "Das gewünschte Schild-NRW-Schuljahr"
-        },
-        "SchoolTerm": {
-          "type": "integer",
-          "description": "Das gewünschte Schild-NRW-Halbhahr"
-        },
-        "TargetFolder": {
-          "type": "string",
-          "description": "Ordnerpfad für die Synchronisation von Schild-NRW nach Enbrea",
-          "default": ".\\schildnrw\\export"
-        }
-      }
-    },
-    "Excel": {
       "oneOf": [
         {
           "type": "object",
-          "description": "Konfiguration der Synchronisation mit Excel (XLSX-Format)",
+          "description": "Konfiguration der Synchronisation mit Schild-NRW (MS Access)",
           "required": [
             "DataProvider",
-            "DataFile",
-            "XlsxMappings"
+            "DatabaseConnection",
+            "SchoolYear",
+            "SchoolTerm"
           ],
           "properties": {
             "DataProvider": {
-              "const": "Xlsx",
-              "description": "XLSX-Format"
+              "const": "MsAccess",
+              "description": "Zugriff auf eine Ms Access-Datenbank"
             },
-            "DataFile": {
+            "DatabaseConnection": {
               "type": "string",
-              "description": "Dateipfad zur XLSX-Datei"
+              "description": "Ein Connection-String zur MySQL-Datenbank von Schild-NRW"
             },
-            "XlsxFirstRowNumber": {
+            "SchoolYear": {
               "type": "integer",
-              "description": "Ab welcher Zeile beginnen die Datenzeilen",
-              "default": 2
+              "description": "Das gewünschte Schild-NRW-Schuljahr"
             },
-            "XlsxMappings": {
-              "type": "array",
-              "description": "Abbildung der Tabellenspalten",
-              "unqiueItems": true,
-              "items": {
-                "type": "object",
-                "description": "Abbildung einer Tabellenspalte",
-                "required": [
-                  "FromHeader",
-                  "ToHeader"
-                ],
-                "properties": {
-                  "FromHeader": {
-                    "type": "string",
-                    "description": "Name der Tabellenspalte in Excel"
-                  },
-                  "ToHeader": {
-                    "enum": [
-                      "Id",
-                      "Vorname",
-                      "Mittelname",
-                      "Nachname",
-                      "Geburtstag",
-                      "Geschlecht",
-                      "Anrede",
-                      "Klasse",
-                      "Fach1",
-                      "Fach2",
-                      "Fach3",
-                      "Fach4",
-                      "Fach5",
-                      "Fach6",
-                      "Fach7",
-                      "Fach8",
-                      "Fach9",
-                      "Fach10",
-                      "Fach11",
-                      "Fach12",
-                      "Fach13",
-                      "Fach14",
-                      "Fach15",
-                      "Fach16",
-                      "Fach17",
-                      "Fach18",
-                      "Fach19",
-                      "Fach20"
-                    ],
-                    "description": "Name der von Enbrea unterstützten Tabellenspalte"
-                  }
-                }
-              }
+            "SchoolTerm": {
+              "type": "integer",
+              "description": "Das gewünschte Schild-NRW-Halbhahr"
             },
             "TargetFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von Excel (XLSX-Format) nach Enbrea",
-              "default": ".\\excel\\export"
+              "description": "Ordnerpfad für die Synchronisation von Schild-NRW nach Enbrea",
+              "default": ".\\schildnrw\\export"
             }
           }
         },
         {
           "type": "object",
-          "description": "Konfiguration der Synchronisation mit Excel (CSV-Format)",
+          "description": "Konfiguration der Synchronisation mit Schild-NRW (MySQL)",
           "required": [
             "DataProvider",
-            "DataFile",
-            "CsvMappings"
+            "DatabaseConnection",
+            "SchoolYear",
+            "SchoolTerm"
           ],
           "properties": {
             "DataProvider": {
-              "const": "Csv",
-              "description": "CSV-Format"
+              "const": "MySql",
+              "description": "Zugriff auf eine MySQL-Datenbank"
             },
-            "DataFile": {
+            "DatabaseConnection": {
               "type": "string",
-              "description": "Dateipfad zur CSV-Datei"
+              "description": "Ein Connection-String zur MySQL-Datenbank von Schild-NRW"
             },
-            "CsvExportQuote": {
-              "type": "string",
-              "description": "Anführungszeichen für die CSV-Datei",
-              "default": "\""
+            "SchoolYear": {
+              "type": "integer",
+              "description": "Das gewünschte Schild-NRW-Schuljahr"
             },
-            "CsvExportSeparator": {
-              "type": "string",
-              "description": "Trennungszeichen für die CSV-Datei",
-              "default": ";"
-            },
-            "CsvMappings": {
-              "type": "array",
-              "description": "Abbildung der Tabellenspalten",
-              "unqiueItems": true,
-              "items": {
-                "type": "object",
-                "description": "Abbildung einer Tabellenspalte",
-                "required": [
-                  "FromHeader",
-                  "ToHeader"
-                ],
-                "properties": {
-                  "FromHeader": {
-                    "type": "string",
-                    "description": "Name der Tabellenspalte in CSV"
-                  },
-                  "ToHeader": {
-                    "enum": [
-                      "Id",
-                      "Vorname",
-                      "Mittelname",
-                      "Nachname",
-                      "Geburtstag",
-                      "Geschlecht",
-                      "Anrede",
-                      "Klasse",
-                      "Fach1",
-                      "Fach2",
-                      "Fach3",
-                      "Fach4",
-                      "Fach5",
-                      "Fach6",
-                      "Fach7",
-                      "Fach8",
-                      "Fach9",
-                      "Fach10",
-                      "Fach11",
-                      "Fach12",
-                      "Fach13",
-                      "Fach14",
-                      "Fach15",
-                      "Fach16",
-                      "Fach17",
-                      "Fach18",
-                      "Fach19",
-                      "Fach20"
-                    ],
-                    "description": "Name der von Enbrea unterstützten Tabellenspalte"
-                  }
-                }
-              }
+            "SchoolTerm": {
+              "type": "integer",
+              "description": "Das gewünschte Schild-NRW-Halbhahr"
             },
             "TargetFolder": {
               "type": "string",
-              "description": "Ordnerpfad für die Synchronisation von Excel (CSV-Format) nach Enbrea",
-              "default": ".\\excel\\export"
+              "description": "Ordnerpfad für die Synchronisation von Schild-NRW nach Enbrea",
+              "default": ".\\schildnrw\\export"
             }
           }
+
         }
-      ]
-    },
-    "EcfMapping": {
-      "type": "object",
-      "description": "Abbildung der beim Import oder Export lokal angelegten ECF-Dateien",
-      "required": [
-        "Files"
       ],
-      "properties": {
-        "Files": {
-          "type": "array",
-          "description": "Liste der zu importierenden bzw. exportierenden ECF-Dateien",
-          "unqiueItems": true,
-          "items": {
+      "Excel": {
+        "oneOf": [
+          {
             "type": "object",
-            "description": "Abbildung einer ECF-Datei",
+            "description": "Konfiguration der Synchronisation mit Excel (XLSX-Format)",
             "required": [
-              "Name",
-              "KeyHeaders"
+              "DataProvider",
+              "DataFile",
+              "XlsxMappings"
             ],
             "properties": {
-              "Name": {
-                "type": "string",
-                "description": "Name der ECF-Datei ohne Dateiendung"
+              "DataProvider": {
+                "const": "Xlsx",
+                "description": "XLSX-Format"
               },
-              "KeyHeaders": {
+              "DataFile": {
+                "type": "string",
+                "description": "Dateipfad zur XLSX-Datei"
+              },
+              "XlsxFirstRowNumber": {
+                "type": "integer",
+                "description": "Ab welcher Zeile beginnen die Datenzeilen",
+                "default": 2
+              },
+              "XlsxMappings": {
                 "type": "array",
-                "description": "Definition eines eindeutigen Schlüssels. Ein Schlüssel definiert sich aus ein oder mehreren ECF-Spalten.",
+                "description": "Abbildung der Tabellenspalten",
+                "unqiueItems": true,
                 "items": {
+                  "type": "object",
+                  "description": "Abbildung einer Tabellenspalte",
+                  "required": [
+                    "FromHeader",
+                    "ToHeader"
+                  ],
+                  "properties": {
+                    "FromHeader": {
+                      "type": "string",
+                      "description": "Name der Tabellenspalte in Excel"
+                    },
+                    "ToHeader": {
+                      "enum": [
+                        "Id",
+                        "Vorname",
+                        "Mittelname",
+                        "Nachname",
+                        "Geburtstag",
+                        "Geschlecht",
+                        "Anrede",
+                        "Klasse",
+                        "Fach1",
+                        "Fach2",
+                        "Fach3",
+                        "Fach4",
+                        "Fach5",
+                        "Fach6",
+                        "Fach7",
+                        "Fach8",
+                        "Fach9",
+                        "Fach10",
+                        "Fach11",
+                        "Fach12",
+                        "Fach13",
+                        "Fach14",
+                        "Fach15",
+                        "Fach16",
+                        "Fach17",
+                        "Fach18",
+                        "Fach19",
+                        "Fach20"
+                      ],
+                      "description": "Name der von Enbrea unterstützten Tabellenspalte"
+                    }
+                  }
+                }
+              },
+              "TargetFolder": {
+                "type": "string",
+                "description": "Ordnerpfad für die Synchronisation von Excel (XLSX-Format) nach Enbrea",
+                "default": ".\\excel\\export"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "description": "Konfiguration der Synchronisation mit Excel (CSV-Format)",
+            "required": [
+              "DataProvider",
+              "DataFile",
+              "CsvMappings"
+            ],
+            "properties": {
+              "DataProvider": {
+                "const": "Csv",
+                "description": "CSV-Format"
+              },
+              "DataFile": {
+                "type": "string",
+                "description": "Dateipfad zur CSV-Datei"
+              },
+              "CsvExportQuote": {
+                "type": "string",
+                "description": "Anführungszeichen für die CSV-Datei",
+                "default": "\""
+              },
+              "CsvExportSeparator": {
+                "type": "string",
+                "description": "Trennungszeichen für die CSV-Datei",
+                "default": ";"
+              },
+              "CsvMappings": {
+                "type": "array",
+                "description": "Abbildung der Tabellenspalten",
+                "unqiueItems": true,
+                "items": {
+                  "type": "object",
+                  "description": "Abbildung einer Tabellenspalte",
+                  "required": [
+                    "FromHeader",
+                    "ToHeader"
+                  ],
+                  "properties": {
+                    "FromHeader": {
+                      "type": "string",
+                      "description": "Name der Tabellenspalte in CSV"
+                    },
+                    "ToHeader": {
+                      "enum": [
+                        "Id",
+                        "Vorname",
+                        "Mittelname",
+                        "Nachname",
+                        "Geburtstag",
+                        "Geschlecht",
+                        "Anrede",
+                        "Klasse",
+                        "Fach1",
+                        "Fach2",
+                        "Fach3",
+                        "Fach4",
+                        "Fach5",
+                        "Fach6",
+                        "Fach7",
+                        "Fach8",
+                        "Fach9",
+                        "Fach10",
+                        "Fach11",
+                        "Fach12",
+                        "Fach13",
+                        "Fach14",
+                        "Fach15",
+                        "Fach16",
+                        "Fach17",
+                        "Fach18",
+                        "Fach19",
+                        "Fach20"
+                      ],
+                      "description": "Name der von Enbrea unterstützten Tabellenspalte"
+                    }
+                  }
+                }
+              },
+              "TargetFolder": {
+                "type": "string",
+                "description": "Ordnerpfad für die Synchronisation von Excel (CSV-Format) nach Enbrea",
+                "default": ".\\excel\\export"
+              }
+            }
+          }
+        ]
+      },
+      "EcfMapping",
+      :,
+      {
+        "type": "object",
+        "description": "Abbildung der beim Import oder Export lokal angelegten ECF-Dateien",
+        "required": [
+          "Files"
+        ],
+        "properties": {
+          "Files": {
+            "type": "array",
+            "description": "Liste der zu importierenden bzw. exportierenden ECF-Dateien",
+            "unqiueItems": true,
+            "items": {
+              "type": "object",
+              "description": "Abbildung einer ECF-Datei",
+              "required": [
+                "Name",
+                "KeyHeaders"
+              ],
+              "properties": {
+                "Name": {
                   "type": "string",
-                  "description": "Name der ECF-Spalte"
+                  "description": "Name der ECF-Datei ohne Dateiendung"
+                },
+                "KeyHeaders": {
+                  "type": "array",
+                  "description": "Definition eines eindeutigen Schlüssels. Ein Schlüssel definiert sich aus ein oder mehreren ECF-Spalten.",
+                  "items": {
+                    "type": "string",
+                    "description": "Name der ECF-Spalte"
+                  }
                 }
               }
             }
           }
         }
       }
-    }
-  },
-  "additionalProperties": true
-}
+    },
+    "additionalProperties": true
+  }

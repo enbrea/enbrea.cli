@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Product>Enbrea CLI Module for DAVINCI</Product>
     <Description>Generating ECF files from DAVINCI and back</Description>
     <Company>STÜBER SYSTEMS GmbH</Company>
@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CliWrap" Version="3.9.0" />
+    <PackageReference Include="CliWrap" Version="3.10.0" />
   </ItemGroup>
 
   <ItemGroup>
