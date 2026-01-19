@@ -8,7 +8,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Description>Client Tool for working with Enbrea on the command line</Description>
     <Authors>STÜBER SYSTEMS GmbH</Authors>
-    <Copyright>© 2025 STÜBER SYSTEMS GmbH</Copyright>
+    <Copyright>© 2026 STÜBER SYSTEMS GmbH</Copyright>
     <LangVersion>latest</LangVersion>
     <RootNamespace>Enbrea.Cli</RootNamespace>
     <AssemblyName>Enbrea</AssemblyName>
