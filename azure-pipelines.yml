@@ -52,12 +52,14 @@ stages:
       displayName: 'Prepare DigiCert Code Signing'
       condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
       env:
-        SM_CLIENT_CERT_FILE: $(SM_CLIENT_CERT_FILE.secureFilePath)
+        SM_HOST : $(SM_HOST)
+        SM_API_KEY: $(SM_API_KEY)
+        SM_CLIENT_CERT_FILE : $(SM_CLIENT_CERT_FILE.secureFilePath)
+        SM_CLIENT_CERT_PASSWORD : $(SM_CLIENT_CERT_PASSWORD)
       inputs:
         targetType: 'inline'
         script: |
-          $env:PATH += ';C:\Program Files\DigiCert\DigiCert Keylocker Tools'
-          smctl credentials save $(SM_API_KEY) $(SM_CLIENT_CERT_PASSWORD)
+          $env:PATH += ';C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
           smctl windows certsync --keypair-alias=$(SM_KEYPAIR_ALIAS)
         failOnStderr: true
         pwsh: true
@@ -113,8 +115,10 @@ stages:
       displayName: 'Sign EXE files'
       condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
       env:
-        SM_CLIENT_CERT_FILE : $(SM_CLIENT_CERT_FILE.secureFilePath)
         SM_HOST : $(SM_HOST)
+        SM_API_KEY: $(SM_API_KEY)
+        SM_CLIENT_CERT_FILE : $(SM_CLIENT_CERT_FILE.secureFilePath)
+        SM_CLIENT_CERT_PASSWORD : $(SM_CLIENT_CERT_PASSWORD)
       inputs:
         targetType: 'inline'
         script: |
@@ -151,8 +155,10 @@ stages:
       displayName: 'Sign MSI files'
       condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
       env:
-        SM_CLIENT_CERT_FILE : $(SM_CLIENT_CERT_FILE.secureFilePath)
         SM_HOST : $(SM_HOST)
+        SM_API_KEY: $(SM_API_KEY)
+        SM_CLIENT_CERT_FILE : $(SM_CLIENT_CERT_FILE.secureFilePath)
+        SM_CLIENT_CERT_PASSWORD : $(SM_CLIENT_CERT_PASSWORD)
       inputs:
         targetType: 'inline'
         script: |

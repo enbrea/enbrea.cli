@@ -46,7 +46,7 @@ namespace Enbrea.Cli.DaVinci
         /// <summary>
         /// Mapping for export to ECF
         /// </summary>
-        [JsonPropertyOrder(9)]
+        [JsonPropertyOrder(10)]
         public ProviderEcfMapping EcfMapping { get; set; }
 
         /// <summary>
@@ -90,5 +90,11 @@ namespace Enbrea.Cli.DaVinci
         /// </summary>
         [JsonPropertyOrder(7)]
         public string TargetFolder { get; set; } = ".\\davinci\\export";
+
+        /// <summary>
+        /// Do not export email addresses to ECF
+        /// </summary>
+        [JsonPropertyOrder(9)]
+        public bool NoEmailAddresses { get; set; } = false;
     }
 }

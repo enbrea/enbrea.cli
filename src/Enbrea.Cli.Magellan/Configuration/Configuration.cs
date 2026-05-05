@@ -50,7 +50,7 @@ namespace Enbrea.Cli.Magellan
         /// <summary>
         /// Table mapping for export and import
         /// </summary>
-        [JsonPropertyOrder(5)]
+        [JsonPropertyOrder(6)]
         public ProviderEcfMapping EcfMapping { get; set; }
 
         /// <summary>
@@ -64,5 +64,11 @@ namespace Enbrea.Cli.Magellan
         /// </summary>
         [JsonPropertyOrder(1)]
         public int TenantId { get; set; } = 1;
+
+        /// <summary>
+        /// Do not export email addresses to ECF
+        /// </summary>
+        [JsonPropertyOrder(5)]
+        public bool NoEmailAddresses { get; set; } = false;
     }
 }

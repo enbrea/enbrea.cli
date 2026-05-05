@@ -451,7 +451,7 @@ namespace Enbrea.Cli.Magellan
                 join 
                   "SchuelerZeitraeume" SZ on S."ID" = SZ."Schueler" and S."Mandant" = SZ."Mandant"
                 where 
-                  S."Mandant" = @tenantId and SZ."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4) and (S."IDIntern" is NULL)
+                  S."Mandant" = @tenantId and SZ."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4, 7) and (S."IDIntern" is NULL)
                 """;
 
             using var fbTransaction = await fbConnection.BeginTransactionAsync(_cancellationToken);
@@ -549,7 +549,7 @@ namespace Enbrea.Cli.Magellan
                 on 
                   S."ID" = SZ."Schueler" and S."Mandant" = SZ."Mandant"
                 where 
-                  S."Mandant" = @tenantId and SZ."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4) and (S."IDIntern" is NULL)
+                  S."Mandant" = @tenantId and SZ."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4, 7) and (S."IDIntern" is NULL)
                 """;
 
             using var fbTransaction = await fbConnection.BeginTransactionAsync(_cancellationToken);
@@ -624,7 +624,7 @@ namespace Enbrea.Cli.Magellan
                 join 
                   "Schueler" as S on Z."Schueler" = S."ID"
                 where 
-                  Z."Mandant" = @tenantId and Z."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4) and (S."IDIntern" is NULL)
+                  Z."Mandant" = @tenantId and Z."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4, 7) and (S."IDIntern" is NULL)
                 
                 union all
                 
@@ -643,7 +643,7 @@ namespace Enbrea.Cli.Magellan
                 join 
                   "Schueler" as S on Z."Schueler" = S."ID"
                 where 
-                  Z."Mandant" = @tenantId and Z."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4) and not (S."IDIntern" is NULL)
+                  Z."Mandant" = @tenantId and Z."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4, 7) and not (S."IDIntern" is NULL)
                 """;
 
             using var fbTransaction = await fbConnection.BeginTransactionAsync(_cancellationToken);
@@ -713,7 +713,7 @@ namespace Enbrea.Cli.Magellan
                 left join 
                   "Lehrer" as L on F."Lehrer" = L."ID"
                 where 
-                  Z."Mandant" = @tenantId and Z."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4) and (S."IDIntern" is NULL)
+                  Z."Mandant" = @tenantId and Z."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4, 7) and (S."IDIntern" is NULL)
                 
                 union all
                 
@@ -743,7 +743,7 @@ namespace Enbrea.Cli.Magellan
                 left join 
                   "Lehrer" as L on F."Lehrer" = L."ID" and L."Status" = 1
                 where 
-                  Z."Mandant" = @tenantId and Z."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4) and not (S."IDIntern" is NULL)
+                  Z."Mandant" = @tenantId and Z."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4, 7) and not (S."IDIntern" is NULL)
                 
                 union all
 
@@ -773,7 +773,7 @@ namespace Enbrea.Cli.Magellan
                 left join 
                   "Lehrer" as L on F."Lehrer" = L."ID"
                 where 
-                  Z."Mandant" = @tenantId and Z."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4) and (S."IDIntern" is NULL)
+                  Z."Mandant" = @tenantId and Z."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4, 7) and (S."IDIntern" is NULL)
                 
                 union all
                 
@@ -803,7 +803,7 @@ namespace Enbrea.Cli.Magellan
                 left join 
                  "Lehrer" as L on F."Lehrer" = L."ID" and L."Status" = 1
                 where 
-                  Z."Mandant" = @tenantId and Z."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4) and not (S."IDIntern" is NULL)
+                  Z."Mandant" = @tenantId and Z."Zeitraum" = @schoolTermId and S."Status" in (2, 3, 4, 7) and not (S."IDIntern" is NULL)
                 """;
 
             using var fbTransaction = await fbConnection.BeginTransactionAsync(_cancellationToken);
@@ -986,31 +986,60 @@ namespace Enbrea.Cli.Magellan
 
             var ecfRecordCounter = 0;
 
-            await ecfTableWriter.WriteHeadersAsync(
-                EcfHeaders.Id,
-                EcfHeaders.Code,
-                EcfHeaders.LastName,
-                EcfHeaders.FirstName,
-                EcfHeaders.MiddleName,
-                EcfHeaders.Salutation,
-                EcfHeaders.Gender,
-                EcfHeaders.Birthdate,
-                EcfHeaders.Birthname,
-                EcfHeaders.PlaceOfBirth,
-                EcfHeaders.MaritalStatusId,
-                EcfHeaders.AddressLines,
-                EcfHeaders.PostalCode,
-                EcfHeaders.Locality,
-                EcfHeaders.CountryId,
-                EcfHeaders.HomePhoneNumber,
-                EcfHeaders.OfficePhoneNumber,
-                EcfHeaders.EmailAddress,
-                EcfHeaders.MobileNumber,
-                EcfHeaders.Nationality1Id,
-                EcfHeaders.Nationality2Id,
-                EcfHeaders.NativeLanguageId,
-                EcfHeaders.CorrespondenceLanguageId,
-                EcfHeaders.ReligionId);
+            if (_config.NoEmailAddresses)
+            {
+                await ecfTableWriter.WriteHeadersAsync(
+                    EcfHeaders.Id,
+                    EcfHeaders.Code,
+                    EcfHeaders.LastName,
+                    EcfHeaders.FirstName,
+                    EcfHeaders.MiddleName,
+                    EcfHeaders.Salutation,
+                    EcfHeaders.Gender,
+                    EcfHeaders.Birthdate,
+                    EcfHeaders.Birthname,
+                    EcfHeaders.PlaceOfBirth,
+                    EcfHeaders.MaritalStatusId,
+                    EcfHeaders.AddressLines,
+                    EcfHeaders.PostalCode,
+                    EcfHeaders.Locality,
+                    EcfHeaders.CountryId,
+                    EcfHeaders.HomePhoneNumber,
+                    EcfHeaders.OfficePhoneNumber,
+                    EcfHeaders.MobileNumber,
+                    EcfHeaders.Nationality1Id,
+                    EcfHeaders.Nationality2Id,
+                    EcfHeaders.NativeLanguageId,
+                    EcfHeaders.CorrespondenceLanguageId,
+                    EcfHeaders.ReligionId);
+            }
+            else {
+                await ecfTableWriter.WriteHeadersAsync(
+                    EcfHeaders.Id,
+                    EcfHeaders.Code,
+                    EcfHeaders.LastName,
+                    EcfHeaders.FirstName,
+                    EcfHeaders.MiddleName,
+                    EcfHeaders.Salutation,
+                    EcfHeaders.Gender,
+                    EcfHeaders.Birthdate,
+                    EcfHeaders.Birthname,
+                    EcfHeaders.PlaceOfBirth,
+                    EcfHeaders.MaritalStatusId,
+                    EcfHeaders.AddressLines,
+                    EcfHeaders.PostalCode,
+                    EcfHeaders.Locality,
+                    EcfHeaders.CountryId,
+                    EcfHeaders.HomePhoneNumber,
+                    EcfHeaders.OfficePhoneNumber,
+                    EcfHeaders.EmailAddress,
+                    EcfHeaders.MobileNumber,
+                    EcfHeaders.Nationality1Id,
+                    EcfHeaders.Nationality2Id,
+                    EcfHeaders.NativeLanguageId,
+                    EcfHeaders.CorrespondenceLanguageId,
+                    EcfHeaders.ReligionId);
+            }
 
             while (await reader.ReadAsync(_cancellationToken))
             {

@@ -51,7 +51,8 @@ namespace Enbrea.Cli.DaVinci
                         "export", "-minimal-display",
                         "-s", "file",
                         "-o", GetEcfFolderName(),
-                        "-fn", _config.DataFile
+                        "-fn", _config.DataFile,
+                        _config.NoEmailAddresses ? "-noemail" : string.Empty
                     ]) :
                 CliWrap.Cli.Wrap(ConsoleUtils.GetConsolePath())
                     .WithArguments([
@@ -62,7 +63,8 @@ namespace Enbrea.Cli.DaVinci
                         "-sp", _config.ServerPort.ToString(),
                         "-un", _config.ServerUserName,
                         "-up", _config.ServerPassword,
-                        "-sf", $"{{{_config.ServerFileId}}}"
+                        "-sf", $"{{{_config.ServerFileId}}}",
+                        _config.NoEmailAddresses ? "-noemail" : string.Empty
                     ]);
 
             // Excecute DAVINCI CONSOLE

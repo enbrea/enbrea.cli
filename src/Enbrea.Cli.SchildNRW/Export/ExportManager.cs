@@ -169,6 +169,8 @@ namespace Enbrea.Cli.SchildNRW
                     ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(student.Id.ToString(), student.SchoolClass));
                     ecfTableWriter.SetValue(EcfHeaders.StudentId, student.Id.ToString());
                     ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, student.SchoolClass);
+                    ecfTableWriter.TrySetValue(EcfHeaders.EntryDate, student.EnrollmentDate);
+                    ecfTableWriter.TrySetValue(EcfHeaders.ExitDate, student.LeaveDate);
 
                     await ecfTableWriter.WriteAsync();
 
@@ -258,7 +260,7 @@ namespace Enbrea.Cli.SchildNRW
                 ecfTableWriter.TrySetValue(EcfHeaders.FirstName, teacher.Firstname);
                 ecfTableWriter.TrySetValue(EcfHeaders.Gender, teacher.GetGenderOrDefault());
                 ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, teacher.GetBirthdateOrDefault());
-                ecfTableWriter.TrySetValue(EcfHeaders.EmailAddress, teacher.Email);
+                ecfTableWriter.TrySetValue(EcfHeaders.EmailAddress, teacher.OfficialEmail);
 
                 await ecfTableWriter.WriteAsync();
 

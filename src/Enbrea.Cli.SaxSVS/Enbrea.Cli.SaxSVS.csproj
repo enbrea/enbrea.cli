@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Enbrea.Ecf" Version="0.3.0" />
+    <PackageReference Include="Enbrea.Ecf" Version="0.3.1-develop.7" />
     <PackageReference Include="Enbrea.SaxSVS" Version="0.3.0" />
   </ItemGroup>
 

@@ -46,7 +46,7 @@ namespace Enbrea.Cli.SchildNRW
         /// <summary>
         /// Mapping for export to ECF
         /// </summary>
-        [JsonPropertyOrder(5)]
+        [JsonPropertyOrder(6)]
         public ProviderEcfMapping EcfMapping { get; set; }
 
         /// <summary>
@@ -66,5 +66,11 @@ namespace Enbrea.Cli.SchildNRW
         /// </summary>
         [JsonPropertyOrder(4)]
         public string TargetFolder { get; set; } = ".\\schildnrw\\export";
+
+        /// <summary>
+        /// Do not export email addresses to ECF
+        /// </summary>
+        [JsonPropertyOrder(5)]
+        public bool NoEmailAddresses { get; set; } = false;
     }
 }

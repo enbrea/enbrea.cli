@@ -11,8 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Enbrea.Ecf" Version="0.3.0" />
-    <PackageReference Include="Enbrea.SchildNRW.Db" Version="0.5.1-develop.5" />
+    <PackageReference Include="Enbrea.Ecf" Version="0.3.1-develop.7" />
+    <PackageReference Include="Enbrea.SchildNRW.Db" Version="0.6.1-develop.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -106,6 +106,8 @@ namespace Enbrea.Cli.Common
             new() { Name = "SubstituteLessons", KeyHeaders = ["Id"] },
             new() { Name = "SubstituteSupervisions", KeyHeaders = ["Id"] },
             new() { Name = "SubstitutionQualities", KeyHeaders = ["Code"] },
+            new() { Name = "SupervisionAreas", KeyHeaders = ["Code"] },
+            new() { Name = "SupervisionGaps", KeyHeaders = ["Id"] },
             new() { Name = "TeacherAbsenceReasonDifferentiations", KeyHeaders = ["Code"] },
             new() { Name = "TeacherAbsenceReasons", KeyHeaders = ["Code"] },
             new() { Name = "TeacherAbsences", KeyHeaders = ["Id"] },
