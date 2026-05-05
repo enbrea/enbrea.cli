@@ -166,7 +166,7 @@ namespace Enbrea.Cli
                 var snapshotCounter = 0;
                 foreach (var e in responseBody.items)
                 {
-                    _consoleWriter.Message($"Snapshot ID {e.uid}, Timestamp {e.timestamp.ToString("yyyy-MM-dd hh:mm:ss")}");
+                    _consoleWriter.Message($"Snapshot ID {e.uid}, Timestamp {e.timestamp:yyyy-MM-dd hh:mm:ss}");
                     snapshotCounter++;
                 }
 

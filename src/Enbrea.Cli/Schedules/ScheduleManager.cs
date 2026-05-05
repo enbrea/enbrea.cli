@@ -450,12 +450,12 @@ namespace Enbrea.Cli
                 {
                     var tasks = new List<Task>();
 
-                    foreach (ImportProvider provider in Enum.GetValues(typeof(ImportProvider)))
+                    foreach (ImportProvider provider in Enum.GetValues<ImportProvider>())
                     {
                         tasks.AddRange(FindAllTasks(taskFolder, provider));
                     }
 
-                    foreach (ExportProvider provider in Enum.GetValues(typeof(ExportProvider)))
+                    foreach (ExportProvider provider in Enum.GetValues<ExportProvider>())
                     {
                         tasks.AddRange(FindAllTasks(taskFolder, provider));
                     }

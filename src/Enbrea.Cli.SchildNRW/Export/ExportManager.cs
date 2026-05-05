@@ -34,7 +34,7 @@ namespace Enbrea.Cli.SchildNRW
     public class ExportManager : EcfCustomManager
     {
         private readonly Configuration _config;
-        private Dictionary<int, string> _ecfStudentsCache = [];
+        private readonly Dictionary<int, string> _ecfStudentsCache = [];
         private int _recordCounter = 0;
         private int _tableCounter = 0;
 

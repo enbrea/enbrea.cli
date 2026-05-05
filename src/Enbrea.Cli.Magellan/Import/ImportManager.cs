@@ -35,21 +35,21 @@ namespace Enbrea.Cli.Magellan
 {
     public class ImportManager : EcfCustomManager
     {
-        private readonly Dictionary<string, string> _applicationAssessments = new();
+        private readonly Dictionary<string, string> _applicationAssessments = [];
 
-        private readonly Dictionary<string, string> _applicationEnrollmentSupportMap = new();
+        private readonly Dictionary<string, string> _applicationEnrollmentSupportMap = [];
 
-        private readonly Dictionary<string, string> _applicationStudentMap = new();
+        private readonly Dictionary<string, string> _applicationStudentMap = [];
 
-        private readonly List<ApplicationTarget> _applicationTargets = new();
+        private readonly List<ApplicationTarget> _applicationTargets = [];
 
-        private readonly List<ApplicationTargetTrack> _applicationTargetTracks = new();
+        private readonly List<ApplicationTargetTrack> _applicationTargetTracks = [];
 
         private readonly Configuration _config;
 
-        private readonly Dictionary<string, string> _custodianRelationshipTypeMap = new();
+        private readonly Dictionary<string, string> _custodianRelationshipTypeMap = [];
 
-        private readonly Dictionary<int, int> _studentForeignLanguageCount = new();
+        private readonly Dictionary<int, int> _studentForeignLanguageCount = [];
 
         private int _tableCounter = 0;
 

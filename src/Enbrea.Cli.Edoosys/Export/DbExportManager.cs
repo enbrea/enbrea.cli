@@ -35,8 +35,8 @@ namespace Enbrea.Cli.Edoosys
     public class DbExportManager : EcfCustomManager
     {
         private readonly Configuration _config;
-        private HashSet<string> _ecfSchoolClassesCache = [];
-        private HashSet<string> _ecfTeachersCache = [];
+        private readonly HashSet<string> _ecfSchoolClassesCache = [];
+        private readonly HashSet<string> _ecfTeachersCache = [];
         private int _recordCounter = 0;
         private int _tableCounter = 0;
 

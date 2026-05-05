@@ -102,7 +102,6 @@ namespace Enbrea.Cli.Danis
         {
             if (_config.Year > 0)
             {
-                var ecfCache = new HashSet<string>();
                 var ecfRecordCounter = 0;
 
                 await ecfTableWriter.WriteHeadersAsync(
