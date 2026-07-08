@@ -52,7 +52,8 @@ namespace Enbrea.Cli.DaVinci
                         "-s", "file",
                         "-o", GetEcfFolderName(),
                         "-fn", _config.DataFile,
-                        _config.NoEmailAddresses ? "-noemail" : string.Empty
+                        _config.NoEmailAddresses ? "-noemail" : string.Empty,
+                        _config.AutoAssignStudentsToCourses ? "-autoassignstudents" : string.Empty
                     ]) :
                 CliWrap.Cli.Wrap(ConsoleUtils.GetConsolePath())
                     .WithArguments([
@@ -64,7 +65,8 @@ namespace Enbrea.Cli.DaVinci
                         "-un", _config.ServerUserName,
                         "-up", _config.ServerPassword,
                         "-sf", $"{{{_config.ServerFileId}}}",
-                        _config.NoEmailAddresses ? "-noemail" : string.Empty
+                        _config.NoEmailAddresses ? "-noemail" : string.Empty,
+                        _config.AutoAssignStudentsToCourses ? "-autoassignstudents" : string.Empty
                     ]);
 
             // Excecute DAVINCI CONSOLE

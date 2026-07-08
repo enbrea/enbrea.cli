@@ -96,5 +96,11 @@ namespace Enbrea.Cli.DaVinci
         /// </summary>
         [JsonPropertyOrder(9)]
         public bool NoEmailAddresses { get; set; } = false;
+
+        /// <summary>
+        /// Auto assign students to courses without students    
+        /// </summary>
+        [JsonPropertyOrder(10)]
+        public bool AutoAssignStudentsToCourses { get; set; } = true;
     }
 }
