@@ -62,10 +62,11 @@ namespace Enbrea.Cli.LUSD
         [
             new() { FromHeader = "A", ToHeader = "Vorname" },
             new() { FromHeader = "B", ToHeader = "Nachname" },
-            new() { FromHeader = "C", ToHeader = "Geburtsdatum" },
-            new() { FromHeader = "D", ToHeader = "Klasse" },
-            new() { FromHeader = "E", ToHeader = "Fach" },
-            new() { FromHeader = "F", ToHeader = "Lehrer" }
+            new() { FromHeader = "C", ToHeader = "Geschlecht" },
+            new() { FromHeader = "D", ToHeader = "Geburtsdatum" },
+            new() { FromHeader = "E", ToHeader = "Klasse" },
+            new() { FromHeader = "F", ToHeader = "Fach" },
+            new() { FromHeader = "G", ToHeader = "Lehrer" }
         ];
 
         /// <summary>
