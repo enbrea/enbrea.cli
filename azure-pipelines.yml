@@ -63,7 +63,7 @@ stages:
           smctl windows certsync --keypair-alias=$(SM_KEYPAIR_ALIAS)
         failOnStderr: true
         pwsh: true
-    - task: Assembly-Info-NetCore@2
+    - task: Assembly-Info-NetCore@3
       displayName: 'Apply Assembly Infos'
       inputs:
         Path: '$(Build.SourcesDirectory)'
