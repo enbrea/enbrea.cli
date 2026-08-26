@@ -88,16 +88,12 @@ namespace Enbrea.Cli
             ExportProvider provider, 
             Configuration config)
         {
-            switch (provider)
+            return provider switch
             {
-                case ExportProvider.davinci:
-                    return config.DaVinci.SourceFolder;
-                case ExportProvider.magellan:
-                    return config.Magellan.SourceFolder;
-                default:
-                    return null;
-
-            }
+                ExportProvider.davinci => config.DaVinci.SourceFolder,
+                ExportProvider.magellan => config.Magellan.SourceFolder,
+                _ => null,
+            };
         }
     }
 }

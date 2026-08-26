@@ -31,6 +31,12 @@ namespace Enbrea.Cli.LUSD
     public class Configuration
     {
         /// <summary>
+        /// Mapping of course names to file names
+        /// </summary>
+        [JsonPropertyOrder(6)]
+        public Dictionary<string, string> CourseMappings { get; set; } = [];
+
+        /// <summary>
         /// Name of the Excel file (XLSX)
         /// </summary>
         [JsonPropertyOrder(1)]
@@ -66,7 +72,8 @@ namespace Enbrea.Cli.LUSD
             new() { FromHeader = "D", ToHeader = "Geburtsdatum" },
             new() { FromHeader = "E", ToHeader = "Klasse" },
             new() { FromHeader = "F", ToHeader = "Fach" },
-            new() { FromHeader = "G", ToHeader = "Lehrer" }
+            new() { FromHeader = "G", ToHeader = "Kurs" },
+            new() { FromHeader = "H", ToHeader = "Lehrer" }
         ];
 
         /// <summary>
@@ -75,6 +82,11 @@ namespace Enbrea.Cli.LUSD
         [JsonPropertyOrder(2)]
         public string XlsxSheetName { get; set; }
 
+        /// <summary>
+        /// Gets the XLSX column name for a given ECF header name
+        /// </summary>
+        /// <param name="ecfHeaderName">The ECF header name</param>
+        /// <returns>The corresponding XLSX column name</returns>
         public string GetXlsxColumnName(string ecfHeaderName)
         {
             var mapping = XlsxMappings.FirstOrDefault(x => x.ToHeader == ecfHeaderName);

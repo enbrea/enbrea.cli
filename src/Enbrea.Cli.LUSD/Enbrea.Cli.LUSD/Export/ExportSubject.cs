@@ -30,6 +30,17 @@ namespace Enbrea.Cli.LUSD
         {
             if (xlsReader.TryGetValue(config.GetXlsxColumnName("Fach"), out Id))
             {
+                if (Id == "WPU")
+                {
+                    if (xlsReader.TryGetValue(config.GetXlsxColumnName("Kurs"), out string courseName))
+                    {
+                        if (config.CourseMappings.TryGetValue(courseName, out string mappedCourseName))
+                        {
+                            Code = mappedCourseName;
+                            return;
+                        }
+                    }
+                }
                 Code = Id;
             }
         }

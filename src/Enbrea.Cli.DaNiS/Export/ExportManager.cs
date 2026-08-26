@@ -24,7 +24,6 @@ using Enbrea.Danis.Db;
 using Enbrea.Ecf;
 using Enbrea.Konsoli;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;

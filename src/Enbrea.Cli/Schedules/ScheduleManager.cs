@@ -492,38 +492,27 @@ namespace Enbrea.Cli
 
         private static string GetLogFolderName(Configuration config, ImportProvider provider)
         {
-            switch (provider)
+            return provider switch
             {
-                case ImportProvider.davinci:
-                    return Path.Combine(config.DaVinci.TargetFolder, "log");
-                case ImportProvider.magellan:
-                    return Path.Combine(config.Magellan.TargetFolder, "log");
-                case ImportProvider.untis:
-                    return Path.Combine(config.Untis.TargetFolder, "log");
-                case ImportProvider.bbsplanung:
-                    return Path.Combine(config.BbsPlanung.TargetFolder, "log");
-                case ImportProvider.edoosys:
-                    return Path.Combine(config.Edoosys.TargetFolder, "log");
-                case ImportProvider.schildnrw:
-                    return Path.Combine(config.SchildNRW.TargetFolder, "log");
-                case ImportProvider.excel:
-                    return Path.Combine(config.Excel.TargetFolder, "log");
-                default:
-                    return null;
-            }
+                ImportProvider.davinci => Path.Combine(config.DaVinci.TargetFolder, "log"),
+                ImportProvider.magellan => Path.Combine(config.Magellan.TargetFolder, "log"),
+                ImportProvider.untis => Path.Combine(config.Untis.TargetFolder, "log"),
+                ImportProvider.bbsplanung => Path.Combine(config.BbsPlanung.TargetFolder, "log"),
+                ImportProvider.edoosys => Path.Combine(config.Edoosys.TargetFolder, "log"),
+                ImportProvider.schildnrw => Path.Combine(config.SchildNRW.TargetFolder, "log"),
+                ImportProvider.excel => Path.Combine(config.Excel.TargetFolder, "log"),
+                _ => null,
+            };
         }
 
         private static string GetLogFolderName(Configuration config, ExportProvider provider)
         {
-            switch (provider)
+            return provider switch
             {
-                case ExportProvider.davinci:
-                    return Path.Combine(config.DaVinci.SourceFolder, "log");
-                case ExportProvider.magellan:
-                    return Path.Combine(config.Magellan.SourceFolder, "log");
-                default:
-                    return null;
-            }
+                ExportProvider.davinci => Path.Combine(config.DaVinci.SourceFolder, "log"),
+                ExportProvider.magellan => Path.Combine(config.Magellan.SourceFolder, "log"),
+                _ => null,
+            };
         }
 
         private TaskFolder AddEnbreaTaskFolder()

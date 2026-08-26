@@ -30,10 +30,10 @@ namespace Enbrea.Cli.Danis
     public class Configuration
     {
         /// <summary>
-        /// PostgreSQL database connection for direct DaNiS access
+        /// MariaDB database connection for direct DaNiS access
         /// </summary>
         [JsonPropertyOrder(1)]
-        public string DatabaseConnection { get; set; } = "Server=127.0.0.1;Port=5432;Database=danis;User Id=myUsername;Password=myPassword;";
+        public string DatabaseConnection { get; set; } = "Server=127.0.0.1;Port=3306;Database=danis;User Id=myUsername;Password=myPassword;";
 
         /// <summary>
         /// Mapping for export to ECF

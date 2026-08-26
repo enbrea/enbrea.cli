@@ -56,74 +56,46 @@ namespace Enbrea.Cli
             ConsoleWriter consoleWriter, 
             CancellationToken cancellationToken)
         {
-            switch (provider)
+            return provider switch
             {
-                case ExportProvider.davinci:
-                    return new DaVinci.ImportManager(config.DaVinci, consoleWriter, cancellationToken);
-                case ExportProvider.magellan:
-                    return new Magellan.ImportManager(config.Magellan, consoleWriter, cancellationToken);
-                default:
-                    return null;
-            }
+                ExportProvider.davinci => new DaVinci.ImportManager(config.DaVinci, consoleWriter, cancellationToken),
+                ExportProvider.magellan => new Magellan.ImportManager(config.Magellan, consoleWriter, cancellationToken),
+                _ => null,
+            };
         }
 
-        private static string GetEnbreaEcfTarget(
-            ImportProvider provider, 
-            Configuration config)
+        private static string GetEnbreaEcfTarget(ImportProvider provider, Configuration config)
         {
-            switch (provider)
+            return provider switch
             {
-                case ImportProvider.davinci:
-                    return config.DaVinci.TargetFolder;
-                case ImportProvider.magellan:
-                    return config.Magellan.TargetFolder;
-                case ImportProvider.untis: 
-                    return config.Untis.TargetFolder;
-                case ImportProvider.bbsplanung:
-                    return config.BbsPlanung.TargetFolder;
-                case ImportProvider.edoosys:
-                    return config.Edoosys.TargetFolder;
-                case ImportProvider.schildnrw:
-                    return config.SchildNRW.TargetFolder;
-                case ImportProvider.danis:
-                    return config.Danis.TargetFolder;
-                case ImportProvider.saxsvs:
-                    return config.SaxSVS.TargetFolder;
-                case ImportProvider.lusd:
-                    return config.LUSD.TargetFolder;
-                case ImportProvider.excel:
-                    return config.Excel.TargetFolder;
-                default:
-                    return null;
-
-            }
+                ImportProvider.davinci => config.DaVinci.TargetFolder,
+                ImportProvider.magellan => config.Magellan.TargetFolder,
+                ImportProvider.untis => config.Untis.TargetFolder,
+                ImportProvider.bbsplanung => config.BbsPlanung.TargetFolder,
+                ImportProvider.edoosys => config.Edoosys.TargetFolder,
+                ImportProvider.schildnrw => config.SchildNRW.TargetFolder,
+                ImportProvider.danis => config.Danis.TargetFolder,
+                ImportProvider.saxsvs => config.SaxSVS.TargetFolder,
+                ImportProvider.lusd => config.LUSD.TargetFolder,
+                ImportProvider.excel => config.Excel.TargetFolder,
+                _ => null,
+            };
         }
 
-        private static ProviderEcfMapping GetProviderEcfMapping(
-            ImportProvider provider, 
-            Configuration config)
+        private static ProviderEcfMapping GetProviderEcfMapping(ImportProvider provider, Configuration config)
         {
-            switch (provider)
+            return provider switch
             {
-                case ImportProvider.davinci:
-                    return config.DaVinci.EcfMapping;
-                case ImportProvider.magellan:
-                    return config.Magellan.EcfMapping;
-                case ImportProvider.untis:
-                    return config.Untis.EcfMapping;
-                case ImportProvider.bbsplanung:
-                    return config.BbsPlanung.EcfMapping;
-                case ImportProvider.edoosys:
-                    return config.Edoosys.EcfMapping;
-                case ImportProvider.schildnrw:
-                    return config.SchildNRW.EcfMapping;
-                case ImportProvider.danis:
-                    return config.Danis.EcfMapping;
-                case ImportProvider.saxsvs:
-                    return config.SaxSVS.EcfMapping;
-                default:
-                    return null;
-            }
+                ImportProvider.davinci => config.DaVinci.EcfMapping,
+                ImportProvider.magellan => config.Magellan.EcfMapping,
+                ImportProvider.untis => config.Untis.EcfMapping,
+                ImportProvider.bbsplanung => config.BbsPlanung.EcfMapping,
+                ImportProvider.edoosys => config.Edoosys.EcfMapping,
+                ImportProvider.schildnrw => config.SchildNRW.EcfMapping,
+                ImportProvider.danis => config.Danis.EcfMapping,
+                ImportProvider.saxsvs => config.SaxSVS.EcfMapping,
+                _ => null,
+            };
         }
     }
 }

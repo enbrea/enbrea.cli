@@ -39,10 +39,10 @@ namespace Enbrea.Cli.Common
         {
             return new ConsoleWriter(progressValueUnit, logger)
             {
-                Theme = new ConsoleWriterTheme()
+                Strings = new ConsoleWriterStrings()
                 {
-                    MessageTextFormat = "> {0}",
-                    ProgressTextFormat = "> {0}",
+                    MessageFormat = "> {0}",
+                    ProgressFormat = "> {0}",
                     SuccessLabel = ">",
                     WarningLabel = ">",
                     InformationLabel = ">"

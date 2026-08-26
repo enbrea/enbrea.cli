@@ -203,7 +203,7 @@ namespace Enbrea.Cli
             }
         }
 
-        private async Task ThrowSnapshotException(string message, HttpResponseMessage serverResponse)
+        private static async Task ThrowSnapshotException(string message, HttpResponseMessage serverResponse)
         {
             throw new SnapshotException(message, serverResponse.StatusCode, await serverResponse.Content.ReadAsStringAsync());
         }
