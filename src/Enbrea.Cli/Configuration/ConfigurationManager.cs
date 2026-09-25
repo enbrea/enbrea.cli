@@ -30,17 +30,14 @@ namespace Enbrea.Cli
 {
     public static class ConfigurationManager
     {
+        private static readonly JsonSerializerOptions _jsonSerializerOptions = GetJsonSerializerOptions();
+
         public static async Task<Configuration> LoadFromFile(FileInfo file, CancellationToken cancellationToken = default)
         {
             if (File.Exists(file.FullName))
             {
                 using var fileStream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
-
-                var loadSerializerOptions = new JsonSerializerOptions()
-                {
-                    PropertyNameCaseInsensitive = true
-                };
-                return await JsonSerializer.DeserializeAsync<Configuration>(fileStream, loadSerializerOptions, cancellationToken);
+                return await JsonSerializer.DeserializeAsync<Configuration>(fileStream, _jsonSerializerOptions, cancellationToken);
             }
             else
             {
@@ -55,18 +52,24 @@ namespace Enbrea.Cli
                 using var fileStream = new FileStream(file.FullName, FileMode.Create, FileAccess.Write, FileShare.Read);
 
                 var templateConfiguration = new Configuration();
-                var templateSerializerOptions = new JsonSerializerOptions() 
-                {
-                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                    WriteIndented = true
-                };
-                await JsonSerializer.SerializeAsync(fileStream, templateConfiguration, templateSerializerOptions, cancellationToken);
+
+                await JsonSerializer.SerializeAsync(fileStream, templateConfiguration, _jsonSerializerOptions, cancellationToken);
             }
             else
             {
                 throw new FileNotFoundException($"File \"{file.FullName}\" already exists.");
             }
+        }
+
+        private static JsonSerializerOptions GetJsonSerializerOptions()
+        {
+            return new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                WriteIndented = true
+            };
         }
     }
 }

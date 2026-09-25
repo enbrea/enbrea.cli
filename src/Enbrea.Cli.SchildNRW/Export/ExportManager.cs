@@ -192,22 +192,19 @@ namespace Enbrea.Cli.SchildNRW
                 EcfHeaders.SubjectId,
                 EcfHeaders.TeacherId);
 
-            await foreach (var course in schildNRWDbReader.CoursesAsync(_config.SchoolYear, _config.SchoolTerm))
+            await foreach (var attendance in schildNRWDbReader.StudentCourseAttendancesAsync(_config.SchoolYear, _config.SchoolTerm))
             {
-                await foreach (var attendance in schildNRWDbReader.StudentCourseAttendancesAsync(course.Id, _config.SchoolYear, _config.SchoolTerm))
+                if (_ecfStudentsCache.TryGetValue(attendance.StudentId, out string schoolClass) && !string.IsNullOrWhiteSpace(schoolClass))
                 {
-                    if (_ecfStudentsCache.TryGetValue(attendance.StudentId, out string schoolClass) && !string.IsNullOrWhiteSpace(schoolClass))
-                    {
-                        ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(attendance.StudentId.ToString(), course.Id.ToString()));
-                        ecfTableWriter.SetValue(EcfHeaders.StudentId, attendance.StudentId.ToString());
-                        ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, schoolClass);
-                        ecfTableWriter.SetValue(EcfHeaders.SubjectId, course.SubjectId);
-                        ecfTableWriter.SetValue(EcfHeaders.TeacherId, course.Teacher);
+                    ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(attendance.StudentId.ToString(), schoolClass, attendance.SubjectId.ToString(), attendance.Teacher));
+                    ecfTableWriter.SetValue(EcfHeaders.StudentId, attendance.StudentId.ToString());
+                    ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, schoolClass);
+                    ecfTableWriter.SetValue(EcfHeaders.SubjectId, attendance.SubjectId.ToString());
+                    ecfTableWriter.SetValue(EcfHeaders.TeacherId, attendance.Teacher);
 
-                        await ecfTableWriter.WriteAsync();
+                    await ecfTableWriter.WriteAsync();
 
-                        _consoleWriter.ContinueProgress(++ecfRecordCounter);
-                    }
+                    _consoleWriter.ContinueProgress(++ecfRecordCounter);
                 }
             }
 

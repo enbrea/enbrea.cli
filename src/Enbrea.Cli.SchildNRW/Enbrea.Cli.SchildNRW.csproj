@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Enbrea.Ecf" Version="0.4.1" />
-    <PackageReference Include="Enbrea.SchildNRW.Db" Version="0.6.1" />
+    <PackageReference Include="Enbrea.SchildNRW.Db" Version="0.7.0" />
   </ItemGroup>
 
   <ItemGroup>

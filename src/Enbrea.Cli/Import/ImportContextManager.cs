@@ -22,6 +22,7 @@
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,17 +30,26 @@ namespace Enbrea.Cli
 {
     public static class ImportContextManager
     {
+        private static readonly JsonSerializerOptions _jsonSerializerOptions = GetJsonSerializerOptions();
+
+        private static JsonSerializerOptions GetJsonSerializerOptions()
+        {
+            return new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                WriteIndented = true
+            };
+        }
+
         public static async Task<ImportContext> LoadFromFileAsync(string fileName, CancellationToken cancellationToken = default)
         {
             if (File.Exists(fileName))
             {
                 using var fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-                var loadSerializerOptions = new JsonSerializerOptions()
-                {
-                    PropertyNameCaseInsensitive = true
-                };
-                return await JsonSerializer.DeserializeAsync<ImportContext>(fileStream, loadSerializerOptions, cancellationToken);
+                return await JsonSerializer.DeserializeAsync<ImportContext>(fileStream, _jsonSerializerOptions, cancellationToken);
             }
             else
             {
@@ -53,13 +63,7 @@ namespace Enbrea.Cli
             
             using var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read);
 
-            var templateSerializerOptions = new JsonSerializerOptions() 
-            { 
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                WriteIndented = true
-            };
-
-            await JsonSerializer.SerializeAsync(fileStream, context, templateSerializerOptions, cancellationToken);
+            await JsonSerializer.SerializeAsync(fileStream, context, _jsonSerializerOptions, cancellationToken);
         }
     }
 }

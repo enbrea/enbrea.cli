@@ -54,7 +54,7 @@ namespace Enbrea.Cli.LUSD
             csvLineBuilder.Append(LastName);
             csvLineBuilder.Append(BirthDate?.ToString("yyyy-MM-dd"));
 
-            return GuidGenerator.Create(GuidGenerator.DnsNamespace, csvLineBuilder.ToString()).ToString();
+            return GuidGenerator.CreateVersion5(GuidNamespaces.Dns, csvLineBuilder.ToString()).ToString();
         }
     }
 }

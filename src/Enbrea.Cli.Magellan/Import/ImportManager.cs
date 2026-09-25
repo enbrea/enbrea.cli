@@ -145,6 +145,76 @@ namespace Enbrea.Cli.Magellan
             }
         }
 
+        private static async Task ImportAchievementType(FbConnection fbConnection, FbTransaction fbTransaction, ImportContext importContext)
+        {
+            await importContext.LookupOrCreateEntityByCodeColumn("Leistungsarten", 20, async (insertOrUpdate, code) =>
+            {
+                var sqlBuilder = new SqlBuilder("Leistungsarten");
+
+                sqlBuilder.SetValue("Kuerzel", code);
+                sqlBuilder.SetValue("Art", 0);
+
+                importContext.LookupValue<string>(EcfHeaders.Name, (value) => sqlBuilder.SetValue("Kuerzel", value));
+                importContext.LookupValue<string>(EcfHeaders.StatisticalCode, value => sqlBuilder.SetValue("Schluessel", value));
+
+                using var fbCommand = new FbCommand(sqlBuilder.AsInsertOrUpdate(insertOrUpdate, "\"Kuerzel\" = @code"), fbConnection, fbTransaction);
+
+                fbCommand.AddParameters(sqlBuilder.Assignments);
+                fbCommand.Parameters.Add("@code", code);
+
+                await fbCommand.ExecuteNonQueryAsync();
+
+                return code;
+            }); ;
+        }
+
+        private static async Task ImportBasicCatalog(string tableName, FbConnection fbConnection, FbTransaction fbTransaction, ImportContext importContext)
+        {
+            await importContext.LookupOrCreateEntityByCodeColumn(tableName, 20, async (insertOrUpdate, code) =>
+            {
+                var sqlBuilder = new SqlBuilder(tableName);
+
+                sqlBuilder.SetValue("Kuerzel", code);
+
+                importContext.LookupValue<string>(EcfHeaders.Name, (value) => sqlBuilder.SetValue("Bezeichnung", value));
+                importContext.LookupValue<string>(EcfHeaders.StatisticalCode, value => sqlBuilder.SetValue("Schluessel", value));
+
+                using var fbCommand = new FbCommand(sqlBuilder.AsInsertOrUpdate(insertOrUpdate, "\"Kuerzel\" = @code"), fbConnection, fbTransaction);
+
+                fbCommand.AddParameters(sqlBuilder.Assignments);
+                fbCommand.Parameters.Add("@code", code);
+
+                await fbCommand.ExecuteNonQueryAsync();
+
+                return code;
+            });
+        }
+
+        private static async Task ImportSchoolTerm(FbConnection fbConnection, FbTransaction fbTransaction, ImportContext importContext)
+        {
+            await importContext.LookupOrCreateEntityByIdColumn("Zeitraeume", async (insertOrUpdate, id) =>
+            {
+                var sqlBuilder = new SqlBuilder("Zeitraeume");
+
+                sqlBuilder.SetValue("ID", id);
+
+                importContext.LookupValue<string>(EcfHeaders.Id, (value) => sqlBuilder.SetValue("EnbreaID", IdFactory.CreateIdFromValue(value).ToEnbreaId()));
+                importContext.LookupValue<string>(EcfHeaders.Code, (value) => sqlBuilder.SetValue("Kuerzel", value));
+                importContext.LookupValue<string>(EcfHeaders.Name1, (value) => sqlBuilder.SetValue("Ausdruck1", value));
+                importContext.LookupValue<string>(EcfHeaders.Name2, (value) => sqlBuilder.SetValue("Ausdruck2", value));
+                importContext.LookupValue<string>(EcfHeaders.ValidFrom, (value) => sqlBuilder.SetValue("Von", value));
+                importContext.LookupValue<string>(EcfHeaders.ValidTo, (value) => sqlBuilder.SetValue("Bis", value));
+                importContext.LookupValue<string>(EcfHeaders.Section, (value) => sqlBuilder.SetValue("Art", ValueConverter.TermSection(value)));
+
+                using var fbCommand = new FbCommand(sqlBuilder.AsInsertOrUpdate(insertOrUpdate, "\"ID\" = @id"), fbConnection, fbTransaction);
+
+                fbCommand.AddParameters(sqlBuilder.Assignments);
+                fbCommand.Parameters.Add("@id", id);
+
+                return (int)await fbCommand.ExecuteScalarAsync();
+            }); ;
+        }
+
         private async Task Execute(FbConnection fbConnection, FbTransaction fbTransaction, string ecfTableName, Func<FbConnection, FbTransaction, ImportContext, Task> action)
         {
             var sourceFile = Path.ChangeExtension(Path.Combine(GetEcfFolderName(), ecfTableName), "csv");
@@ -186,29 +256,6 @@ namespace Enbrea.Cli.Magellan
                     throw;
                 }
             }
-        }
-
-        private async Task ImportAchievementType(FbConnection fbConnection, FbTransaction fbTransaction, ImportContext importContext)
-        {
-            await importContext.LookupOrCreateEntityByCodeColumn("Leistungsarten", 20, async (insertOrUpdate, code) =>
-            {
-                var sqlBuilder = new SqlBuilder("Leistungsarten");
-
-                sqlBuilder.SetValue("Kuerzel", code);
-                sqlBuilder.SetValue("Art", 0);
-
-                importContext.LookupValue<string>(EcfHeaders.Name, (value) => sqlBuilder.SetValue("Kuerzel", value));
-                importContext.LookupValue<string>(EcfHeaders.StatisticalCode, value => sqlBuilder.SetValue("Schluessel", value));
-
-                using var fbCommand = new FbCommand(sqlBuilder.AsInsertOrUpdate(insertOrUpdate, "\"Kuerzel\" = @code"), fbConnection, fbTransaction);
-
-                fbCommand.AddParameters(sqlBuilder.Assignments);
-                fbCommand.Parameters.Add("@code", code);
-
-                await fbCommand.ExecuteNonQueryAsync();
-
-                return code;
-            }); ;
         }
 
         private async Task ImportApplicationAssesments(FbConnection fbConnection, FbTransaction fbTransaction, ImportContext importContext)
@@ -451,29 +498,6 @@ namespace Enbrea.Cli.Magellan
 
             await Task.CompletedTask;
         }
-
-        private async Task ImportBasicCatalog(string tableName, FbConnection fbConnection, FbTransaction fbTransaction, ImportContext importContext)
-        {
-            await importContext.LookupOrCreateEntityByCodeColumn(tableName, 20, async (insertOrUpdate, code) =>
-            {
-                var sqlBuilder = new SqlBuilder(tableName);
-
-                sqlBuilder.SetValue("Kuerzel", code);
-
-                importContext.LookupValue<string>(EcfHeaders.Name, (value) => sqlBuilder.SetValue("Bezeichnung", value));
-                importContext.LookupValue<string>(EcfHeaders.StatisticalCode, value => sqlBuilder.SetValue("Schluessel", value));
-
-                using var fbCommand = new FbCommand(sqlBuilder.AsInsertOrUpdate(insertOrUpdate, "\"Kuerzel\" = @code"), fbConnection, fbTransaction);
-
-                fbCommand.AddParameters(sqlBuilder.Assignments);
-                fbCommand.Parameters.Add("@code", code);
-
-                await fbCommand.ExecuteNonQueryAsync();
-
-                return code;
-            });
-        }
-
         private async Task ImportCustodian(FbConnection fbConnection, FbTransaction fbTransaction, ImportContext importContext)
         {
             await importContext.LookupOrCreateEntityByIdColumn("Sorgeberechtigte", _config.TenantId, async (insertOrUpdate, id) =>
@@ -631,31 +655,6 @@ namespace Enbrea.Cli.Magellan
                 });
 
                 return (int)schoolClassId;
-            }); ;
-        }
-
-        private async Task ImportSchoolTerm(FbConnection fbConnection, FbTransaction fbTransaction, ImportContext importContext)
-        {
-            await importContext.LookupOrCreateEntityByIdColumn("Zeitraeume", async (insertOrUpdate, id) =>
-            {
-                var sqlBuilder = new SqlBuilder("Zeitraeume");
-
-                sqlBuilder.SetValue("ID", id);
-
-                importContext.LookupValue<string>(EcfHeaders.Id, (value) => sqlBuilder.SetValue("EnbreaID", IdFactory.CreateIdFromValue(value).ToEnbreaId()));
-                importContext.LookupValue<string>(EcfHeaders.Code, (value) => sqlBuilder.SetValue("Kuerzel", value));
-                importContext.LookupValue<string>(EcfHeaders.Name1, (value) => sqlBuilder.SetValue("Ausdruck1", value));
-                importContext.LookupValue<string>(EcfHeaders.Name2, (value) => sqlBuilder.SetValue("Ausdruck2", value));
-                importContext.LookupValue<string>(EcfHeaders.ValidFrom, (value) => sqlBuilder.SetValue("Von", value));
-                importContext.LookupValue<string>(EcfHeaders.ValidTo, (value) => sqlBuilder.SetValue("Bis", value));
-                importContext.LookupValue<string>(EcfHeaders.Section, (value) => sqlBuilder.SetValue("Art", ValueConverter.TermSection(value)));
-
-                using var fbCommand = new FbCommand(sqlBuilder.AsInsertOrUpdate(insertOrUpdate, "\"ID\" = @id"), fbConnection, fbTransaction);
-
-                fbCommand.AddParameters(sqlBuilder.Assignments);
-                fbCommand.Parameters.Add("@id", id);
-
-                return (int)await fbCommand.ExecuteScalarAsync();
             }); ;
         }
 

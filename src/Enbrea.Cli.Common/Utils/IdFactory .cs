@@ -35,7 +35,7 @@ namespace Enbrea.Cli.Common
             }
             else
             {
-                return GuidGenerator.Create(GuidGenerator.IsoOidNamespace, value);
+                return GuidGenerator.CreateVersion5(GuidNamespaces.IsoOid, value);
             }
         }
 
@@ -46,8 +46,8 @@ namespace Enbrea.Cli.Common
             {
                 csvLineBuilder.Append(value);
 
-           }
-            return GuidGenerator.Create(GuidGenerator.IsoOidNamespace, csvLineBuilder.ToString());
+            }
+            return GuidGenerator.CreateVersion5(GuidNamespaces.IsoOid, csvLineBuilder.ToString());
         }
     }
 }

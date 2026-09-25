@@ -490,6 +490,50 @@ namespace Enbrea.Cli
             }
         }
 
+        private static TaskFolder AddEnbreaTaskFolder()
+        {
+            return TaskService.Instance.RootFolder.CreateFolder("Enbrea", exceptionOnExists: false);
+        }
+
+        private static TaskCollection FindAllTasks(TaskFolder folder, ImportProvider provider)
+        {
+            return folder.GetTasks(new Regex(@$"enbrea\.from\.{provider}(\..+)?"));
+        }
+
+        private static TaskCollection FindAllTasks(TaskFolder folder, ExportProvider provider)
+        {
+            return folder.GetTasks(new Regex(@$"enbrea\.to\.{provider}(\..+)?"));
+        }
+
+        private static TaskFolder GetEnbreaTaskFolder()
+        {
+            return TaskService.Instance.GetFolder("Enbrea");
+        }
+
+        private static string GetEnbreaTaskName(ImportProvider provider, string suffix)
+        {
+            if (string.IsNullOrWhiteSpace(suffix))
+            {
+                return $"enbrea.from.{provider}";
+            }
+            else
+            {
+                return $"enbrea.from.{provider}.{suffix}";
+            }
+        }
+
+        private static string GetEnbreaTaskName(ExportProvider provider, string suffix)
+        {
+            if (string.IsNullOrWhiteSpace(suffix))
+            {
+                return $"enbrea.to.{provider}";
+            }
+            else
+            {
+                return $"enbrea.to.{provider}.{suffix}";
+            }
+        }
+
         private static string GetLogFolderName(Configuration config, ImportProvider provider)
         {
             return provider switch
@@ -515,51 +559,7 @@ namespace Enbrea.Cli
             };
         }
 
-        private TaskFolder AddEnbreaTaskFolder()
-        {
-            return TaskService.Instance.RootFolder.CreateFolder("Enbrea", exceptionOnExists: false);
-        }
-
-        private TaskCollection FindAllTasks(TaskFolder folder, ImportProvider provider)
-        {
-            return folder.GetTasks(new Regex(@$"enbrea\.from\.{provider}(\..+)?"));
-        }
-
-        private TaskCollection FindAllTasks(TaskFolder folder, ExportProvider provider)
-        {
-            return folder.GetTasks(new Regex(@$"enbrea\.to\.{provider}(\..+)?"));
-        }
-
-        private TaskFolder GetEnbreaTaskFolder()
-        {
-            return TaskService.Instance.GetFolder("Enbrea");
-        }
-
-        private string GetEnbreaTaskName(ImportProvider provider, string suffix)
-        {
-            if (string.IsNullOrWhiteSpace(suffix))
-            {
-                return $"enbrea.from.{provider}";
-            }
-            else
-            {
-                return $"enbrea.from.{provider}.{suffix}";
-            }
-        }
-
-        private string GetEnbreaTaskName(ExportProvider provider, string suffix)
-        {
-            if (string.IsNullOrWhiteSpace(suffix))
-            {
-                return $"enbrea.to.{provider}";
-            }
-            else
-            {
-                return $"enbrea.to.{provider}.{suffix}";
-            }
-        }
-
-        private Task GetTask(string taskName)
+        private static Task GetTask(string taskName)
         {
             return TaskService.Instance.GetTask($"Enbrea\\{taskName}");
         }
