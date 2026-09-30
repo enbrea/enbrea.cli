@@ -22,17 +22,16 @@
 using Enbrea.Csv;
 using Enbrea.Ecf;
 
-namespace Enbrea.Cli.Edoosys
+namespace Enbrea.Cli.Edoosys;
+
+/// <summary>
+/// Implementation of an <see cref="ICsvConverterResolver"/> for Edoosys CSV
+/// </summary>
+public class CsvConverterResolver : CsvDefaultConverterResolver
 {
-    /// <summary>
-    /// Implementation of an <see cref="ICsvConverterResolver"/> for Edoosys CSV
-    /// </summary>
-    public class CsvConverterResolver : CsvDefaultConverterResolver
+    protected override void RegisterDefaultConverters()
     {
-        protected override void RegisterDefaultConverters()
-        {
-            base.RegisterDefaultConverters();
-            AddConverter(typeof(EcfGender), new CsvGenderConverter());
-        }
+        base.RegisterDefaultConverters();
+        AddConverter(typeof(EcfGender), new CsvGenderConverter());
     }
 }

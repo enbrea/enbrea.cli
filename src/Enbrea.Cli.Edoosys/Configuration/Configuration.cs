@@ -22,72 +22,71 @@
 using Enbrea.Cli.Common;
 using System.Text.Json.Serialization;
 
-namespace Enbrea.Cli.Edoosys
+namespace Enbrea.Cli.Edoosys;
+
+/// <summary>
+/// Configuration for edoo.sys
+/// </summary>
+public class Configuration
 {
     /// <summary>
-    /// Configuration for edoo.sys
+    /// Folder for CSV export from edoo.sys
     /// </summary>
-    public class Configuration
-    {
-        /// <summary>
-        /// Folder for CSV export from edoo.sys
-        /// </summary>
-        [JsonPropertyOrder(2)]
-        public string CsvExportFile { get; set; } = ".\\edoosys\\export\\csv\\data.csv";
+    [JsonPropertyOrder(2)]
+    public string CsvExportFile { get; set; } = ".\\edoosys\\export\\csv\\data.csv";
 
-        /// <summary>
-        /// Quote char for CSV export from edoo.sys
-        /// </summary>
-        [JsonPropertyOrder(3)]
-        public char CsvExportQuote { get; set; } = '"';
+    /// <summary>
+    /// Quote char for CSV export from edoo.sys
+    /// </summary>
+    [JsonPropertyOrder(3)]
+    public char CsvExportQuote { get; set; } = '"';
 
-        /// <summary>
-        /// Separator char for CSV export from edoo.sys
-        /// </summary>
-        [JsonPropertyOrder(4)]
-        public char CsvExportSeparator { get; set; } = ';';
+    /// <summary>
+    /// Separator char for CSV export from edoo.sys
+    /// </summary>
+    [JsonPropertyOrder(4)]
+    public char CsvExportSeparator { get; set; } = ';';
 
-        /// <summary>
-        /// PostgreSQL database connection for direct edoo.sys access
-        /// </summary>
-        [JsonPropertyOrder(1)]
-        public string DatabaseConnection { get; set; } = "Server=127.0.0.1;Port=5432;Database=asv;User Id=myUsername;Password=myPassword;";
+    /// <summary>
+    /// PostgreSQL database connection for direct edoo.sys access
+    /// </summary>
+    [JsonPropertyOrder(1)]
+    public string DatabaseConnection { get; set; } = "Server=127.0.0.1;Port=5432;Database=asv;User Id=myUsername;Password=myPassword;";
 
-        /// <summary>
-        /// Data provider for edoo.sys (either CSV export or direct database access)
-        /// </summary>
-        [JsonPropertyOrder(0)]
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public DataProvider DataProvider { get; set; } = DataProvider.Postgres;
+    /// <summary>
+    /// Data provider for edoo.sys (either CSV export or direct database access)
+    /// </summary>
+    [JsonPropertyOrder(0)]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public DataProvider DataProvider { get; set; } = DataProvider.Postgres;
 
-        /// <summary>
-        /// Mapping for export to ECF
-        /// </summary>
-        [JsonPropertyOrder(9)]
-        public ProviderEcfMapping EcfMapping { get; set; }
+    /// <summary>
+    /// Mapping for export to ECF
+    /// </summary>
+    [JsonPropertyOrder(9)]
+    public ProviderEcfMapping EcfMapping { get; set; }
 
-        /// <summary>
-        /// Do not process edoo.sys school class groups (Klassengruppen)
-        /// </summary>
-        [JsonPropertyOrder(7)]
-        public bool NoSchoolClassGroups { get; set; } = true;
+    /// <summary>
+    /// Do not process edoo.sys school class groups (Klassengruppen)
+    /// </summary>
+    [JsonPropertyOrder(7)]
+    public bool NoSchoolClassGroups { get; set; } = true;
 
-        /// <summary>
-        /// School number (Schulnummer)
-        /// </summary>
-        [JsonPropertyOrder(5)]
-        public string SchoolNo { get; set; } = "12345";
+    /// <summary>
+    /// School number (Schulnummer)
+    /// </summary>
+    [JsonPropertyOrder(5)]
+    public string SchoolNo { get; set; } = "12345";
 
-        /// <summary>
-        /// School year code (Kürzel des Schuljahres)
-        /// </summary>
-        [JsonPropertyOrder(6)]
-        public string SchoolYearCode { get; set; } = "2023/24";
+    /// <summary>
+    /// School year code (Kürzel des Schuljahres)
+    /// </summary>
+    [JsonPropertyOrder(6)]
+    public string SchoolYearCode { get; set; } = "2023/24";
 
-        /// <summary>
-        /// Target folder for ECF file generation
-        /// </summary>
-        [JsonPropertyOrder(8)]
-        public string TargetFolder { get; set; } = ".\\edoosys\\export";
-    }
+    /// <summary>
+    /// Target folder for ECF file generation
+    /// </summary>
+    [JsonPropertyOrder(8)]
+    public string TargetFolder { get; set; } = ".\\edoosys\\export";
 }

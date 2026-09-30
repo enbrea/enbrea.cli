@@ -23,35 +23,34 @@ using Enbrea.Csv;
 using Enbrea.Ecf;
 using System.Globalization;
 
-namespace Enbrea.Cli.Edoosys
-{
-    /// <summary>
-    /// Implementation of a Gender converter from Edoosys CSV
-    /// </summary>
-    public class CsvGenderConverter : CsvDefaultEnumConverter
-    {
-        public CsvGenderConverter() : 
-            base(typeof(EcfGender), CultureInfo.InvariantCulture, true)
-        {
-        }
+namespace Enbrea.Cli.Edoosys;
 
-        public override object FromString(string value)
+/// <summary>
+/// Implementation of a Gender converter from Edoosys CSV
+/// </summary>
+public class CsvGenderConverter : CsvDefaultEnumConverter
+{
+    public CsvGenderConverter() : 
+        base(typeof(EcfGender), CultureInfo.InvariantCulture, true)
+    {
+    }
+
+    public override object FromString(string value)
+    {
+        if (!string.IsNullOrEmpty(value))
         {
-            if (!string.IsNullOrEmpty(value))
+            return value switch
             {
-                return value switch
-                {
-                    "W" => EcfGender.Female,
-                    "weiblich" => EcfGender.Female,
-                    "M" => EcfGender.Male,
-                    "männlich" => EcfGender.Male,
-                    _ => null,
-                };
-            }
-            else
-            {
-                return null;
-            }
+                "W" => EcfGender.Female,
+                "weiblich" => EcfGender.Female,
+                "M" => EcfGender.Male,
+                "männlich" => EcfGender.Male,
+                _ => null,
+            };
+        }
+        else
+        {
+            return null;
         }
     }
 }

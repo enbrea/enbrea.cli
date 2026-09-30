@@ -19,10 +19,9 @@
  */
 #endregion
 
-namespace Enbrea.Cli.Edoosys
+namespace Enbrea.Cli.Edoosys;
+
+public enum DataProvider
 {
-    public enum DataProvider
-    {
-        Postgres, Csv
-    }
+    Postgres, Csv
 }

@@ -23,35 +23,34 @@ using Enbrea.Ecf;
 using Enbrea.Edoosys.Db;
 using System;
 
-namespace Enbrea.Cli.Edoosys
-{
-    /// <summary>
-    /// Data type converter
-    /// </summary>
-    public static class ValueConverter
-    {
-        public static DateOnly? GetDateOrDefault(DateTime? value)
-        {
-            if (value != null)
-            {
-                return DateOnly.FromDateTime((DateTime)value);
-            }
-            return null;
-        }
+namespace Enbrea.Cli.Edoosys;
 
-        public static EcfGender? GetGenderOrDefault(Gender? value)
+/// <summary>
+/// Data type converter
+/// </summary>
+public static class ValueConverter
+{
+    public static DateOnly? GetDateOnlyOrDefault(DateOnly? value)
+    {
+        if (value != null)
         {
-            if (value != null)
-            {
-                return (value) switch
-                {
-                    Gender.Male => EcfGender.Male,
-                    Gender.Female => EcfGender.Female,
-                    Gender.Diverse => EcfGender.Diverse,
-                    _ => null,
-                };
-            }
-            return null;
+            return value;
         }
+        return null;
+    }
+
+    public static EcfGender? GetGenderOrDefault(Gender? value)
+    {
+        if (value != null)
+        {
+            return (value) switch
+            {
+                Gender.Male => EcfGender.Male,
+                Gender.Female => EcfGender.Female,
+                Gender.Diverse => EcfGender.Diverse,
+                _ => null,
+            };
+        }
+        return null;
     }
 }

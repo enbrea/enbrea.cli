@@ -30,343 +30,342 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Enbrea.Cli.Edoosys
+namespace Enbrea.Cli.Edoosys;
+
+public class CsvExportManager : EcfCustomManager
 {
-    public class CsvExportManager : EcfCustomManager
+    private readonly Configuration _config;
+    private int _recordCounter = 0;
+    private int _tableCounter = 0;
+
+    public CsvExportManager(Configuration config, ConsoleWriter consoleWriter, CancellationToken cancellationToken)
+        : base(config.TargetFolder, consoleWriter, cancellationToken)
     {
-        private readonly Configuration _config;
-        private int _recordCounter = 0;
-        private int _tableCounter = 0;
+        _config = config;
+    }
 
-        public CsvExportManager(Configuration config, ConsoleWriter consoleWriter, CancellationToken cancellationToken)
-            : base(config.TargetFolder, consoleWriter, cancellationToken)
-        {
-            _config = config;
-        }
+    public async override Task Execute()
+    {
+        // Init counters
+        _tableCounter = 0;
+        _recordCounter = 0;
 
-        public async override Task Execute()
+        // Report status
+        _consoleWriter.Caption("Export from edoo.sys");
+
+        // Preperation
+        PrepareEcfFolder();
+
+        // Education
+        await Execute(EcfTables.Teachers, ExportTeachers);
+        await Execute(EcfTables.Subjects, ExportSubjects);
+        await Execute(EcfTables.SchoolClasses, ExportSchoolClasses);
+        await Execute(EcfTables.Students, ExportStudents);
+        await Execute(EcfTables.StudentSchoolClassAttendances, ExportStudentSchoolClassAttendances);
+        await Execute(EcfTables.StudentSubjects, ExportStudentSubjects);
+
+        // Report status
+        _consoleWriter.Success($"{_tableCounter} table(s) and {_recordCounter} record(s) extracted").NewLine();
+    }
+
+    private async Task Execute(string ecfTableName, Func<CsvTableReader, EcfTableWriter, Task<int>> action)
+    {
+        // Report status
+        _consoleWriter.StartProgress($"Extracting {ecfTableName}...");
+        try
         {
-            // Init counters
-            _tableCounter = 0;
-            _recordCounter = 0;
+            // Open Edoosys file stream for import
+            using var strReader = new StreamReader(_config.CsvExportFile);
+
+            // Create CSV Reader for import
+            var csvTableReader = new CsvTableReader(strReader, new CsvConfiguration()
+            {
+                Quote = _config.CsvExportQuote,
+                Separator = _config.CsvExportSeparator
+            }, new CsvConverterResolver());
+
+            // Expected date format
+            csvTableReader.SetFormats<DateOnly>("dd.MM.yyyy");
+
+            // Generate ECF file name
+            var ecfFileName = Path.ChangeExtension(Path.Combine(GetEcfFolderName(), ecfTableName), "csv");
+
+            // Create ECF file stream for export
+            using var strWriter = new StreamWriter(ecfFileName, false, Encoding.UTF8);
+
+            // Create ECF Writer for export
+            var ecfTableWriter = new EcfTableWriter(strWriter);
+
+            // Call table specific action
+            var ecfRecordCounter = await action(csvTableReader, ecfTableWriter);
+
+            // Inc counters
+            _recordCounter += ecfRecordCounter;
+            _tableCounter++;
 
             // Report status
-            _consoleWriter.Caption("Export from edoo.sys");
-
-            // Preperation
-            PrepareEcfFolder();
-
-            // Education
-            await Execute(EcfTables.Teachers, ExportTeachers);
-            await Execute(EcfTables.Subjects, ExportSubjects);
-            await Execute(EcfTables.SchoolClasses, ExportSchoolClasses);
-            await Execute(EcfTables.Students, ExportStudents);
-            await Execute(EcfTables.StudentSchoolClassAttendances, ExportStudentSchoolClassAttendances);
-            await Execute(EcfTables.StudentSubjects, ExportStudentSubjects);
-
-            // Report status
-            _consoleWriter.Success($"{_tableCounter} table(s) and {_recordCounter} record(s) extracted").NewLine();
+            _consoleWriter.FinishProgress();
         }
-
-        private async Task Execute(string ecfTableName, Func<CsvTableReader, EcfTableWriter, Task<int>> action)
+        catch
         {
-            // Report status
-            _consoleWriter.StartProgress($"Extracting {ecfTableName}...");
-            try
+            _consoleWriter.CancelProgress();
+            throw;
+        }
+    }
+
+    private async Task<int> ExportSchoolClasses(CsvTableReader csvTableReader, EcfTableWriter ecfTableWriter)
+    {
+        var ecfCache = new HashSet<string>();
+        var ecfRecordCounter = 0;
+
+        await csvTableReader.ReadHeadersAsync();
+
+        await ecfTableWriter.WriteHeadersAsync(
+            EcfHeaders.Id,
+            EcfHeaders.Code);
+
+        while (await csvTableReader.ReadAsync() > 0)
+        {
+            var schoolClass = new CsvExportSchoolClass(csvTableReader);
+
+            if (!string.IsNullOrEmpty(schoolClass.Id) && !ecfCache.Contains(schoolClass.Id))
             {
-                // Open Edoosys file stream for import
-                using var strReader = new StreamReader(_config.CsvExportFile);
+                ecfTableWriter.SetValue(EcfHeaders.Id, schoolClass.Id);
+                ecfTableWriter.SetValue(EcfHeaders.Code, schoolClass.Code);
 
-                // Create CSV Reader for import
-                var csvTableReader = new CsvTableReader(strReader, new CsvConfiguration()
-                {
-                    Quote = _config.CsvExportQuote,
-                    Separator = _config.CsvExportSeparator
-                }, new CsvConverterResolver());
+                await ecfTableWriter.WriteAsync();
 
-                // Expected date format
-                csvTableReader.SetFormats<DateOnly>("dd.MM.yyyy");
+                ecfCache.Add(schoolClass.Id);
 
-                // Generate ECF file name
-                var ecfFileName = Path.ChangeExtension(Path.Combine(GetEcfFolderName(), ecfTableName), "csv");
-
-                // Create ECF file stream for export
-                using var strWriter = new StreamWriter(ecfFileName, false, Encoding.UTF8);
-
-                // Create ECF Writer for export
-                var ecfTableWriter = new EcfTableWriter(strWriter);
-
-                // Call table specific action
-                var ecfRecordCounter = await action(csvTableReader, ecfTableWriter);
-
-                // Inc counters
-                _recordCounter += ecfRecordCounter;
-                _tableCounter++;
-
-                // Report status
-                _consoleWriter.FinishProgress();
-            }
-            catch
-            {
-                _consoleWriter.CancelProgress();
-                throw;
+                _consoleWriter.ContinueProgress(++ecfRecordCounter);
             }
         }
 
-        private async Task<int> ExportSchoolClasses(CsvTableReader csvTableReader, EcfTableWriter ecfTableWriter)
+        return ecfRecordCounter;
+    }
+
+    private async Task<int> ExportStudents(CsvTableReader csvTableReader, EcfTableWriter ecfTableWriter)
+    {
+        var ecfCache = new HashSet<string>();
+        var ecfRecordCounter = 0;
+
+        await csvTableReader.ReadHeadersAsync();
+
+        await ecfTableWriter.WriteHeadersAsync(
+            EcfHeaders.Id,
+            EcfHeaders.LastName,
+            EcfHeaders.FirstName,
+            EcfHeaders.Gender,
+            EcfHeaders.Birthdate);
+
+        while (await csvTableReader.ReadAsync() > 0)
         {
-            var ecfCache = new HashSet<string>();
-            var ecfRecordCounter = 0;
+            var student = new CsvExportStudent(csvTableReader);
 
-            await csvTableReader.ReadHeadersAsync();
-
-            await ecfTableWriter.WriteHeadersAsync(
-                EcfHeaders.Id,
-                EcfHeaders.Code);
-
-            while (await csvTableReader.ReadAsync() > 0)
+            if (!ecfCache.Contains(student.Id))
             {
-                var schoolClass = new CsvExportSchoolClass(csvTableReader);
+                ecfTableWriter.SetValue(EcfHeaders.Id, student.Id);
+                ecfTableWriter.SetValue(EcfHeaders.LastName, student.LastName);
+                ecfTableWriter.SetValue(EcfHeaders.FirstName, student.FirstName);
+                ecfTableWriter.TrySetValue(EcfHeaders.Gender, student.Gender);
+                ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, student.BirthDate);
 
-                if (!string.IsNullOrEmpty(schoolClass.Id) && !ecfCache.Contains(schoolClass.Id))
-                {
-                    ecfTableWriter.SetValue(EcfHeaders.Id, schoolClass.Id);
-                    ecfTableWriter.SetValue(EcfHeaders.Code, schoolClass.Code);
+                await ecfTableWriter.WriteAsync();
 
-                    await ecfTableWriter.WriteAsync();
+                ecfCache.Add(student.Id);
 
-                    ecfCache.Add(schoolClass.Id);
-
-                    _consoleWriter.ContinueProgress(++ecfRecordCounter);
-                }
+                _consoleWriter.ContinueProgress(++ecfRecordCounter);
             }
-
-            return ecfRecordCounter;
         }
 
-        private async Task<int> ExportStudents(CsvTableReader csvTableReader, EcfTableWriter ecfTableWriter)
+        return ecfRecordCounter;
+    }
+
+    private async Task<int> ExportStudentSchoolClassAttendances(CsvTableReader csvTableReader, EcfTableWriter ecfTableWriter)
+    {
+        var ecfRecordCounter = 0;
+
+        await csvTableReader.ReadHeadersAsync();
+
+        await ecfTableWriter.WriteHeadersAsync(
+            EcfHeaders.Id,
+            EcfHeaders.StudentId,
+            EcfHeaders.SchoolClassId);
+
+        while (await csvTableReader.ReadAsync() > 0)
         {
-            var ecfCache = new HashSet<string>();
-            var ecfRecordCounter = 0;
+            var student = new CsvExportStudent(csvTableReader);
+            var schoolClass = new CsvExportSchoolClass(csvTableReader);
 
-            await csvTableReader.ReadHeadersAsync();
-
-            await ecfTableWriter.WriteHeadersAsync(
-                EcfHeaders.Id,
-                EcfHeaders.LastName,
-                EcfHeaders.FirstName,
-                EcfHeaders.Gender,
-                EcfHeaders.Birthdate);
-
-            while (await csvTableReader.ReadAsync() > 0)
+            if (!string.IsNullOrEmpty(schoolClass.Id))
             {
-                var student = new CsvExportStudent(csvTableReader);
+                ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(student.Id, schoolClass.Id));
+                ecfTableWriter.SetValue(EcfHeaders.StudentId, student.Id);
+                ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, schoolClass.Id);
 
-                if (!ecfCache.Contains(student.Id))
-                {
-                    ecfTableWriter.SetValue(EcfHeaders.Id, student.Id);
-                    ecfTableWriter.SetValue(EcfHeaders.LastName, student.LastName);
-                    ecfTableWriter.SetValue(EcfHeaders.FirstName, student.FirstName);
-                    ecfTableWriter.TrySetValue(EcfHeaders.Gender, student.Gender);
-                    ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, student.BirthDate);
+                await ecfTableWriter.WriteAsync();
 
-                    await ecfTableWriter.WriteAsync();
-
-                    ecfCache.Add(student.Id);
-
-                    _consoleWriter.ContinueProgress(++ecfRecordCounter);
-                }
+                _consoleWriter.ContinueProgress(++ecfRecordCounter);
             }
-
-            return ecfRecordCounter;
         }
 
-        private async Task<int> ExportStudentSchoolClassAttendances(CsvTableReader csvTableReader, EcfTableWriter ecfTableWriter)
+        return ecfRecordCounter;
+    }
+
+    private async Task<int> ExportStudentSubjects(CsvTableReader csvTableReader, EcfTableWriter ecfTableWriter)
+    {
+        var ecfRecordCounter = 0;
+
+        await csvTableReader.ReadHeadersAsync();
+
+        await ecfTableWriter.WriteHeadersAsync(
+            EcfHeaders.Id,
+            EcfHeaders.StudentId,
+            EcfHeaders.SchoolClassId,
+            EcfHeaders.SubjectId,
+            EcfHeaders.TeacherId);
+
+        while (await csvTableReader.ReadAsync() > 0)
         {
-            var ecfRecordCounter = 0;
+            var student = new CsvExportStudent(csvTableReader);
+            var schoolClass = new CsvExportSchoolClass(csvTableReader);
 
-            await csvTableReader.ReadHeadersAsync();
-
-            await ecfTableWriter.WriteHeadersAsync(
-                EcfHeaders.Id,
-                EcfHeaders.StudentId,
-                EcfHeaders.SchoolClassId);
-
-            while (await csvTableReader.ReadAsync() > 0)
+            if (csvTableReader.TryGetValue("Alle Lehrkräfte (Kürzel) mit Fach", out var value))
             {
-                var student = new CsvExportStudent(csvTableReader);
-                var schoolClass = new CsvExportSchoolClass(csvTableReader);
+                var csvLineParser = new CsvLineParser(',');
 
-                if (!string.IsNullOrEmpty(schoolClass.Id))
+                var subValues = csvLineParser.Parse(value);
+
+                csvLineParser.Configuration.Separator = ' ';
+
+                foreach (var subValue in subValues)
                 {
-                    ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(student.Id, schoolClass.Id));
-                    ecfTableWriter.SetValue(EcfHeaders.StudentId, student.Id);
-                    ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, schoolClass.Id);
-
-                    await ecfTableWriter.WriteAsync();
-
-                    _consoleWriter.ContinueProgress(++ecfRecordCounter);
-                }
-            }
-
-            return ecfRecordCounter;
-        }
-
-        private async Task<int> ExportStudentSubjects(CsvTableReader csvTableReader, EcfTableWriter ecfTableWriter)
-        {
-            var ecfRecordCounter = 0;
-
-            await csvTableReader.ReadHeadersAsync();
-
-            await ecfTableWriter.WriteHeadersAsync(
-                EcfHeaders.Id,
-                EcfHeaders.StudentId,
-                EcfHeaders.SchoolClassId,
-                EcfHeaders.SubjectId,
-                EcfHeaders.TeacherId);
-
-            while (await csvTableReader.ReadAsync() > 0)
-            {
-                var student = new CsvExportStudent(csvTableReader);
-                var schoolClass = new CsvExportSchoolClass(csvTableReader);
-
-                if (csvTableReader.TryGetValue("Alle Lehrkräfte (Kürzel) mit Fach", out var value))
-                {
-                    var csvLineParser = new CsvLineParser(',');
-
-                    var subValues = csvLineParser.Parse(value);
-
-                    csvLineParser.Configuration.Separator = ' ';
-
-                    foreach (var subValue in subValues)
+                    if (!string.IsNullOrEmpty(subValue))
                     {
-                        if (!string.IsNullOrEmpty(subValue))
+                        var subValueParts = csvLineParser.Parse(subValue.Trim());
+                        if (subValueParts.Length == 2)
                         {
-                            var subValueParts = csvLineParser.Parse(subValue.Trim());
-                            if (subValueParts.Length == 2)
+                            var teacherCode = subValueParts[0];
+                            var subjectCode = subValueParts[1];
+
+                            if (!string.IsNullOrEmpty(subjectCode))
                             {
-                                var teacherCode = subValueParts[0];
-                                var subjectCode = subValueParts[1];
+                                ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(student.Id, schoolClass.Id, subjectCode, teacherCode));
+                                ecfTableWriter.SetValue(EcfHeaders.StudentId, student.Id);
+                                ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, schoolClass.Id);
+                                ecfTableWriter.SetValue(EcfHeaders.SubjectId, subjectCode);
+                                ecfTableWriter.SetValue(EcfHeaders.TeacherId, teacherCode);
 
-                                if (!string.IsNullOrEmpty(subjectCode))
-                                {
-                                    ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(student.Id, schoolClass.Id, subjectCode, teacherCode));
-                                    ecfTableWriter.SetValue(EcfHeaders.StudentId, student.Id);
-                                    ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, schoolClass.Id);
-                                    ecfTableWriter.SetValue(EcfHeaders.SubjectId, subjectCode);
-                                    ecfTableWriter.SetValue(EcfHeaders.TeacherId, teacherCode);
+                                await ecfTableWriter.WriteAsync();
 
-                                    await ecfTableWriter.WriteAsync();
-
-                                    _consoleWriter.ContinueProgress(++ecfRecordCounter);
-                                }
+                                _consoleWriter.ContinueProgress(++ecfRecordCounter);
                             }
                         }
                     }
                 }
             }
-
-            return ecfRecordCounter;
         }
 
-        private async Task<int> ExportSubjects(CsvTableReader csvTableReader, EcfTableWriter ecfTableWriter)
+        return ecfRecordCounter;
+    }
+
+    private async Task<int> ExportSubjects(CsvTableReader csvTableReader, EcfTableWriter ecfTableWriter)
+    {
+        var ecfCache = new HashSet<string>();
+        var ecfRecordCounter = 0;
+
+        await csvTableReader.ReadHeadersAsync();
+
+        await ecfTableWriter.WriteHeadersAsync(
+            EcfHeaders.Id,
+            EcfHeaders.Code);
+
+        while (await csvTableReader.ReadAsync() > 0)
         {
-            var ecfCache = new HashSet<string>();
-            var ecfRecordCounter = 0;
-
-            await csvTableReader.ReadHeadersAsync();
-
-            await ecfTableWriter.WriteHeadersAsync(
-                EcfHeaders.Id,
-                EcfHeaders.Code);
-
-            while (await csvTableReader.ReadAsync() > 0)
+            if (csvTableReader.TryGetValue("Alle Lehrkräfte (Kürzel) mit Fach", out var value))
             {
-                if (csvTableReader.TryGetValue("Alle Lehrkräfte (Kürzel) mit Fach", out var value))
+                var csvLineParser = new CsvLineParser(',');
+
+                var subValues = csvLineParser.Parse(value);
+
+                csvLineParser.Configuration.Separator = ' ';
+
+                foreach (var subValue in subValues)
                 {
-                    var csvLineParser = new CsvLineParser(',');
-
-                    var subValues = csvLineParser.Parse(value);
-
-                    csvLineParser.Configuration.Separator = ' ';
-
-                    foreach (var subValue in subValues)
+                    if (!string.IsNullOrEmpty(subValue))
                     {
-                        if (!string.IsNullOrEmpty(subValue))
+                        var subValueParts = csvLineParser.Parse(subValue.Trim());
+                        if (subValueParts.Length == 2)
                         {
-                            var subValueParts = csvLineParser.Parse(subValue.Trim());
-                            if (subValueParts.Length == 2)
+                            var subjectCode = subValueParts[1];
+
+                            if (!string.IsNullOrEmpty(subjectCode) && !ecfCache.Contains(subjectCode))
                             {
-                                var subjectCode = subValueParts[1];
+                                ecfTableWriter.SetValue(EcfHeaders.Id, subjectCode);
+                                ecfTableWriter.SetValue(EcfHeaders.Code, subjectCode);
 
-                                if (!string.IsNullOrEmpty(subjectCode) && !ecfCache.Contains(subjectCode))
-                                {
-                                    ecfTableWriter.SetValue(EcfHeaders.Id, subjectCode);
-                                    ecfTableWriter.SetValue(EcfHeaders.Code, subjectCode);
+                                await ecfTableWriter.WriteAsync();
 
-                                    await ecfTableWriter.WriteAsync();
+                                ecfCache.Add(subjectCode);
 
-                                    ecfCache.Add(subjectCode);
-
-                                    _consoleWriter.ContinueProgress(++ecfRecordCounter);
-                                }
+                                _consoleWriter.ContinueProgress(++ecfRecordCounter);
                             }
                         }
                     }
                 }
             }
-
-            return ecfRecordCounter;
         }
 
-        private async Task<int> ExportTeachers(CsvTableReader csvTableReader, EcfTableWriter ecfTableWriter)
+        return ecfRecordCounter;
+    }
+
+    private async Task<int> ExportTeachers(CsvTableReader csvTableReader, EcfTableWriter ecfTableWriter)
+    {
+        var ecfCache = new HashSet<string>();
+        var ecfRecordCounter = 0;
+
+        await csvTableReader.ReadHeadersAsync();
+
+        await ecfTableWriter.WriteHeadersAsync(
+            EcfHeaders.Id,
+            EcfHeaders.Code);
+
+        while (await csvTableReader.ReadAsync() > 0)
         {
-            var ecfCache = new HashSet<string>();
-            var ecfRecordCounter = 0;
-
-            await csvTableReader.ReadHeadersAsync();
-
-            await ecfTableWriter.WriteHeadersAsync(
-                EcfHeaders.Id,
-                EcfHeaders.Code);
-
-            while (await csvTableReader.ReadAsync() > 0)
+            if (csvTableReader.TryGetValue("Alle Lehrkräfte (Kürzel) mit Fach", out var value))
             {
-                if (csvTableReader.TryGetValue("Alle Lehrkräfte (Kürzel) mit Fach", out var value))
+                var csvLineParser = new CsvLineParser(',');
+
+                var subValues = csvLineParser.Parse(value);
+
+                csvLineParser.Configuration.Separator = ' ';
+
+                foreach (var subValue in subValues)
                 {
-                    var csvLineParser = new CsvLineParser(',');
-
-                    var subValues = csvLineParser.Parse(value);
-
-                    csvLineParser.Configuration.Separator = ' ';
-
-                    foreach (var subValue in subValues)
+                    if (!string.IsNullOrEmpty(subValue))
                     {
-                        if (!string.IsNullOrEmpty(subValue))
+                        var subValueParts = csvLineParser.Parse(subValue.Trim());
+                        if (subValueParts.Length == 2)
                         {
-                            var subValueParts = csvLineParser.Parse(subValue.Trim());
-                            if (subValueParts.Length == 2)
+                            var teacherCode = subValueParts[0];
+
+                            if (!string.IsNullOrEmpty(teacherCode) && !ecfCache.Contains(teacherCode))
                             {
-                                var teacherCode = subValueParts[0];
+                                ecfTableWriter.SetValue(EcfHeaders.Id, teacherCode);
+                                ecfTableWriter.SetValue(EcfHeaders.Code, teacherCode);
 
-                                if (!string.IsNullOrEmpty(teacherCode) && !ecfCache.Contains(teacherCode))
-                                {
-                                    ecfTableWriter.SetValue(EcfHeaders.Id, teacherCode);
-                                    ecfTableWriter.SetValue(EcfHeaders.Code, teacherCode);
+                                await ecfTableWriter.WriteAsync();
 
-                                    await ecfTableWriter.WriteAsync();
+                                ecfCache.Add(teacherCode);
 
-                                    ecfCache.Add(teacherCode);
-
-                                    _consoleWriter.ContinueProgress(++ecfRecordCounter);
-                                }
+                                _consoleWriter.ContinueProgress(++ecfRecordCounter);
                             }
                         }
                     }
                 }
             }
-
-            return ecfRecordCounter;
         }
+
+        return ecfRecordCounter;
     }
 }

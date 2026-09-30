@@ -23,27 +23,26 @@ using Enbrea.Csv;
 using Enbrea.Ecf;
 using System;
 
-namespace Enbrea.Cli.Edoosys
+namespace Enbrea.Cli.Edoosys;
+
+public class CsvExportStudent
 {
-    public class CsvExportStudent
+    public readonly DateOnly? BirthDate = null;
+    public readonly string FirstName = null;
+    public readonly EcfGender? Gender = null;
+    public readonly string Id;
+    public readonly string LastName = null;
+
+    public CsvExportStudent(CsvTableReader csvTableReader)
     {
-        public readonly DateOnly? BirthDate = null;
-        public readonly string FirstName = null;
-        public readonly EcfGender? Gender = null;
-        public readonly string Id;
-        public readonly string LastName = null;
+        csvTableReader.TryGetValue("Schüler_Stamm_ID", out Id);
+        csvTableReader.TryGetValue("Vornamen", out FirstName);
+        csvTableReader.TryGetValue("Familienname", out LastName);
+        csvTableReader.TryGetValue("Geburtsdatum", out BirthDate);
 
-        public CsvExportStudent(CsvTableReader csvTableReader)
+        if (!csvTableReader.TryGetValue("Geschlecht (männlich/weiblich)", out Gender))
         {
-            csvTableReader.TryGetValue("Schüler_Stamm_ID", out Id);
-            csvTableReader.TryGetValue("Vornamen", out FirstName);
-            csvTableReader.TryGetValue("Familienname", out LastName);
-            csvTableReader.TryGetValue("Geburtsdatum", out BirthDate);
-
-            if (!csvTableReader.TryGetValue("Geschlecht (männlich/weiblich)", out Gender))
-            {
-                csvTableReader.TryGetValue("Geschlecht (männlich/weiblich).Kurzform", out Gender);
-            }
+            csvTableReader.TryGetValue("Geschlecht (männlich/weiblich).Kurzform", out Gender);
         }
     }
 }

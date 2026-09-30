@@ -21,23 +21,22 @@
 
 using Enbrea.Csv;
 
-namespace Enbrea.Cli.Edoosys
-{
-    public class CsvExportSchoolClass
-    {
-        public readonly string Code;
-        public readonly string Id;
+namespace Enbrea.Cli.Edoosys;
 
-        public CsvExportSchoolClass(CsvTableReader csvTableReader)
+public class CsvExportSchoolClass
+{
+    public readonly string Code;
+    public readonly string Id;
+
+    public CsvExportSchoolClass(CsvTableReader csvTableReader)
+    {
+        if (csvTableReader.TryGetValue("Klasse", out Id))
         {
-            if (csvTableReader.TryGetValue("Klasse", out Id))
-            {
-                Code = Id;
-            }
-            else if (csvTableReader.TryGetValue("Klasse / Klassengruppe", out Id))
-            {
-                Code = Id;
-            }
+            Code = Id;
+        }
+        else if (csvTableReader.TryGetValue("Klasse / Klassengruppe", out Id))
+        {
+            Code = Id;
         }
     }
 }
