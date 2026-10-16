@@ -207,6 +207,7 @@ namespace Enbrea.Cli.LUSD
                 EcfHeaders.StudentId,
                 EcfHeaders.SchoolClassId,
                 EcfHeaders.SubjectId,
+                EcfHeaders.Description,
                 EcfHeaders.TeacherId);
 
             while (xlsxReader.ReadLine())
@@ -224,6 +225,7 @@ namespace Enbrea.Cli.LUSD
                         ecfTableWriter.SetValue(EcfHeaders.StudentId, student.Id);
                         ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, schoolClass.Id);
                         ecfTableWriter.SetValue(EcfHeaders.SubjectId, subject.Id);
+                        ecfTableWriter.SetValue(EcfHeaders.Description, subject.Description);
                         ecfTableWriter.SetValue(EcfHeaders.TeacherId, teacher.Id);
 
                         await ecfTableWriter.WriteAsync();

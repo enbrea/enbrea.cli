@@ -314,7 +314,8 @@ public class DbExportManager : EcfCustomManager
                 EcfHeaders.LastName,
                 EcfHeaders.FirstName,
                 EcfHeaders.Gender,
-                EcfHeaders.Birthdate);
+                EcfHeaders.Birthdate,
+                EcfHeaders.EmailAddress);
 
             await foreach (var teacher in edoosysDbReader.TeachersAsync(_config.SchoolNo, _config.SchoolYearCode))
             {
@@ -326,6 +327,7 @@ public class DbExportManager : EcfCustomManager
                     ecfTableWriter.TrySetValue(EcfHeaders.FirstName, teacher.Firstname);
                     ecfTableWriter.TrySetValue(EcfHeaders.Gender, ValueConverter.GetGenderOrDefault(teacher.Gender));
                     ecfTableWriter.TrySetValue(EcfHeaders.Birthdate, ValueConverter.GetDateOnlyOrDefault(teacher.Birthdate));
+                    ecfTableWriter.TrySetValue(EcfHeaders.EmailAddress, teacher.Email);
 
                     await ecfTableWriter.WriteAsync();
 
