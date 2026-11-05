@@ -204,6 +204,7 @@ namespace Enbrea.Cli.LUSD
             var ecfRecordCounter = 0;
 
             await ecfTableWriter.WriteHeadersAsync(
+                EcfHeaders.Id,
                 EcfHeaders.StudentId,
                 EcfHeaders.SchoolClassId,
                 EcfHeaders.SubjectId,
@@ -222,6 +223,7 @@ namespace Enbrea.Cli.LUSD
 
                     if (!string.IsNullOrEmpty(subject.Id))
                     {
+                        ecfTableWriter.SetValue(EcfHeaders.Id, IdFactory.CreateIdFromValues(student.Id, schoolClass.Id, subject.Code, teacher.Code));
                         ecfTableWriter.SetValue(EcfHeaders.StudentId, student.Id);
                         ecfTableWriter.SetValue(EcfHeaders.SchoolClassId, schoolClass.Id);
                         ecfTableWriter.SetValue(EcfHeaders.SubjectId, subject.Id);
