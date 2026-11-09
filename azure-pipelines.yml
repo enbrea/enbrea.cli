@@ -123,9 +123,9 @@ stages:
         targetType: 'inline'
         script: |
           $env:PATH += ';C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64'
-          signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) $(Build.SourcesDirectory)/src/Enbrea.Cli/bin/Publish/win-x64/Enbrea.exe
-          signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) $(Build.SourcesDirectory)/src/Enbrea.Cli/bin/Publish/win-x86/Enbrea.exe
-          signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) $(Build.SourcesDirectory)/src/Enbrea.Cli/bin/Publish/portable/Enbrea.exe
+          signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT_SHA1) $(Build.SourcesDirectory)/src/Enbrea.Cli/bin/Publish/win-x64/Enbrea.exe
+          signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT_SHA1) $(Build.SourcesDirectory)/src/Enbrea.Cli/bin/Publish/win-x86/Enbrea.exe
+          signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT_SHA1) $(Build.SourcesDirectory)/src/Enbrea.Cli/bin/Publish/portable/Enbrea.exe
         failOnStderr: true
         pwsh: true
     - task: DotNetCoreCLI@2
@@ -163,10 +163,10 @@ stages:
         targetType: 'inline'
         script: |
           $env:PATH += ';C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64'
-          signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) /d "Enbrea CLI" $(Build.ArtifactStagingDirectory)/enbrea.cli-x64-de.msi
-          signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) /d "Enbrea CLI" $(Build.ArtifactStagingDirectory)/enbrea.cli-x64-en.msi
-          signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) /d "Enbrea CLI" $(Build.ArtifactStagingDirectory)/enbrea.cli-x86-de.msi
-          signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT) /d "Enbrea CLI" $(Build.ArtifactStagingDirectory)/enbrea.cli-x86-en.msi
+          signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT_SHA1) /d "Enbrea CLI" $(Build.ArtifactStagingDirectory)/enbrea.cli-x64-de.msi
+          signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT_SHA1) /d "Enbrea CLI" $(Build.ArtifactStagingDirectory)/enbrea.cli-x64-en.msi
+          signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT_SHA1) /d "Enbrea CLI" $(Build.ArtifactStagingDirectory)/enbrea.cli-x86-de.msi
+          signtool.exe sign /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 /sha1 $(SM_CERT_FINGERPRINT_SHA1) /d "Enbrea CLI" $(Build.ArtifactStagingDirectory)/enbrea.cli-x86-en.msi
         failOnStderr: true
         pwsh: true
     - task: ArchiveFiles@2
